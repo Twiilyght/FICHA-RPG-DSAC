@@ -44,29 +44,6 @@
     color:#e5e7eb;
   }
 
-  .tabs{
-    display:flex;
-    gap:10px;
-    margin-bottom:12px;
-    flex-wrap:wrap;
-  }
-
-  .tab-btn{
-    padding:8px 14px;
-    border-radius:10px;
-    border:1px solid #374151;
-    background:#020617;
-    color:#e5e7eb;
-    cursor:pointer;
-  }
-  .tab-btn.active{
-    background:#4f46e5;
-    border-color:#6366f1;
-  }
-
-  .tab-content{ display:none; }
-  .tab-content.active{ display:block; }
-
   .atributo, .pericia{
     display:grid;
     grid-template-columns: 1fr 90px 40px 120px;
@@ -87,11 +64,7 @@
     margin-bottom:15px;
   }
 
-  .imagem-box img{
-    max-width:70%;
-    border-radius:10px;
-    margin-top:10px;
-  }
+  .imagem-box img{ max-width:100%;border-radius:10px;margin-top:10px; }
 
   .salvar-btn{
     margin-top:15px;
@@ -110,7 +83,7 @@
   .status-bar{ height:8px;background:#1f2937;border-radius:10px;overflow:hidden;margin-top:6px; }
   .status-fill{ height:8px;background:linear-gradient(90deg,#4ade80,#22c55e);width:100%;transition:.25s; }
   .status-fill.sanity{ background:linear-gradient(90deg,#60a5fa,#3b82f6); }
-  .status-fill.aura{ background:linear-gradient(90deg,#facc15,#eab308); }
+  .status-fill.aura{ background:linear-gradient(90deg,#fde047,#facc15); }
 
   .alerta{
     margin-top:10px;
@@ -128,7 +101,6 @@
 
 <div id="ficha">
 
-<!-- SLOT -->
 <div class="bloco">
   <h2>Seleção de Ficha</h2>
 
@@ -143,7 +115,6 @@
   </div>
 </div>
 
-<!-- IMAGEM -->
 <div class="bloco">
   <h2>Imagem do Personagem</h2>
   <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
@@ -153,70 +124,55 @@
   </div>
 </div>
 
-<!-- TABS -->
 <div class="bloco">
-  <div class="tabs">
-    <button class="tab-btn active" onclick="abrirTab('info')">INFO</button>
-    <button class="tab-btn" onclick="abrirTab('atributosTab')">ATRIBUTOS</button>
-    <button class="tab-btn" onclick="abrirTab('periciasTab')">PERÍCIAS</button>
-    <button class="tab-btn" onclick="abrirTab('statusTab')">STATUS</button>
-  </div>
-
-  <!-- INFO -->
-  <div id="info" class="tab-content active">
-    <h2>Informações Básicas</h2>
-    <div class="linha"><label>Nome</label><input id="nome"></div>
-    <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-    <div class="linha"><label>Energia Interna</label><textarea id="antecedencia"></textarea></div>
-    <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
-    <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
-  </div>
-
-  <!-- ATRIBUTOS -->
-  <div id="atributosTab" class="tab-content">
-    <h2>Atributos</h2>
-    <div id="atributos"></div>
-  </div>
-
-  <!-- PERÍCIAS -->
-  <div id="periciasTab" class="tab-content">
-    <h2>Perícias</h2>
-    <div id="pericias"></div>
-  </div>
-
-  <!-- STATUS -->
-  <div id="statusTab" class="tab-content">
-    <h2>Status</h2>
-
-    <div class="status-card">
-
-      <div class="status-item">
-        <div class="status-top"><div>Vida</div><span>❤️</span></div>
-        <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar')">
-        <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
-      </div>
-
-      <div class="status-item">
-        <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
-        <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar')">
-        <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
-      </div>
-
-      <!-- AURA -->
-      <div class="status-item" style="grid-column:1 / span 2">
-        <div class="status-top"><div>Aura</div><span✨></span></div>
-        <div id="auraValor">0</div>
-        <div class="status-bar">
-          <div id="aura-bar" class="status-fill aura"></div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
+  <h2>Informações Básicas</h2>
+  <div class="linha"><label>Nome</label><input id="nome"></div>
+  <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
+  <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
+  <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
+  <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
 </div>
 
-<!-- CONTROLES -->
+<div class="bloco">
+  <h2>Atributos</h2>
+  <div id="atributos"></div>
+</div>
+
+<div class="bloco">
+  <h2>Perícias</h2>
+  <div id="pericias"></div>
+</div>
+
+<div class="bloco">
+  <h2>Status</h2>
+
+  <div class="status-card">
+
+    <!-- VIDA -->
+    <div class="status-item">
+      <div class="status-top"><div>Vida</div><span>❤️</span></div>
+      <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar',100)">
+      <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
+    </div>
+
+    <!-- SANIDADE -->
+    <div class="status-item">
+      <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
+      <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar',100)">
+      <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
+    </div>
+
+    <!-- AURA -->
+    <div class="status-item">
+      <div class="status-top"><div>Aura ✨</div></div>
+      <input id="aura" type="number" value="0" oninput="atualizarAura()">
+      <small id="auraMaxTxt">Máx: 0</small>
+      <div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
+    </div>
+
+  </div>
+</div>
+
 <div class="bloco">
   <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
   <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
@@ -227,8 +183,6 @@
 </div>
 
 <script>
-/* ====================== DADOS BASE ====================== */
-
 const atributos = [
   {sigla:"FOR", nome:"Força"},
   {sigla:"CON", nome:"Constituição"},
@@ -244,28 +198,13 @@ const pericias = [
   ["AGI","Iniciativa"],["AGI","Pontaria"],["AGI","Pilotagem"],
   ["INT","Ciências"],["INT","Tática"],["INT","Investigação"],
   ["INT","Medicina"],["INT","Tecnologia"],["INT","Sobrevivência"],
-  ["INT","Lábia"],["INT","Diplomacia"],
-  ["POD","Intimidação"],["INT","Artes"],
-  ["POD","Intuição"],["INT","Percepção"],
-  ["INT","Adestramento"],["POD","Charme"],
-  ["POD","Vontade"],
-
-  /* NOVA PERÍCIA */
+  ["INT","Lábia"],["INT","Diplomacia"],["POD","Intimidação"],
+  ["INT","Artes"],["POD","Intuição"],["INT","Percepção"],
+  ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"],
   ["POD","Energia"]
 ];
 
-/* ====================== TABS ====================== */
-
-function abrirTab(id){
-  document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-
-  document.getElementById(id).classList.add("active");
-  event.target.classList.add("active");
-}
-
-/* ====================== INTERFACE ====================== */
-
+/* --- INTERFACE --- */
 function criarInterface(){
   const aBox = document.getElementById("atributos");
   aBox.innerHTML = "";
@@ -273,7 +212,7 @@ function criarInterface(){
     aBox.innerHTML += `
       <div class="atributo">
         <div>[${a.sigla}] ${a.nome}</div>
-        <select id="atr_${a.sigla}" onchange="atualizarAura()">
+        <select id="atr_${a.sigla}" onchange="recalcularAura()">
           ${[...Array(11).keys()].map(v=>`<option>${v}</option>`).join("")}
         </select>
         <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
@@ -300,12 +239,10 @@ function criarInterface(){
 }
 criarInterface();
 
-/* ====================== DADOS & RESULTADOS ====================== */
-
 function d20(){ return Math.floor(Math.random()*20)+1; }
 
 function limparDepois(id, ms=8000){
-  setTimeout(()=>{
+  setTimeout(()=>{ 
     const el = document.getElementById(id);
     if(el) el.innerText = "";
   }, ms);
@@ -347,8 +284,7 @@ function rolarPericia(id, sigla){
   limparDepois(resId);
 }
 
-/* ====================== IMAGEM ====================== */
-
+/* --- IMAGEM --- */
 let imagemBase64 = "";
 
 document.getElementById("imagemInput").addEventListener("change", e=>{
@@ -362,31 +298,45 @@ document.getElementById("imagemInput").addEventListener("change", e=>{
   reader.readAsDataURL(file);
 });
 
-/* ====================== STATUS BARRAS ====================== */
-
-function atualizarBarra(inputId, barId){
-  const v = Math.min(100, Math.max(1, parseInt(document.getElementById(inputId).value)||1));
-  document.getElementById(barId).style.width = v+"%";
+/* --- STATUS BARRAS --- */
+function atualizarBarra(inputId, barId, max=100){
+  const v = Math.max(0, Math.min(max, parseInt(document.getElementById(inputId).value)||0));
+  document.getElementById(inputId).value = v;
+  document.getElementById(barId).style.width = ((v / max) * 100) + "%";
 }
-atualizarBarra("vida","vida-bar");
-atualizarBarra("sanidade","sanidade-bar");
 
-/* --------- AURA --------- */
+function recalcularAura(){
+  const con = Number(document.getElementById("atr_CON").value) || 0;
+  const pod = Number(document.getElementById("atr_POD").value) || 0;
+
+  const auraMax = (con + pod) * 3;
+
+  document.getElementById("aura").setAttribute("max", auraMax);
+  document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
+
+  atualizarAura();
+}
 
 function atualizarAura(){
-  const con = Number(document.getElementById("atr_CON").value || 0);
-  const pod = Number(document.getElementById("atr_POD").value || 0);
+  const auraInput = document.getElementById("aura");
+  const max = Number(auraInput.getAttribute("max")) || 0;
+  let v = Number(auraInput.value) || 0;
 
-  const aura = (con + pod) * 3;
+  if(v > max) v = max;
+  if(v < 0) v = 0;
 
-  document.getElementById("auraValor").innerText = aura;
+  auraInput.value = v;
 
-  const percent = Math.min(100, aura);
-  document.getElementById("aura-bar").style.width = percent + "%";
+  const bar = document.getElementById("aura-bar");
+  const percent = max > 0 ? (v / max) * 100 : 0;
+  bar.style.width = percent + "%";
 }
 
-/* ====================== SALVAR ====================== */
+recalcularAura();
+atualizarBarra("vida","vida-bar",100);
+atualizarBarra("sanidade","sanidade-bar",100);
 
+/* --- SALVAR --- */
 function salvarFicha(){
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
@@ -399,6 +349,8 @@ function salvarFicha(){
     historia: historia.value,
     vida: vida.value,
     sanidade: sanidade.value,
+    aura: aura.value,
+    auraMax: aura.getAttribute("max"),
     imagem: imagemBase64,
     atributos: {},
     pericias: {}
@@ -419,8 +371,7 @@ function salvarFicha(){
   setTimeout(()=> alerta.style.display="none", 2500);
 }
 
-/* ====================== CARREGAR ====================== */
-
+/* --- CARREGAR --- */
 function carregarFicha(){
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
@@ -444,9 +395,6 @@ function carregarFicha(){
   imagemBase64 = d.imagem || "";
   document.getElementById("previewImg").src = imagemBase64 || "";
 
-  atualizarBarra("vida","vida-bar");
-  atualizarBarra("sanidade","sanidade-bar");
-
   for(const s in d.atributos){
     const el = document.getElementById("atr_"+s);
     if(el) el.value = d.atributos[s];
@@ -457,6 +405,11 @@ function carregarFicha(){
     if(el) el.value = d.pericias[p];
   }
 
+  atualizarBarra("vida","vida-bar",100);
+  atualizarBarra("sanidade","sanidade-bar",100);
+
+  recalcularAura();
+  aura.value = d.aura || 0;
   atualizarAura();
 }
 
@@ -470,13 +423,13 @@ function limparCampos(){
   sanidade.value = 100;
   imagemBase64 = "";
   document.getElementById("previewImg").src = "";
+  recalcularAura();
 }
 
 /* carregar slot inicial */
 carregarFicha();
 
-/* ====================== PDF ====================== */
-
+/* --- PDF --- */
 async function gerarPDF(){
   const { jsPDF } = window.jspdf;
   const ficha = document.getElementById("ficha");
