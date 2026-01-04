@@ -1,265 +1,175 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
 <title>Ficha RPG</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-body{
-  background:#0f172a;
-  color:#e5e7eb;
-  font-family:Arial, sans-serif;
-  margin:0;
-}
+  body{
+    background:#0f172a;
+    color:#e5e7eb;
+    font-family: Arial, sans-serif;
+  }
 
-header{
-  background:#1f2937;
-  padding:12px 18px;
-  font-size:18px;
-  font-weight:bold;
-  text-align:center;
-}
+  .bloco{
+    background:#1f2937;
+    padding:18px;
+    border-radius:14px;
+    margin:18px auto;
+    max-width:900px;
+    box-shadow:0 10px 25px rgba(0,0,0,.3);
+  }
 
-.tabs{
-  display:flex;
-  justify-content:center;
-  gap:8px;
-  padding:12px;
-  flex-wrap:wrap;
-}
+  h2{
+    margin-top:0;
+    color:#a5b4fc;
+    border-bottom:1px solid #374151;
+    padding-bottom:6px;
+  }
 
-.tab-btn{
-  padding:8px 14px;
-  border-radius:10px;
-  border:1px solid #374151;
-  background:#020617;
-  color:#e5e7eb;
-  cursor:pointer;
-}
+  .linha{
+    margin:10px 0;
+    display:flex;
+    flex-direction:column;
+  }
 
-.tab-btn.active{
-  background:#4f46e5;
-  border-color:#4f46e5;
-}
+  input, select, textarea{
+    border-radius:10px;
+    border:1px solid #374151;
+    padding:8px;
+    background:#020617;
+    color:#e5e7eb;
+  }
 
-.section{
-  max-width:900px;
-  margin:0 auto;
-  padding:14px;
-  display:none;
-}
+  .atributo, .pericia{
+    display:grid;
+    grid-template-columns: 1fr 90px 40px 120px;
+    align-items:center;
+    gap:10px;
+    margin:6px 0;
+  }
 
-.section.active{ display:block; }
+  .dice{ cursor:pointer;font-size:22px;text-align:center; }
+  .resultado{ color:#a5f3fc;font-size:13px;text-align:center; }
 
-.bloco{
-  background:#1f2937;
-  padding:14px;
-  border-radius:14px;
-  margin:12px 0;
-}
+  .imagem-box{
+    border:2px dashed #4b5563;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    cursor:pointer;
+    margin-bottom:15px;
+  }
 
-h2{
-  margin-top:0;
-  color:#a5b4fc;
-  border-bottom:1px solid #374151;
-  padding-bottom:6px;
-}
+  .imagem-box img{ max-width:100%;border-radius:10px;margin-top:10px; }
 
-input, select, textarea{
-  border-radius:10px;
-  border:1px solid #374151;
-  padding:8px;
-  background:#020617;
-  color:#e5e7eb;
-  width:100%;
-}
+  .salvar-btn{
+    margin-top:15px;
+    padding:10px 20px;
+    border-radius:10px;
+    border:none;
+    background:#4f46e5;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+  }
 
-textarea{ min-height:70px; }
+  .status-card{ display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+  .status-item{ background:#020617;border:1px solid #374151;padding:12px;border-radius:12px; }
+  .status-top{ display:flex;justify-content:space-between;align-items:center;margin-bottom:6px; }
+  .status-bar{ height:8px;background:#1f2937;border-radius:10px;overflow:hidden;margin-top:6px; }
+  .status-fill{ height:8px;background:linear-gradient(90deg,#4ade80,#22c55e);width:100%;transition:.25s; }
+  .status-fill.sanity{ background:linear-gradient(90deg,#60a5fa,#3b82f6); }
 
-.imagem-box{
-  border:2px dashed #4b5563;
-  border-radius:12px;
-  padding:12px;
-  text-align:center;
-  cursor:pointer;
-}
-
-.imagem-box img{
-  max-width:60%;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-/* atributos/perícias */
-.atributo, .pericia{
-  display:grid;
-  grid-template-columns: 1fr 80px 40px 150px;
-  align-items:center;
-  gap:10px;
-  margin:6px 0;
-}
-
-.dice{ cursor:pointer; text-align:center; font-size:20px; }
-.resultado{ color:#a5f3fc; font-size:13px; }
-
-/* status */
-.status-card{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.status-item{ background:#020617; border:1px solid #374151; padding:10px; border-radius:12px; }
-.status-top{ display:flex; justify-content:space-between; }
-.status-bar{ height:8px; background:#1f2937; border-radius:10px; overflow:hidden; margin-top:6px; }
-.status-fill{ height:8px; background:linear-gradient(90deg,#4ade80,#22c55e); width:100%; transition:.25s; }
-.status-fill.sanity{ background:linear-gradient(90deg,#60a5fa,#3b82f6); }
-
-/* ataques */
-.ataque-box{
-  background:#020617;
-  border:1px solid #374151;
-  padding:10px;
-  border-radius:10px;
-  margin:8px 0;
-}
-
-.add-btn, .salvar-btn{
-  padding:8px 14px;
-  border-radius:10px;
-  border:none;
-  background:#4f46e5;
-  color:white;
-  cursor:pointer;
-  margin-top:8px;
-}
-
+  .alerta{
+    margin-top:10px;
+    padding:8px 10px;
+    border-radius:10px;
+    background:#065f46;
+    border:1px solid #059669;
+    color:#d1fae5;
+    display:none;
+  }
 </style>
 </head>
 
 <body>
 
-<header>Ficha RPG</header>
-
-<div class="tabs">
-  <button class="tab-btn active" onclick="abrirTab('basico')">Básico</button>
-  <button class="tab-btn" onclick="abrirTab('atributosTab')">Atributos</button>
-  <button class="tab-btn" onclick="abrirTab('periciasTab')">Perícias</button>
-  <button class="tab-btn" onclick="abrirTab('statusTab')">Status</button>
-  <button class="tab-btn" onclick="abrirTab('habilidadesTab')">Habilidades</button>
-  <button class="tab-btn" onclick="abrirTab('ataquesTab')">Ataques</button>
-</div>
-
 <div id="ficha">
 
-<!-- ===================== BÁSICO ===================== -->
-<section id="basico" class="section active">
+<div class="bloco">
+  <h2>Seleção de Ficha</h2>
 
-  <div class="bloco">
-    <h2>Imagem do Personagem</h2>
-    <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
-      Clique para adicionar imagem
-      <input type="file" id="imagemInput" accept="image/*" style="display:none">
-      <img id="previewImg">
+  <div class="linha">
+    <label>Escolha o slot</label>
+    <select id="slot" onchange="carregarFicha()">
+      <option value="1">Slot 1</option>
+      <option value="2">Slot 2</option>
+      <option value="3">Slot 3</option>
+      <option value="4">Slot 4</option>
+    </select>
+  </div>
+</div>
+
+<div class="bloco">
+  <h2>Imagem do Personagem</h2>
+  <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
+    Clique para adicionar imagem
+    <input type="file" id="imagemInput" accept="image/*" style="display:none">
+    <img id="previewImg">
+  </div>
+</div>
+
+<div class="bloco">
+  <h2>Informações Básicas</h2>
+  <div class="linha"><label>Nome</label><input id="nome"></div>
+  <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
+  <div class="linha"><label>Antecedência</label><textarea id="antecedencia"></textarea></div>
+  <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
+  <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
+</div>
+
+<div class="bloco">
+  <h2>Atributos</h2>
+  <div id="atributos"></div>
+</div>
+
+<div class="bloco">
+  <h2>Perícias</h2>
+  <div id="pericias"></div>
+</div>
+
+<div class="bloco">
+  <h2>Status</h2>
+
+  <div class="status-card">
+    <div class="status-item">
+      <div class="status-top"><div>Vida</div><span>❤️</span></div>
+      <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar')">
+      <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
+    </div>
+
+    <div class="status-item">
+      <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
+      <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar')">
+      <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
     </div>
   </div>
+</div>
 
-  <div class="bloco">
-    <h2>Informações</h2>
+<div class="bloco">
+  <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
+  <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
 
-    <label>Nome</label>
-    <input id="nome">
-
-    <label>Idade</label>
-    <input id="idade" type="number">
-
-    <label>Energia Interna</label>
-    <textarea id="antecedencia"></textarea>
-
-    <label>Descrição</label>
-    <textarea id="descricao"></textarea>
-
-    <label>História</label>
-    <textarea id="historia"></textarea>
-  </div>
-
-</section>
-
-<!-- ===================== ATRIBUTOS ===================== -->
-<section id="atributosTab" class="section">
-  <div class="bloco">
-    <h2>Atributos</h2>
-    <div id="atributos"></div>
-  </div>
-</section>
-
-<!-- ===================== PERÍCIAS ===================== -->
-<section id="periciasTab" class="section">
-  <div class="bloco">
-    <h2>Perícias</h2>
-    <div id="pericias"></div>
-  </div>
-</section>
-
-<!-- ===================== STATUS ===================== -->
-<section id="statusTab" class="section">
-  <div class="bloco">
-    <h2>Status</h2>
-
-    <div class="status-card">
-      <div class="status-item">
-        <div class="status-top">
-          <div>Vida</div><span>❤️</span>
-        </div>
-        <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar')">
-        <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
-      </div>
-
-      <div class="status-item">
-        <div class="status-top">
-          <div>Sanidade</div><span>🧠</span>
-        </div>
-        <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar')">
-        <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== HABILIDADES ===================== -->
-<section id="habilidadesTab" class="section">
-  <div class="bloco">
-    <h2>Habilidades</h2>
-    <textarea id="habilidades" placeholder="Descreva as habilidades do personagem..."></textarea>
-  </div>
-</section>
-
-<!-- ===================== ATAQUES ===================== -->
-<section id="ataquesTab" class="section">
-  <div class="bloco">
-    <h2>Ataques</h2>
-
-    <div id="listaAtaques"></div>
-
-    <button class="add-btn" onclick="addAtaque()">Adicionar Ataque</button>
-  </div>
-</section>
+  <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
+</div>
 
 </div>
 
 <script>
-/* ---------- abas ---------- */
-function abrirTab(id){
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-
-  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
-}
-
-/* ---------- dados ---------- */
-function d20(){ return Math.floor(Math.random()*20)+1; }
-
-/* ---------- atributos ---------- */
 const atributos = [
   {sigla:"FOR", nome:"Força"},
   {sigla:"CON", nome:"Constituição"},
@@ -269,30 +179,15 @@ const atributos = [
 ];
 
 const pericias = [
-  ["FOR","Atletismo"],
-  ["FOR","Luta"],
+  ["FOR","Atletismo"],["FOR","Luta"],
   ["CON","Fortitude"],
-  ["AGI","Reflexos"],
-  ["AGI","Furtividade"],
-  ["AGI","Acrobacia"],
-  ["AGI","Iniciativa"],
-  ["AGI","Pontaria"],
-  ["AGI","Pilotagem"],
-  ["INT","Ciências"],
-  ["INT","Tática"],
-  ["INT","Investigação"],
-  ["INT","Medicina"],
-  ["INT","Tecnologia"],
-  ["INT","Sobrevivência"],
-  ["INT","Lábia"],
-  ["INT","Diplomacia"],
-  ["POD","Intimidação"],
-  ["INT","Artes"],
-  ["POD","Intuição"],
-  ["POD","Percepção"],
-  ["INT","Adestramento"],
-  ["POD","Charme"],
-  ["POD","Vontade"]
+  ["AGI","Reflexos"],["AGI","Furtividade"],["AGI","Acrobacia"],
+  ["AGI","Iniciativa"],["AGI","Pontaria"],["AGI","Pilotagem"],
+  ["INT","Ciências"],["INT","Tática"],["INT","Investigação"],
+  ["INT","Medicina"],["INT","Tecnologia"],["INT","Sobrevivência"],
+  ["INT","Lábia"],["INT","Diplomacia"],["POD","Intimidação"],
+  ["INT","Artes"],["POD","Intuição"],["INT","Percepção"],
+  ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"]
 ];
 
 function criarInterface(){
@@ -327,9 +222,20 @@ function criarInterface(){
 }
 criarInterface();
 
+function d20(){ return Math.floor(Math.random()*20)+1; }
+
+function limparDepois(id, ms=8000){
+  setTimeout(()=>{ 
+    const el = document.getElementById(id);
+    if(el) el.innerText = "";
+  }, ms);
+}
+
 function rolarAtributo(sigla){
   const v = Number(document.getElementById("atr_"+sigla).value);
-  document.getElementById("resAtr_"+sigla).innerText = "Resultado: " + (d20()+v);
+  const resId = "resAtr_"+sigla;
+  document.getElementById(resId).innerText = "Resultado: " + (d20()+v);
+  limparDepois(resId);
 }
 
 function rolarPericia(id, sigla){
@@ -337,7 +243,10 @@ function rolarPericia(id, sigla){
   const atr = Number(document.getElementById("atr_" + sigla).value);
   const bonus = atr;
 
-  const d1 = d20(), d2 = d20(), d3 = d20();
+  const d1 = d20();
+  const d2 = d20();
+  const d3 = d20();
+
   let resultado, texto;
 
   if (per === 1){
@@ -353,22 +262,25 @@ function rolarPericia(id, sigla){
     texto = `3d20 (${d1} | ${d2} | ${d3}) → ${maior} + ${bonus} = ${resultado}`;
   }
 
-  const span = document.getElementById("res_" + id);
-  span.innerText = texto;
-
-  setTimeout(()=> span.innerText = "", 6000);
+  const resId = "res_" + id;
+  document.getElementById(resId).innerText = texto;
+  limparDepois(resId);
 }
 
-/* ---------- imagem ---------- */
+/* --- IMAGEM --- */
+let imagemBase64 = "";
+
 document.getElementById("imagemInput").addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = ()=> document.getElementById("previewImg").src = reader.result;
+  reader.onload = ()=>{
+    imagemBase64 = reader.result;
+    document.getElementById("previewImg").src = imagemBase64;
+  };
   reader.readAsDataURL(file);
 });
 
-/* ---------- status ---------- */
 function atualizarBarra(inputId, barId){
   const v = Math.min(100, Math.max(1, parseInt(document.getElementById(inputId).value)||1));
   document.getElementById(barId).style.width = v+"%";
@@ -376,49 +288,116 @@ function atualizarBarra(inputId, barId){
 atualizarBarra("vida","vida-bar");
 atualizarBarra("sanidade","sanidade-bar");
 
-/* ---------- ataques ---------- */
-function addAtaque(){
-  const box = document.createElement("div");
-  box.className = "ataque-box";
+/* --- SALVAR FICHA (POR SLOT) --- */
+function salvarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
 
-  box.innerHTML = `
-    <label>Nome do ataque</label>
-    <input class="atk-nome">
+  const dados = {
+    nome: nome.value,
+    idade: idade.value,
+    antecedencia: antecedencia.value,
+    descricao: descricao.value,
+    historia: historia.value,
+    vida: vida.value,
+    sanidade: sanidade.value,
+    imagem: imagemBase64,
+    atributos: {},
+    pericias: {}
+  };
 
-    <label>Dado de dano (ex: 1d6, 2d8)</label>
-    <input class="atk-dado">
+  atributos.forEach(a=>{
+    dados.atributos[a.sigla] = document.getElementById("atr_"+a.sigla).value;
+  });
 
-    <label>Crítico</label>
-    <input class="atk-critico" placeholder="ex: 19/x3">
+  pericias.forEach((p,i)=>{
+    dados.pericias["per_"+i] = document.getElementById("per_"+i).value;
+  });
 
-    <label>Descrição</label>
-    <textarea class="atk-desc" placeholder="Explique o ataque..."></textarea>
+  localStorage.setItem(chave, JSON.stringify(dados));
 
-    <button class="add-btn" onclick="rolarAtaque(this)">🎲 Rolar</button>
-    <div class="resultado"></div>
-  `;
-
-  document.getElementById("listaAtaques").appendChild(box);
+  const alerta = document.getElementById("alerta");
+  alerta.style.display = "block";
+  setTimeout(()=> alerta.style.display="none", 2500);
 }
 
-function rolarAtaque(btn){
-  const box = btn.parentElement;
-  const dado = box.querySelector(".atk-dado").value.trim();
+/* --- CARREGAR FICHA --- */
+function carregarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
 
-  if(!dado.includes("d")) return;
-
-  const [n,s] = dado.split("d").map(Number);
-  let total = 0;
-  let rolls = [];
-
-  for(let i=0;i<n;i++){
-    const r = Math.floor(Math.random()*s)+1;
-    total += r;
-    rolls.push(r);
+  const salvo = localStorage.getItem(chave);
+  if(!salvo){
+    limparCampos();
+    return;
   }
 
-  box.querySelector(".resultado").innerText =
-    `${dado} → (${rolls.join(" | ")}) = ${total}`;
+  const d = JSON.parse(salvo);
+
+  nome.value = d.nome || "";
+  idade.value = d.idade || "";
+  antecedencia.value = d.antecedencia || "";
+  descricao.value = d.descricao || "";
+  historia.value = d.historia || "";
+  vida.value = d.vida || 100;
+  sanidade.value = d.sanidade || 100;
+
+  imagemBase64 = d.imagem || "";
+  document.getElementById("previewImg").src = imagemBase64 || "";
+
+  atualizarBarra("vida","vida-bar");
+  atualizarBarra("sanidade","sanidade-bar");
+
+  for(const s in d.atributos){
+    const el = document.getElementById("atr_"+s);
+    if(el) el.value = d.atributos[s];
+  }
+
+  for(const p in d.pericias){
+    const el = document.getElementById(p);
+    if(el) el.value = d.pericias[p];
+  }
+}
+
+function limparCampos(){
+  nome.value = "";
+  idade.value = "";
+  antecedencia.value = "";
+  descricao.value = "";
+  historia.value = "";
+  vida.value = 100;
+  sanidade.value = 100;
+  imagemBase64 = "";
+  document.getElementById("previewImg").src = "";
+}
+
+/* carregar slot inicial */
+carregarFicha();
+
+/* --- PDF --- */
+async function gerarPDF(){
+  const { jsPDF } = window.jspdf;
+  const ficha = document.getElementById("ficha");
+  const canvas = await html2canvas(ficha,{ scale:2 });
+  const img = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p","mm","a4");
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  const imgProps = pdf.getImageProperties(img);
+  const ratio = imgProps.width / imgProps.height;
+
+  let w = pageW - 10;
+  let h = w / ratio;
+
+  if(h > pageH){
+    h = pageH - 10;
+    w = h * ratio;
+  }
+
+  pdf.addImage(img,"PNG",5,5,w,h);
+  pdf.save("ficha_rpg.pdf");
 }
 </script>
 
