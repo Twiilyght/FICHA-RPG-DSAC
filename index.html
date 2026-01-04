@@ -101,6 +101,20 @@
 <div id="ficha">
 
 <div class="bloco">
+  <h2>Seleção de Ficha</h2>
+
+  <div class="linha">
+    <label>Escolha o slot</label>
+    <select id="slot" onchange="carregarFicha()">
+      <option value="1">Slot 1</option>
+      <option value="2">Slot 2</option>
+      <option value="3">Slot 3</option>
+      <option value="4">Slot 4</option>
+    </select>
+  </div>
+</div>
+
+<div class="bloco">
   <h2>Imagem do Personagem</h2>
   <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
     Clique para adicionar imagem
@@ -253,11 +267,17 @@ function rolarPericia(id, sigla){
   limparDepois(resId);
 }
 
+/* --- IMAGEM --- */
+let imagemBase64 = "";
+
 document.getElementById("imagemInput").addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = ()=> document.getElementById("previewImg").src = reader.result;
+  reader.onload = ()=>{
+    imagemBase64 = reader.result;
+    document.getElementById("previewImg").src = imagemBase64;
+  };
   reader.readAsDataURL(file);
 });
 
@@ -268,7 +288,11 @@ function atualizarBarra(inputId, barId){
 atualizarBarra("vida","vida-bar");
 atualizarBarra("sanidade","sanidade-bar");
 
+/* --- SALVAR FICHA (POR SLOT) --- */
 function salvarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
+
   const dados = {
     nome: nome.value,
     idade: idade.value,
@@ -277,6 +301,7 @@ function salvarFicha(){
     historia: historia.value,
     vida: vida.value,
     sanidade: sanidade.value,
+    imagem: imagemBase64,
     atributos: {},
     pericias: {}
   };
@@ -289,16 +314,24 @@ function salvarFicha(){
     dados.pericias["per_"+i] = document.getElementById("per_"+i).value;
   });
 
-  localStorage.setItem("fichaRPG", JSON.stringify(dados));
+  localStorage.setItem(chave, JSON.stringify(dados));
 
   const alerta = document.getElementById("alerta");
   alerta.style.display = "block";
   setTimeout(()=> alerta.style.display="none", 2500);
 }
 
-(function carregarFicha(){
-  const salvo = localStorage.getItem("fichaRPG");
-  if(!salvo) return;
+/* --- CARREGAR FICHA --- */
+function carregarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
+
+  const salvo = localStorage.getItem(chave);
+  if(!salvo){
+    limparCampos();
+    return;
+  }
+
   const d = JSON.parse(salvo);
 
   nome.value = d.nome || "";
@@ -308,6 +341,9 @@ function salvarFicha(){
   historia.value = d.historia || "";
   vida.value = d.vida || 100;
   sanidade.value = d.sanidade || 100;
+
+  imagemBase64 = d.imagem || "";
+  document.getElementById("previewImg").src = imagemBase64 || "";
 
   atualizarBarra("vida","vida-bar");
   atualizarBarra("sanidade","sanidade-bar");
@@ -321,8 +357,24 @@ function salvarFicha(){
     const el = document.getElementById(p);
     if(el) el.value = d.pericias[p];
   }
-})();
+}
 
+function limparCampos(){
+  nome.value = "";
+  idade.value = "";
+  antecedencia.value = "";
+  descricao.value = "";
+  historia.value = "";
+  vida.value = 100;
+  sanidade.value = 100;
+  imagemBase64 = "";
+  document.getElementById("previewImg").src = "";
+}
+
+/* carregar slot inicial */
+carregarFicha();
+
+/* --- PDF --- */
 async function gerarPDF(){
   const { jsPDF } = window.jspdf;
   const ficha = document.getElementById("ficha");
