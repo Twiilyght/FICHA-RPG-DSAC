@@ -14,40 +14,6 @@
     font-family: Arial, sans-serif;
   }
 
-  .tabs{
-    max-width:950px;
-    margin:20px auto;
-  }
-
-  .tab-buttons{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-
-  .tab-buttons button{
-    flex:1;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #374151;
-    background:#020617;
-    color:#e5e7eb;
-    cursor:pointer;
-  }
-
-  .tab-buttons button.active{
-    background:#4f46e5;
-    border-color:#6366f1;
-  }
-
-  .tab{
-    display:none;
-  }
-
-  .tab.active{
-    display:block;
-  }
-
   .bloco{
     background:#1f2937;
     padding:18px;
@@ -92,63 +58,16 @@
   .imagem-box{
     border:2px dashed #4b5563;
     border-radius:12px;
-    padding:12px;
+    padding:20px;
     text-align:center;
     cursor:pointer;
-    margin-bottom:10px;
+    margin-bottom:15px;
   }
 
-  .imagem-box img{
-    max-width:250px;
-    border-radius:10px;
-    margin-top:10px;
-  }
-
-  .status-card{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-  }
-
-  .status-item{
-    background:#020617;
-    border:1px solid #374151;
-    padding:12px;
-    border-radius:12px;
-  }
-
-  .status-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:6px;
-  }
-
-  .status-bar{
-    height:8px;
-    background:#1f2937;
-    border-radius:10px;
-    overflow:hidden;
-    margin-top:6px;
-  }
-
-  .status-fill{
-    height:8px;
-    background:linear-gradient(90deg,#4ade80,#22c55e);
-    width:100%;
-    transition:.25s;
-  }
-
-  .status-fill.sanity{
-    background:linear-gradient(90deg,#60a5fa,#3b82f6);
-  }
-
-  .status-fill.aura{
-    background:linear-gradient(90deg,#fde047,#facc15);
-  }
+  .imagem-box img{ max-width:100%;border-radius:10px;margin-top:10px; }
 
   .salvar-btn{
-    margin-top:10px;
+    margin-top:15px;
     padding:10px 20px;
     border-radius:10px;
     border:none;
@@ -157,6 +76,14 @@
     font-weight:bold;
     cursor:pointer;
   }
+
+  .status-card{ display:grid;grid-template-columns:1fr 1fr;gap:14px; }
+  .status-item{ background:#020617;border:1px solid #374151;padding:12px;border-radius:12px; }
+  .status-top{ display:flex;justify-content:space-between;align-items:center;margin-bottom:6px; }
+  .status-bar{ height:8px;background:#1f2937;border-radius:10px;overflow:hidden;margin-top:6px; }
+  .status-fill{ height:8px;background:linear-gradient(90deg,#4ade80,#22c55e);width:100%;transition:.25s; }
+  .status-fill.sanity{ background:linear-gradient(90deg,#60a5fa,#3b82f6); }
+  .status-fill.aura{ background:linear-gradient(90deg,#fde047,#facc15); }
 
   .alerta{
     margin-top:10px;
@@ -172,126 +99,362 @@
 
 <body>
 
-<div class="tabs">
+<div id="ficha">
 
-  <div class="tab-buttons">
-    <button onclick="openTab('basico')" class="active">Básico</button>
-    <button onclick="openTab('atributosTab')">Atributos</button>
-    <button onclick="openTab('periciasTab')">Perícias</button>
-    <button onclick="openTab('statusTab')">Status</button>
-    <button onclick="openTab('salvarTab')">Salvar / PDF</button>
+<div class="bloco">
+  <h2>Seleção de Ficha</h2>
+
+  <div class="linha">
+    <label>Escolha o slot</label>
+    <select id="slot" onchange="carregarFicha()">
+      <option value="1">Slot 1</option>
+      <option value="2">Slot 2</option>
+      <option value="3">Slot 3</option>
+      <option value="4">Slot 4</option>
+    </select>
   </div>
+</div>
 
-  <!-- BASICO -->
-  <div id="basico" class="tab active">
-    <div class="bloco">
-      <h2>Seleção de Ficha</h2>
-
-      <div class="linha">
-        <label>Escolha o slot</label>
-        <select id="slot" onchange="carregarFicha()">
-          <option value="1">Slot 1</option>
-          <option value="2">Slot 2</option>
-          <option value="3">Slot 3</option>
-          <option value="4">Slot 4</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="bloco">
-      <h2>Imagem do Personagem</h2>
-      <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
-        Clique para adicionar imagem
-        <input type="file" id="imagemInput" accept="image/*" style="display:none">
-        <img id="previewImg">
-      </div>
-    </div>
-
-    <div class="bloco">
-      <h2>Informações Básicas</h2>
-      <div class="linha"><label>Nome</label><input id="nome"></div>
-      <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-      <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
-      <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
-      <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
-    </div>
+<div class="bloco">
+  <h2>Imagem do Personagem</h2>
+  <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
+    Clique para adicionar imagem
+    <input type="file" id="imagemInput" accept="image/*" style="display:none">
+    <img id="previewImg">
   </div>
+</div>
 
-  <!-- ATRIBUTOS -->
-  <div id="atributosTab" class="tab">
-    <div class="bloco">
-      <h2>Atributos</h2>
-      <div id="atributos"></div>
+<div class="bloco">
+  <h2>Informações Básicas</h2>
+  <div class="linha"><label>Nome</label><input id="nome"></div>
+  <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
+  <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
+  <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
+  <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
+</div>
+
+<div class="bloco">
+  <h2>Atributos</h2>
+  <div id="atributos"></div>
+</div>
+
+<div class="bloco">
+  <h2>Perícias</h2>
+  <div id="pericias"></div>
+</div>
+
+<div class="bloco">
+  <h2>Status</h2>
+
+  <div class="status-card">
+
+    <!-- VIDA -->
+    <div class="status-item">
+      <div class="status-top"><div>Vida</div><span>❤️</span></div>
+      <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar',100)">
+      <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
     </div>
-  </div>
 
-  <!-- PERICIAS -->
-  <div id="periciasTab" class="tab">
-    <div class="bloco">
-      <h2>Perícias</h2>
-      <div id="pericias"></div>
+    <!-- SANIDADE -->
+    <div class="status-item">
+      <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
+      <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar',100)">
+      <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
     </div>
-  </div>
 
-  <!-- STATUS -->
-  <div id="statusTab" class="tab">
-    <div class="bloco">
-      <h2>Status</h2>
-
-      <div class="status-card">
-
-        <div class="status-item">
-          <div class="status-top"><div>Vida</div><span>❤️</span></div>
-          <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar',100)">
-          <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
-        </div>
-
-        <div class="status-item">
-          <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
-          <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar',100)">
-          <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
-        </div>
-
-        <div class="status-item">
-          <div class="status-top"><div>Aura ✨</div></div>
-          <input id="aura" type="number" value="0" oninput="atualizarAura()">
-          <small id="auraMaxTxt">Máx: 0</small>
-          <div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
-        </div>
-
-      </div>
+    <!-- AURA -->
+    <div class="status-item">
+      <div class="status-top"><div>Aura ✨</div></div>
+      <input id="aura" type="number" value="0" oninput="atualizarAura()">
+      <small id="auraMaxTxt">Máx: 0</small>
+      <div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
     </div>
-  </div>
 
-  <!-- SALVAR -->
-  <div id="salvarTab" class="tab">
-    <div class="bloco">
-      <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
-      <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
-
-      <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
-    </div>
   </div>
+</div>
+
+<div class="bloco">
+  <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
+  <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
+
+  <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
+</div>
 
 </div>
 
 <script>
-/* --- abas --- */
-function openTab(id){
-  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
-  document.querySelectorAll(".tab-buttons button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  event.target.classList.add("active");
+const atributos = [
+  {sigla:"FOR", nome:"Força"},
+  {sigla:"CON", nome:"Constituição"},
+  {sigla:"AGI", nome:"Agilidade"},
+  {sigla:"INT", nome:"Intelecto"},
+  {sigla:"POD", nome:"Poder"}
+];
+
+const pericias = [
+  ["FOR","Atletismo"],["FOR","Luta"],
+  ["CON","Fortitude"],
+  ["AGI","Reflexos"],["AGI","Furtividade"],["AGI","Acrobacia"],
+  ["AGI","Iniciativa"],["AGI","Pontaria"],["AGI","Pilotagem"],
+  ["INT","Ciências"],["INT","Tática"],["INT","Investigação"],
+  ["INT","Medicina"],["INT","Tecnologia"],["INT","Sobrevivência"],
+  ["INT","Lábia"],["INT","Diplomacia"],["POD","Intimidação"],
+  ["INT","Artes"],["POD","Intuição"],["INT","Percepção"],
+  ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"],
+  ["POD","Energia"]
+];
+
+/* --- INTERFACE --- */
+function criarInterface(){
+  const aBox = document.getElementById("atributos");
+  aBox.innerHTML = "";
+  atributos.forEach(a=>{
+    aBox.innerHTML += `
+      <div class="atributo">
+        <div>[${a.sigla}] ${a.nome}</div>
+        <select id="atr_${a.sigla}" onchange="recalcularAura()">
+          ${[...Array(11).keys()].map(v=>`<option>${v}</option>`).join("")}
+        </select>
+        <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
+        <span id="resAtr_${a.sigla}" class="resultado"></span>
+      </div>`;
+  });
+
+  const pBox = document.getElementById("pericias");
+  pBox.innerHTML = "";
+  pericias.forEach((p,i)=>{
+    const id = "per_"+i;
+    pBox.innerHTML += `
+      <div class="pericia">
+        <div>[${p[0]}] ${p[1]}</div>
+        <select id="${id}">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+        <span class="dice" onclick="rolarPericia('${id}','${p[0]}')">🎲</span>
+        <span id="res_${id}" class="resultado"></span>
+      </div>`;
+  });
+}
+criarInterface();
+
+function d20(){ return Math.floor(Math.random()*20)+1; }
+
+function limparDepois(id, ms=8000){
+  setTimeout(()=>{ 
+    const el = document.getElementById(id);
+    if(el) el.innerText = "";
+  }, ms);
 }
 
-/* ——— o restante do script É O MESMO (igual você já tinha) ——— */
-</script>
+function rolarAtributo(sigla){
+  const v = Number(document.getElementById("atr_"+sigla).value);
+  const resId = "resAtr_"+sigla;
+  document.getElementById(resId).innerText = "Resultado: " + (d20()+v);
+  limparDepois(resId);
+}
 
-<!-- 
-Cole aqui embaixo exatamente o mesmo script JS
-que já está no seu código atual (atributos, perícias,
-salvar, PDF, aura, etc.)
--->
+function rolarPericia(id, sigla){
+  const per = Number(document.getElementById(id).value);
+  const atr = Number(document.getElementById("atr_" + sigla).value);
+  const bonus = atr;
+
+  const d1 = d20();
+  const d2 = d20();
+  const d3 = d20();
+
+  let resultado, texto;
+
+  if (per === 1){
+    resultado = d1 + bonus;
+    texto = `1d20 (${d1}) + ${bonus} = ${resultado}`;
+  } else if (per === 2){
+    const maior = Math.max(d1, d2);
+    resultado = maior + bonus;
+    texto = `2d20 (${d1} | ${d2}) → ${maior} + ${bonus} = ${resultado}`;
+  } else {
+    const maior = Math.max(d1, d2, d3);
+    resultado = maior + bonus;
+    texto = `3d20 (${d1} | ${d2} | ${d3}) → ${maior} + ${bonus} = ${resultado}`;
+  }
+
+  const resId = "res_" + id;
+  document.getElementById(resId).innerText = texto;
+  limparDepois(resId);
+}
+
+/* --- IMAGEM --- */
+let imagemBase64 = "";
+
+document.getElementById("imagemInput").addEventListener("change", e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    imagemBase64 = reader.result;
+    document.getElementById("previewImg").src = imagemBase64;
+  };
+  reader.readAsDataURL(file);
+});
+
+/* --- STATUS BARRAS --- */
+function atualizarBarra(inputId, barId, max=100){
+  const v = Math.max(0, Math.min(max, parseInt(document.getElementById(inputId).value)||0));
+  document.getElementById(inputId).value = v;
+  document.getElementById(barId).style.width = ((v / max) * 100) + "%";
+}
+
+function recalcularAura(){
+  const con = Number(document.getElementById("atr_CON").value) || 0;
+  const pod = Number(document.getElementById("atr_POD").value) || 0;
+
+  const auraMax = (con + pod) * 3;
+
+  document.getElementById("aura").setAttribute("max", auraMax);
+  document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
+
+  atualizarAura();
+}
+
+function atualizarAura(){
+  const auraInput = document.getElementById("aura");
+  const max = Number(auraInput.getAttribute("max")) || 0;
+  let v = Number(auraInput.value) || 0;
+
+  if(v > max) v = max;
+  if(v < 0) v = 0;
+
+  auraInput.value = v;
+
+  const bar = document.getElementById("aura-bar");
+  const percent = max > 0 ? (v / max) * 100 : 0;
+  bar.style.width = percent + "%";
+}
+
+recalcularAura();
+atualizarBarra("vida","vida-bar",100);
+atualizarBarra("sanidade","sanidade-bar",100);
+
+/* --- SALVAR --- */
+function salvarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
+
+  const dados = {
+    nome: nome.value,
+    idade: idade.value,
+    antecedencia: antecedencia.value,
+    descricao: descricao.value,
+    historia: historia.value,
+    vida: vida.value,
+    sanidade: sanidade.value,
+    aura: aura.value,
+    auraMax: aura.getAttribute("max"),
+    imagem: imagemBase64,
+    atributos: {},
+    pericias: {}
+  };
+
+  atributos.forEach(a=>{
+    dados.atributos[a.sigla] = document.getElementById("atr_"+a.sigla).value;
+  });
+
+  pericias.forEach((p,i)=>{
+    dados.pericias["per_"+i] = document.getElementById("per_"+i).value;
+  });
+
+  localStorage.setItem(chave, JSON.stringify(dados));
+
+  const alerta = document.getElementById("alerta");
+  alerta.style.display = "block";
+  setTimeout(()=> alerta.style.display="none", 2500);
+}
+
+/* --- CARREGAR --- */
+function carregarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
+
+  const salvo = localStorage.getItem(chave);
+  if(!salvo){
+    limparCampos();
+    return;
+  }
+
+  const d = JSON.parse(salvo);
+
+  nome.value = d.nome || "";
+  idade.value = d.idade || "";
+  antecedencia.value = d.antecedencia || "";
+  descricao.value = d.descricao || "";
+  historia.value = d.historia || "";
+  vida.value = d.vida || 100;
+  sanidade.value = d.sanidade || 100;
+
+  imagemBase64 = d.imagem || "";
+  document.getElementById("previewImg").src = imagemBase64 || "";
+
+  for(const s in d.atributos){
+    const el = document.getElementById("atr_"+s);
+    if(el) el.value = d.atributos[s];
+  }
+
+  for(const p in d.pericias){
+    const el = document.getElementById(p);
+    if(el) el.value = d.pericias[p];
+  }
+
+  atualizarBarra("vida","vida-bar",100);
+  atualizarBarra("sanidade","sanidade-bar",100);
+
+  recalcularAura();
+  aura.value = d.aura || 0;
+  atualizarAura();
+}
+
+function limparCampos(){
+  nome.value = "";
+  idade.value = "";
+  antecedencia.value = "";
+  descricao.value = "";
+  historia.value = "";
+  vida.value = 100;
+  sanidade.value = 100;
+  imagemBase64 = "";
+  document.getElementById("previewImg").src = "";
+  recalcularAura();
+}
+
+/* carregar slot inicial */
+carregarFicha();
+
+/* --- PDF --- */
+async function gerarPDF(){
+  const { jsPDF } = window.jspdf;
+  const ficha = document.getElementById("ficha");
+  const canvas = await html2canvas(ficha,{ scale:2 });
+  const img = canvas.toDataURL("image/png");
+
+  const pdf = new jsPDF("p","mm","a4");
+  const pageW = pdf.internal.pageSize.getWidth();
+  const pageH = pdf.internal.pageSize.getHeight();
+
+  const imgProps = pdf.getImageProperties(img);
+  const ratio = imgProps.width / imgProps.height;
+
+  let w = pageW - 10;
+  let h = w / ratio;
+
+  if(h > pageH){
+    h = pageH - 10;
+    w = h * ratio;
+  }
+
+  pdf.addImage(img,"PNG",5,5,w,h);
+  pdf.save("ficha_rpg.pdf");
+}
+</script>
 
 </body>
 </html>
