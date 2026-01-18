@@ -46,7 +46,7 @@ input, select, textarea{
 
 .atributo, .pericia, .habilidade{
   display:grid;
-  grid-template-columns: 1fr 100px 40px 160px;
+  grid-template-columns: 1fr 90px 40px 160px;
   align-items:center;
   gap:10px;
   margin:6px 0;
@@ -61,7 +61,6 @@ input, select, textarea{
 .resultado{
   color:#a5f3fc;
   font-size:13px;
-  text-align:left;
 }
 
 .imagem-box{
@@ -198,7 +197,6 @@ Clique para adicionar imagem
 <!-- STATUS -->
 <div class="bloco">
 <h2>Status</h2>
-
 <div class="status-card">
 
 <div class="status-item">
@@ -226,9 +224,7 @@ Clique para adicionar imagem
 <!-- HABILIDADES -->
 <div class="bloco">
 <h2>Habilidades</h2>
-
 <div id="habilidades"></div>
-
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
 </div>
 
@@ -242,6 +238,7 @@ Clique para adicionar imagem
 </div>
 
 <script>
+/* ================= DADOS ================= */
 const atributos = [
 {sigla:"FOR", nome:"Força"},
 {sigla:"CON", nome:"Constituição"},
@@ -265,208 +262,286 @@ const pericias = [
 let imagemBase64 = "";
 let habilidades = [];
 
-function d20(){ return Math.floor(Math.random()*20)+1; }
+/* ================= INTERFACE ================= */
+function criarInterface(){
+  const aBox = document.getElementById("atributos");
+  aBox.innerHTML = "";
 
-function limparDepois(id, ms=8000){
-setTimeout(()=>{
-const el = document.getElementById(id);
-if(el) el.innerText="";
-},ms);
+  atributos.forEach(a=>{
+    aBox.innerHTML += `
+    <div class="atributo">
+      <div>[${a.sigla}] ${a.nome}</div>
+      <select id="atr_${a.sigla}" onchange="recalcularAura()">
+        ${[...Array(11).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
+      </select>
+      <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
+      <span id="resAtr_${a.sigla}" class="resultado"></span>
+    </div>`;
+  });
+
+  const pBox = document.getElementById("pericias");
+  pBox.innerHTML = "";
+
+  pericias.forEach((p,i)=>{
+    const id = "per_"+i;
+    pBox.innerHTML += `
+    <div class="pericia">
+      <div>[${p[0]}] ${p[1]}</div>
+      <select id="${id}">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+      <span class="dice" onclick="rolarPericia('${id}','${p[0]}')">🎲</span>
+      <span id="res_${id}" class="resultado"></span>
+    </div>`;
+  });
 }
 
-/* ---------------- HABILIDADES ---------------- */
+/* ================= DADOS ================= */
+function d20(){ return Math.floor(Math.random()*20)+1; }
 
+function limparDepois(id,ms=8000){
+  setTimeout(()=>{
+    const el = document.getElementById(id);
+    if(el) el.innerText="";
+  },ms);
+}
+
+function rolarAtributo(sigla){
+  const v = Number(document.getElementById("atr_"+sigla).value);
+  const resId = "resAtr_"+sigla;
+  const d = d20();
+  document.getElementById(resId).innerText = `1d20 (${d}) + ${v} = ${d+v}`;
+  limparDepois(resId);
+}
+
+function rolarPericia(id,sigla){
+  const per = Number(document.getElementById(id).value);
+  const atr = Number(document.getElementById("atr_"+sigla).value);
+  const bonus = atr;
+
+  const d1=d20(), d2=d20(), d3=d20();
+  let texto;
+
+  if(per===1){
+    texto = `1d20 (${d1}) + ${bonus} = ${d1+bonus}`;
+  }else if(per===2){
+    const maior=Math.max(d1,d2);
+    texto = `2d20 (${d1} | ${d2}) → ${maior} + ${bonus} = ${maior+bonus}`;
+  }else{
+    const maior=Math.max(d1,d2,d3);
+    texto = `3d20 (${d1} | ${d2} | ${d3}) → ${maior} + ${bonus} = ${maior+bonus}`;
+  }
+
+  const resId="res_"+id;
+  document.getElementById(resId).innerText=texto;
+  limparDepois(resId);
+}
+
+/* ================= HABILIDADES ================= */
 function adicionarHabilidade(){
-habilidades.push({nome:"",desc:"",dado:""});
-renderHabilidades();
+  habilidades.push({nome:"",desc:"",dado:""});
+  renderHabilidades();
 }
 
 function removerHabilidade(i){
-habilidades.splice(i,1);
-renderHabilidades();
+  habilidades.splice(i,1);
+  renderHabilidades();
 }
 
 function renderHabilidades(){
-const box = document.getElementById("habilidades");
-box.innerHTML="";
+  const box=document.getElementById("habilidades");
+  box.innerHTML="";
 
-habilidades.forEach((h,i)=>{
-box.innerHTML += `
-<div class="habilidade">
-<input placeholder="Nome" value="${h.nome}" 
-oninput="habilidades[${i}].nome=this.value">
+  habilidades.forEach((h,i)=>{
+    box.innerHTML+=`
+    <div class="habilidade">
+      <input placeholder="Nome" value="${h.nome}" 
+        oninput="habilidades[${i}].nome=this.value">
 
-<input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
-oninput="habilidades[${i}].dado=this.value">
+      <input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
+        oninput="habilidades[${i}].dado=this.value">
 
-<span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
+      <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
+      <span id="resHab_${i}" class="resultado"></span>
 
-<span id="resHab_${i}" class="resultado"></span>
+      <textarea placeholder="Descrição"
+        oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
 
-<textarea placeholder="Descrição"
-oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-
-<button onclick="removerHabilidade(${i})">❌</button>
-</div>
-`;
-});
+      <button onclick="removerHabilidade(${i})">❌</button>
+    </div>`;
+  });
 }
 
 function rolarHabilidade(i){
-const h = habilidades[i];
-const resId = "resHab_"+i;
+  const h=habilidades[i];
+  const resId="resHab_"+i;
 
-const regex = /(\d+)d(\d+)([+-]\d+)?/i;
-const match = h.dado.match(regex);
+  const regex=/(\d+)d(\d+)([+-]\d+)?/i;
+  const match=h.dado.match(regex);
 
-if(!match){
-document.getElementById(resId).innerText = "Formato inválido";
-limparDepois(resId);
-return;
+  if(!match){
+    document.getElementById(resId).innerText="Formato inválido";
+    limparDepois(resId);
+    return;
+  }
+
+  const qtd=Number(match[1]);
+  const faces=Number(match[2]);
+  const mod=Number(match[3]||0);
+
+  let rolls=[];
+  let total=0;
+
+  for(let r=0;r<qtd;r++){
+    const v=Math.floor(Math.random()*faces)+1;
+    rolls.push(v);
+    total+=v;
+  }
+
+  total+=mod;
+
+  document.getElementById(resId).innerText=
+    `${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
+
+  limparDepois(resId);
 }
 
-const qtd = Number(match[1]);
-const faces = Number(match[2]);
-const mod = Number(match[3]||0);
-
-let rolls = [];
-let total = 0;
-
-for(let r=0;r<qtd;r++){
-const v = Math.floor(Math.random()*faces)+1;
-rolls.push(v);
-total += v;
-}
-
-total += mod;
-
-document.getElementById(resId).innerText =
-`${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
-
-limparDepois(resId);
-}
-
-/* ---------------- SALVAR ---------------- */
-
-function salvarFicha(){
-const slot = slotEl().value;
-const chave = "fichaRPG_"+slot;
-
-const dados = {
-nome: nome.value,
-idade: idade.value,
-antecedencia: antecedencia.value,
-descricao: descricao.value,
-historia: historia.value,
-vida: vida.value,
-sanidade: sanidade.value,
-aura: aura.value,
-imagem: imagemBase64,
-habilidades: habilidades,
-atributos:{},
-pericias:{}
-};
-
-atributos.forEach(a=>{
-dados.atributos[a.sigla] = document.getElementById("atr_"+a.sigla).value;
-});
-
-pericias.forEach((p,i)=>{
-dados.pericias["per_"+i] = document.getElementById("per_"+i).value;
-});
-
-localStorage.setItem(chave,JSON.stringify(dados));
-
-const alerta = document.getElementById("alerta");
-alerta.style.display="block";
-setTimeout(()=>alerta.style.display="none",2500);
-}
-
-function carregarFicha(){
-const slot = slotEl().value;
-const chave = "fichaRPG_"+slot;
-const salvo = localStorage.getItem(chave);
-
-if(!salvo){
-habilidades=[];
-renderHabilidades();
-return;
-}
-
-const d = JSON.parse(salvo);
-
-nome.value = d.nome||"";
-idade.value = d.idade||"";
-antecedencia.value = d.antecedencia||"";
-descricao.value = d.descricao||"";
-historia.value = d.historia||"";
-vida.value = d.vida||100;
-sanidade.value = d.sanidade||100;
-aura.value = d.aura||0;
-
-imagemBase64 = d.imagem||"";
-previewImg.src = imagemBase64;
-
-habilidades = d.habilidades||[];
-renderHabilidades();
-}
-
-/* ---------------- UTIL ---------------- */
-function slotEl(){ return document.getElementById("slot"); }
-
-function atualizarBarra(inputId, barId, max=100){
-const v = Math.max(0,Math.min(max,parseInt(document.getElementById(inputId).value)||0));
-document.getElementById(inputId).value = v;
-document.getElementById(barId).style.width = ((v/max)*100)+"%";
+/* ================= STATUS ================= */
+function atualizarBarra(inputId,barId,max=100){
+  const v=Math.max(0,Math.min(max,parseInt(document.getElementById(inputId).value)||0));
+  document.getElementById(inputId).value=v;
+  document.getElementById(barId).style.width=((v/max)*100)+"%";
 }
 
 function recalcularAura(){
-const con = Number(document.getElementById("atr_CON").value)||0;
-const pod = Number(document.getElementById("atr_POD").value)||0;
-const auraMax = (con+pod)*3;
+  const con=Number(document.getElementById("atr_CON").value)||0;
+  const pod=Number(document.getElementById("atr_POD").value)||0;
+  const auraMax=(con+pod)*3;
 
-aura.setAttribute("max",auraMax);
-auraMaxTxt.innerText = "Máx: "+auraMax;
-atualizarAura();
+  aura.setAttribute("max",auraMax);
+  auraMaxTxt.innerText="Máx: "+auraMax;
+  atualizarAura();
 }
 
 function atualizarAura(){
-const max = Number(aura.getAttribute("max"))||0;
-let v = Number(aura.value)||0;
-if(v>max) v=max;
-if(v<0) v=0;
-aura.value=v;
-auraBar().style.width = max>0 ? ((v/max)*100)+"%" : "0%";
+  const max=Number(aura.getAttribute("max"))||0;
+  let v=Number(aura.value)||0;
+  if(v>max) v=max;
+  if(v<0) v=0;
+  aura.value=v;
+  document.getElementById("aura-bar").style.width=
+    max>0?((v/max)*100)+"%":"0%";
 }
 
-function auraBar(){ return document.getElementById("aura-bar"); }
+/* ================= SALVAR ================= */
+function salvarFicha(){
+  const slot=document.getElementById("slot").value;
+  const chave="fichaRPG_"+slot;
 
-/* ---------------- PDF ---------------- */
+  const dados={
+    nome:nome.value,
+    idade:idade.value,
+    antecedencia:antecedencia.value,
+    descricao:descricao.value,
+    historia:historia.value,
+    vida:vida.value,
+    sanidade:sanidade.value,
+    aura:aura.value,
+    imagem:imagemBase64,
+    habilidades:habilidades,
+    atributos:{},
+    pericias:{}
+  };
+
+  atributos.forEach(a=>{
+    dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
+  });
+
+  pericias.forEach((p,i)=>{
+    dados.pericias["per_"+i]=document.getElementById("per_"+i).value;
+  });
+
+  localStorage.setItem(chave,JSON.stringify(dados));
+
+  const alerta=document.getElementById("alerta");
+  alerta.style.display="block";
+  setTimeout(()=>alerta.style.display="none",2500);
+}
+
+function carregarFicha(){
+  const slot=document.getElementById("slot").value;
+  const chave="fichaRPG_"+slot;
+  const salvo=localStorage.getItem(chave);
+
+  if(!salvo){
+    habilidades=[];
+    renderHabilidades();
+    return;
+  }
+
+  const d=JSON.parse(salvo);
+
+  nome.value=d.nome||"";
+  idade.value=d.idade||"";
+  antecedencia.value=d.antecedencia||"";
+  descricao.value=d.descricao||"";
+  historia.value=d.historia||"";
+  vida.value=d.vida||100;
+  sanidade.value=d.sanidade||100;
+  aura.value=d.aura||0;
+
+  imagemBase64=d.imagem||"";
+  previewImg.src=imagemBase64;
+
+  for(const s in d.atributos){
+    const el=document.getElementById("atr_"+s);
+    if(el) el.value=d.atributos[s];
+  }
+
+  for(const p in d.pericias){
+    const el=document.getElementById(p);
+    if(el) el.value=d.pericias[p];
+  }
+
+  habilidades=d.habilidades||[];
+  renderHabilidades();
+
+  atualizarBarra("vida","vida-bar",100);
+  atualizarBarra("sanidade","sanidade-bar",100);
+  recalcularAura();
+}
+
+/* ================= PDF ================= */
 async function gerarPDF(){
-const { jsPDF } = window.jspdf;
-const ficha = document.getElementById("ficha");
-const canvas = await html2canvas(ficha,{ scale:2 });
-const img = canvas.toDataURL("image/png");
+  const { jsPDF }=window.jspdf;
+  const ficha=document.getElementById("ficha");
+  const canvas=await html2canvas(ficha,{scale:2});
+  const img=canvas.toDataURL("image/png");
 
-const pdf = new jsPDF("p","mm","a4");
-const w = pdf.internal.pageSize.getWidth()-10;
-const h = (canvas.height * w) / canvas.width;
+  const pdf=new jsPDF("p","mm","a4");
+  const w=pdf.internal.pageSize.getWidth()-10;
+  const h=(canvas.height*w)/canvas.width;
 
-pdf.addImage(img,"PNG",5,5,w,h);
-pdf.save("ficha_rpg.pdf");
+  pdf.addImage(img,"PNG",5,5,w,h);
+  pdf.save("ficha_rpg.pdf");
 }
 
-document.getElementById("imagemInput").addEventListener("change", e=>{
-const file = e.target.files[0];
-if(!file) return;
-const reader = new FileReader();
-reader.onload = ()=>{
-imagemBase64 = reader.result;
-previewImg.src = imagemBase64;
-};
-reader.readAsDataURL(file);
+/* ================= IMAGEM ================= */
+document.getElementById("imagemInput").addEventListener("change",e=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{
+    imagemBase64=reader.result;
+    previewImg.src=imagemBase64;
+  };
+  reader.readAsDataURL(file);
 });
 
+/* ================= START ================= */
+criarInterface();
 carregarFicha();
 </script>
 
