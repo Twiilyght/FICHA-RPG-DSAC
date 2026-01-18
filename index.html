@@ -8,92 +8,140 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-  body{
-    background:#0f172a;
-    color:#e5e7eb;
-    font-family: Arial, sans-serif;
-  }
+body{
+  background:#0f172a;
+  color:#e5e7eb;
+  font-family: Arial, sans-serif;
+}
 
-  .bloco{
-    background:#1f2937;
-    padding:18px;
-    border-radius:14px;
-    margin:18px auto;
-    max-width:900px;
-    box-shadow:0 10px 25px rgba(0,0,0,.3);
-  }
+.bloco{
+  background:#1f2937;
+  padding:18px;
+  border-radius:14px;
+  margin:18px auto;
+  max-width:900px;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
+}
 
-  h2{
-    margin-top:0;
-    color:#a5b4fc;
-    border-bottom:1px solid #374151;
-    padding-bottom:6px;
-  }
+h2{
+  margin-top:0;
+  color:#a5b4fc;
+  border-bottom:1px solid #374151;
+  padding-bottom:6px;
+}
 
-  .linha{
-    margin:10px 0;
-    display:flex;
-    flex-direction:column;
-  }
+.linha{
+  margin:10px 0;
+  display:flex;
+  flex-direction:column;
+}
 
-  input, select, textarea{
-    border-radius:10px;
-    border:1px solid #374151;
-    padding:8px;
-    background:#020617;
-    color:#e5e7eb;
-  }
+input, select, textarea{
+  border-radius:10px;
+  border:1px solid #374151;
+  padding:8px;
+  background:#020617;
+  color:#e5e7eb;
+}
 
-  .atributo, .pericia{
-    display:grid;
-    grid-template-columns: 1fr 90px 40px 120px;
-    align-items:center;
-    gap:10px;
-    margin:6px 0;
-  }
+.atributo, .pericia, .habilidade{
+  display:grid;
+  grid-template-columns: 1fr 100px 40px 160px;
+  align-items:center;
+  gap:10px;
+  margin:6px 0;
+}
 
-  .dice{ cursor:pointer;font-size:22px;text-align:center; }
-  .resultado{ color:#a5f3fc;font-size:13px;text-align:center; }
+.dice{
+  cursor:pointer;
+  font-size:22px;
+  text-align:center;
+}
 
-  .imagem-box{
-    border:2px dashed #4b5563;
-    border-radius:12px;
-    padding:20px;
-    text-align:center;
-    cursor:pointer;
-    margin-bottom:15px;
-  }
+.resultado{
+  color:#a5f3fc;
+  font-size:13px;
+  text-align:left;
+}
 
-  .imagem-box img{ max-width:100%;border-radius:10px;margin-top:10px; }
+.imagem-box{
+  border:2px dashed #4b5563;
+  border-radius:12px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  margin-bottom:15px;
+}
 
-  .salvar-btn{
-    margin-top:15px;
-    padding:10px 20px;
-    border-radius:10px;
-    border:none;
-    background:#4f46e5;
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-  }
+.imagem-box img{
+  max-width:160px;
+  border-radius:10px;
+  margin-top:10px;
+}
 
-  .status-card{ display:grid;grid-template-columns:1fr 1fr;gap:14px; }
-  .status-item{ background:#020617;border:1px solid #374151;padding:12px;border-radius:12px; }
-  .status-top{ display:flex;justify-content:space-between;align-items:center;margin-bottom:6px; }
-  .status-bar{ height:8px;background:#1f2937;border-radius:10px;overflow:hidden;margin-top:6px; }
-  .status-fill{ height:8px;background:linear-gradient(90deg,#4ade80,#22c55e);width:100%;transition:.25s; }
-  .status-fill.sanity{ background:linear-gradient(90deg,#60a5fa,#3b82f6); }
-  .status-fill.aura{ background:linear-gradient(90deg,#fde047,#facc15); }
+.salvar-btn{
+  margin-top:15px;
+  padding:10px 20px;
+  border-radius:10px;
+  border:none;
+  background:#4f46e5;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-  .alerta{
-    margin-top:10px;
-    padding:8px 10px;
-    border-radius:10px;
-    background:#065f46;
-    border:1px solid #059669;
-    color:#d1fae5;
-    display:none;
-  }
+.status-card{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.status-item{
+  background:#020617;
+  border:1px solid #374151;
+  padding:12px;
+  border-radius:12px;
+}
+
+.status-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:6px;
+}
+
+.status-bar{
+  height:8px;
+  background:#1f2937;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:6px;
+}
+
+.status-fill{
+  height:8px;
+  background:linear-gradient(90deg,#4ade80,#22c55e);
+  width:100%;
+  transition:.25s;
+}
+
+.status-fill.sanity{
+  background:linear-gradient(90deg,#60a5fa,#3b82f6);
+}
+
+.status-fill.aura{
+  background:linear-gradient(90deg,#fde047,#facc15);
+}
+
+.alerta{
+  margin-top:10px;
+  padding:8px 10px;
+  border-radius:10px;
+  background:#065f46;
+  border:1px solid #059669;
+  color:#d1fae5;
+  display:none;
+}
 </style>
 </head>
 
@@ -101,359 +149,325 @@
 
 <div id="ficha">
 
+<!-- SLOT -->
 <div class="bloco">
-  <h2>Seleção de Ficha</h2>
-
-  <div class="linha">
-    <label>Escolha o slot</label>
-    <select id="slot" onchange="carregarFicha()">
-      <option value="1">Slot 1</option>
-      <option value="2">Slot 2</option>
-      <option value="3">Slot 3</option>
-      <option value="4">Slot 4</option>
-    </select>
-  </div>
+<h2>Seleção de Ficha</h2>
+<div class="linha">
+<label>Escolha o slot</label>
+<select id="slot" onchange="carregarFicha()">
+<option value="1">Slot 1</option>
+<option value="2">Slot 2</option>
+<option value="3">Slot 3</option>
+<option value="4">Slot 4</option>
+</select>
+</div>
 </div>
 
+<!-- IMAGEM -->
 <div class="bloco">
-  <h2>Imagem do Personagem</h2>
-  <div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
-    Clique para adicionar imagem
-    <input type="file" id="imagemInput" accept="image/*" style="display:none">
-    <img id="previewImg">
-  </div>
+<h2>Imagem do Personagem</h2>
+<div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
+Clique para adicionar imagem
+<input type="file" id="imagemInput" accept="image/*" style="display:none">
+<img id="previewImg">
+</div>
 </div>
 
+<!-- BÁSICO -->
 <div class="bloco">
-  <h2>Informações Básicas</h2>
-  <div class="linha"><label>Nome</label><input id="nome"></div>
-  <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-  <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
-  <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
-  <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
+<h2>Informações Básicas</h2>
+<div class="linha"><label>Nome</label><input id="nome"></div>
+<div class="linha"><label>Idade</label><input id="idade" type="number"></div>
+<div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
+<div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
+<div class="linha"><label>História</label><textarea id="historia"></textarea></div>
 </div>
 
+<!-- ATRIBUTOS -->
 <div class="bloco">
-  <h2>Atributos</h2>
-  <div id="atributos"></div>
+<h2>Atributos</h2>
+<div id="atributos"></div>
 </div>
 
+<!-- PERÍCIAS -->
 <div class="bloco">
-  <h2>Perícias</h2>
-  <div id="pericias"></div>
+<h2>Perícias</h2>
+<div id="pericias"></div>
 </div>
 
+<!-- STATUS -->
 <div class="bloco">
-  <h2>Status</h2>
+<h2>Status</h2>
 
-  <div class="status-card">
+<div class="status-card">
 
-    <!-- VIDA -->
-    <div class="status-item">
-      <div class="status-top"><div>Vida</div><span>❤️</span></div>
-      <input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar',100)">
-      <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
-    </div>
-
-    <!-- SANIDADE -->
-    <div class="status-item">
-      <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
-      <input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar',100)">
-      <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
-    </div>
-
-    <!-- AURA -->
-    <div class="status-item">
-      <div class="status-top"><div>Aura ✨</div></div>
-      <input id="aura" type="number" value="0" oninput="atualizarAura()">
-      <small id="auraMaxTxt">Máx: 0</small>
-      <div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
-    </div>
-
-  </div>
+<div class="status-item">
+<div class="status-top"><div>Vida</div><span>❤️</span></div>
+<input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar',100)">
+<div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
 </div>
 
-<div class="bloco">
-  <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
-  <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
+<div class="status-item">
+<div class="status-top"><div>Sanidade</div><span>🧠</span></div>
+<input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar',100)">
+<div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
+</div>
 
-  <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
+<div class="status-item">
+<div class="status-top"><div>Aura ✨</div></div>
+<input id="aura" type="number" value="0" oninput="atualizarAura()">
+<small id="auraMaxTxt">Máx: 0</small>
+<div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
+</div>
+
+</div>
+</div>
+
+<!-- HABILIDADES -->
+<div class="bloco">
+<h2>Habilidades</h2>
+
+<div id="habilidades"></div>
+
+<button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
+</div>
+
+<!-- SALVAR -->
+<div class="bloco">
+<button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
+<div id="alerta" class="alerta">Ficha salva com sucesso!</div>
+<button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
 </div>
 
 </div>
 
 <script>
 const atributos = [
-  {sigla:"FOR", nome:"Força"},
-  {sigla:"CON", nome:"Constituição"},
-  {sigla:"AGI", nome:"Agilidade"},
-  {sigla:"INT", nome:"Intelecto"},
-  {sigla:"POD", nome:"Poder"}
+{sigla:"FOR", nome:"Força"},
+{sigla:"CON", nome:"Constituição"},
+{sigla:"AGI", nome:"Agilidade"},
+{sigla:"INT", nome:"Intelecto"},
+{sigla:"POD", nome:"Poder"}
 ];
 
 const pericias = [
-  ["FOR","Atletismo"],["FOR","Luta"],
-  ["CON","Fortitude"],
-  ["AGI","Reflexos"],["AGI","Furtividade"],["AGI","Acrobacia"],
-  ["AGI","Iniciativa"],["AGI","Pontaria"],["AGI","Pilotagem"],
-  ["INT","Ciências"],["INT","Tática"],["INT","Investigação"],
-  ["INT","Medicina"],["INT","Tecnologia"],["INT","Sobrevivência"],
-  ["INT","Lábia"],["INT","Diplomacia"],["POD","Intimidação"],
-  ["INT","Artes"],["POD","Intuição"],["INT","Percepção"],
-  ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"],
-  ["POD","Energia"]
+["FOR","Atletismo"],["FOR","Luta"],
+["CON","Fortitude"],
+["AGI","Reflexos"],["AGI","Furtividade"],["AGI","Acrobacia"],
+["AGI","Iniciativa"],["AGI","Pontaria"],["AGI","Pilotagem"],
+["INT","Ciências"],["INT","Tática"],["INT","Investigação"],
+["INT","Medicina"],["INT","Tecnologia"],["INT","Sobrevivência"],
+["INT","Lábia"],["INT","Diplomacia"],["POD","Intimidação"],
+["INT","Artes"],["POD","Intuição"],["INT","Percepção"],
+["INT","Adestramento"],["POD","Charme"],["POD","Vontade"]
 ];
 
-/* --- INTERFACE --- */
-function criarInterface(){
-  const aBox = document.getElementById("atributos");
-  aBox.innerHTML = "";
-  atributos.forEach(a=>{
-    aBox.innerHTML += `
-      <div class="atributo">
-        <div>[${a.sigla}] ${a.nome}</div>
-        <select id="atr_${a.sigla}" onchange="recalcularAura()">
-          ${[...Array(11).keys()].map(v=>`<option>${v}</option>`).join("")}
-        </select>
-        <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
-        <span id="resAtr_${a.sigla}" class="resultado"></span>
-      </div>`;
-  });
-
-  const pBox = document.getElementById("pericias");
-  pBox.innerHTML = "";
-  pericias.forEach((p,i)=>{
-    const id = "per_"+i;
-    pBox.innerHTML += `
-      <div class="pericia">
-        <div>[${p[0]}] ${p[1]}</div>
-        <select id="${id}">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
-        <span class="dice" onclick="rolarPericia('${id}','${p[0]}')">🎲</span>
-        <span id="res_${id}" class="resultado"></span>
-      </div>`;
-  });
-}
-criarInterface();
+let imagemBase64 = "";
+let habilidades = [];
 
 function d20(){ return Math.floor(Math.random()*20)+1; }
 
 function limparDepois(id, ms=8000){
-  setTimeout(()=>{ 
-    const el = document.getElementById(id);
-    if(el) el.innerText = "";
-  }, ms);
+setTimeout(()=>{
+const el = document.getElementById(id);
+if(el) el.innerText="";
+},ms);
 }
 
-function rolarAtributo(sigla){
-  const v = Number(document.getElementById("atr_"+sigla).value);
-  const resId = "resAtr_"+sigla;
-  document.getElementById(resId).innerText = "Resultado: " + (d20()+v);
-  limparDepois(resId);
+/* ---------------- HABILIDADES ---------------- */
+
+function adicionarHabilidade(){
+habilidades.push({nome:"",desc:"",dado:""});
+renderHabilidades();
 }
 
-function rolarPericia(id, sigla){
-  const per = Number(document.getElementById(id).value);
-  const atr = Number(document.getElementById("atr_" + sigla).value);
-  const bonus = atr;
-
-  const d1 = d20();
-  const d2 = d20();
-  const d3 = d20();
-
-  let resultado, texto;
-
-  if (per === 1){
-    resultado = d1 + bonus;
-    texto = `1d20 (${d1}) + ${bonus} = ${resultado}`;
-  } else if (per === 2){
-    const maior = Math.max(d1, d2);
-    resultado = maior + bonus;
-    texto = `2d20 (${d1} | ${d2}) → ${maior} + ${bonus} = ${resultado}`;
-  } else {
-    const maior = Math.max(d1, d2, d3);
-    resultado = maior + bonus;
-    texto = `3d20 (${d1} | ${d2} | ${d3}) → ${maior} + ${bonus} = ${resultado}`;
-  }
-
-  const resId = "res_" + id;
-  document.getElementById(resId).innerText = texto;
-  limparDepois(resId);
+function removerHabilidade(i){
+habilidades.splice(i,1);
+renderHabilidades();
 }
 
-/* --- IMAGEM --- */
-let imagemBase64 = "";
+function renderHabilidades(){
+const box = document.getElementById("habilidades");
+box.innerHTML="";
 
-document.getElementById("imagemInput").addEventListener("change", e=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    imagemBase64 = reader.result;
-    document.getElementById("previewImg").src = imagemBase64;
-  };
-  reader.readAsDataURL(file);
+habilidades.forEach((h,i)=>{
+box.innerHTML += `
+<div class="habilidade">
+<input placeholder="Nome" value="${h.nome}" 
+oninput="habilidades[${i}].nome=this.value">
+
+<input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
+oninput="habilidades[${i}].dado=this.value">
+
+<span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
+
+<span id="resHab_${i}" class="resultado"></span>
+
+<textarea placeholder="Descrição"
+oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
+
+<button onclick="removerHabilidade(${i})">❌</button>
+</div>
+`;
+});
+}
+
+function rolarHabilidade(i){
+const h = habilidades[i];
+const resId = "resHab_"+i;
+
+const regex = /(\d+)d(\d+)([+-]\d+)?/i;
+const match = h.dado.match(regex);
+
+if(!match){
+document.getElementById(resId).innerText = "Formato inválido";
+limparDepois(resId);
+return;
+}
+
+const qtd = Number(match[1]);
+const faces = Number(match[2]);
+const mod = Number(match[3]||0);
+
+let rolls = [];
+let total = 0;
+
+for(let r=0;r<qtd;r++){
+const v = Math.floor(Math.random()*faces)+1;
+rolls.push(v);
+total += v;
+}
+
+total += mod;
+
+document.getElementById(resId).innerText =
+`${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
+
+limparDepois(resId);
+}
+
+/* ---------------- SALVAR ---------------- */
+
+function salvarFicha(){
+const slot = slotEl().value;
+const chave = "fichaRPG_"+slot;
+
+const dados = {
+nome: nome.value,
+idade: idade.value,
+antecedencia: antecedencia.value,
+descricao: descricao.value,
+historia: historia.value,
+vida: vida.value,
+sanidade: sanidade.value,
+aura: aura.value,
+imagem: imagemBase64,
+habilidades: habilidades,
+atributos:{},
+pericias:{}
+};
+
+atributos.forEach(a=>{
+dados.atributos[a.sigla] = document.getElementById("atr_"+a.sigla).value;
 });
 
-/* --- STATUS BARRAS --- */
+pericias.forEach((p,i)=>{
+dados.pericias["per_"+i] = document.getElementById("per_"+i).value;
+});
+
+localStorage.setItem(chave,JSON.stringify(dados));
+
+const alerta = document.getElementById("alerta");
+alerta.style.display="block";
+setTimeout(()=>alerta.style.display="none",2500);
+}
+
+function carregarFicha(){
+const slot = slotEl().value;
+const chave = "fichaRPG_"+slot;
+const salvo = localStorage.getItem(chave);
+
+if(!salvo){
+habilidades=[];
+renderHabilidades();
+return;
+}
+
+const d = JSON.parse(salvo);
+
+nome.value = d.nome||"";
+idade.value = d.idade||"";
+antecedencia.value = d.antecedencia||"";
+descricao.value = d.descricao||"";
+historia.value = d.historia||"";
+vida.value = d.vida||100;
+sanidade.value = d.sanidade||100;
+aura.value = d.aura||0;
+
+imagemBase64 = d.imagem||"";
+previewImg.src = imagemBase64;
+
+habilidades = d.habilidades||[];
+renderHabilidades();
+}
+
+/* ---------------- UTIL ---------------- */
+function slotEl(){ return document.getElementById("slot"); }
+
 function atualizarBarra(inputId, barId, max=100){
-  const v = Math.max(0, Math.min(max, parseInt(document.getElementById(inputId).value)||0));
-  document.getElementById(inputId).value = v;
-  document.getElementById(barId).style.width = ((v / max) * 100) + "%";
+const v = Math.max(0,Math.min(max,parseInt(document.getElementById(inputId).value)||0));
+document.getElementById(inputId).value = v;
+document.getElementById(barId).style.width = ((v/max)*100)+"%";
 }
 
 function recalcularAura(){
-  const con = Number(document.getElementById("atr_CON").value) || 0;
-  const pod = Number(document.getElementById("atr_POD").value) || 0;
+const con = Number(document.getElementById("atr_CON").value)||0;
+const pod = Number(document.getElementById("atr_POD").value)||0;
+const auraMax = (con+pod)*3;
 
-  const auraMax = (con + pod) * 3;
-
-  document.getElementById("aura").setAttribute("max", auraMax);
-  document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
-
-  atualizarAura();
+aura.setAttribute("max",auraMax);
+auraMaxTxt.innerText = "Máx: "+auraMax;
+atualizarAura();
 }
 
 function atualizarAura(){
-  const auraInput = document.getElementById("aura");
-  const max = Number(auraInput.getAttribute("max")) || 0;
-  let v = Number(auraInput.value) || 0;
-
-  if(v > max) v = max;
-  if(v < 0) v = 0;
-
-  auraInput.value = v;
-
-  const bar = document.getElementById("aura-bar");
-  const percent = max > 0 ? (v / max) * 100 : 0;
-  bar.style.width = percent + "%";
+const max = Number(aura.getAttribute("max"))||0;
+let v = Number(aura.value)||0;
+if(v>max) v=max;
+if(v<0) v=0;
+aura.value=v;
+auraBar().style.width = max>0 ? ((v/max)*100)+"%" : "0%";
 }
 
-recalcularAura();
-atualizarBarra("vida","vida-bar",100);
-atualizarBarra("sanidade","sanidade-bar",100);
+function auraBar(){ return document.getElementById("aura-bar"); }
 
-/* --- SALVAR --- */
-function salvarFicha(){
-  const slot = document.getElementById("slot").value;
-  const chave = "fichaRPG_" + slot;
-
-  const dados = {
-    nome: nome.value,
-    idade: idade.value,
-    antecedencia: antecedencia.value,
-    descricao: descricao.value,
-    historia: historia.value,
-    vida: vida.value,
-    sanidade: sanidade.value,
-    aura: aura.value,
-    auraMax: aura.getAttribute("max"),
-    imagem: imagemBase64,
-    atributos: {},
-    pericias: {}
-  };
-
-  atributos.forEach(a=>{
-    dados.atributos[a.sigla] = document.getElementById("atr_"+a.sigla).value;
-  });
-
-  pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i] = document.getElementById("per_"+i).value;
-  });
-
-  localStorage.setItem(chave, JSON.stringify(dados));
-
-  const alerta = document.getElementById("alerta");
-  alerta.style.display = "block";
-  setTimeout(()=> alerta.style.display="none", 2500);
-}
-
-/* --- CARREGAR --- */
-function carregarFicha(){
-  const slot = document.getElementById("slot").value;
-  const chave = "fichaRPG_" + slot;
-
-  const salvo = localStorage.getItem(chave);
-  if(!salvo){
-    limparCampos();
-    return;
-  }
-
-  const d = JSON.parse(salvo);
-
-  nome.value = d.nome || "";
-  idade.value = d.idade || "";
-  antecedencia.value = d.antecedencia || "";
-  descricao.value = d.descricao || "";
-  historia.value = d.historia || "";
-  vida.value = d.vida || 100;
-  sanidade.value = d.sanidade || 100;
-
-  imagemBase64 = d.imagem || "";
-  document.getElementById("previewImg").src = imagemBase64 || "";
-
-  for(const s in d.atributos){
-    const el = document.getElementById("atr_"+s);
-    if(el) el.value = d.atributos[s];
-  }
-
-  for(const p in d.pericias){
-    const el = document.getElementById(p);
-    if(el) el.value = d.pericias[p];
-  }
-
-  atualizarBarra("vida","vida-bar",100);
-  atualizarBarra("sanidade","sanidade-bar",100);
-
-  recalcularAura();
-  aura.value = d.aura || 0;
-  atualizarAura();
-}
-
-function limparCampos(){
-  nome.value = "";
-  idade.value = "";
-  antecedencia.value = "";
-  descricao.value = "";
-  historia.value = "";
-  vida.value = 100;
-  sanidade.value = 100;
-  imagemBase64 = "";
-  document.getElementById("previewImg").src = "";
-  recalcularAura();
-}
-
-/* carregar slot inicial */
-carregarFicha();
-
-/* --- PDF --- */
+/* ---------------- PDF ---------------- */
 async function gerarPDF(){
-  const { jsPDF } = window.jspdf;
-  const ficha = document.getElementById("ficha");
-  const canvas = await html2canvas(ficha,{ scale:2 });
-  const img = canvas.toDataURL("image/png");
+const { jsPDF } = window.jspdf;
+const ficha = document.getElementById("ficha");
+const canvas = await html2canvas(ficha,{ scale:2 });
+const img = canvas.toDataURL("image/png");
 
-  const pdf = new jsPDF("p","mm","a4");
-  const pageW = pdf.internal.pageSize.getWidth();
-  const pageH = pdf.internal.pageSize.getHeight();
+const pdf = new jsPDF("p","mm","a4");
+const w = pdf.internal.pageSize.getWidth()-10;
+const h = (canvas.height * w) / canvas.width;
 
-  const imgProps = pdf.getImageProperties(img);
-  const ratio = imgProps.width / imgProps.height;
-
-  let w = pageW - 10;
-  let h = w / ratio;
-
-  if(h > pageH){
-    h = pageH - 10;
-    w = h * ratio;
-  }
-
-  pdf.addImage(img,"PNG",5,5,w,h);
-  pdf.save("ficha_rpg.pdf");
+pdf.addImage(img,"PNG",5,5,w,h);
+pdf.save("ficha_rpg.pdf");
 }
+
+document.getElementById("imagemInput").addEventListener("change", e=>{
+const file = e.target.files[0];
+if(!file) return;
+const reader = new FileReader();
+reader.onload = ()=>{
+imagemBase64 = reader.result;
+previewImg.src = imagemBase64;
+};
+reader.readAsDataURL(file);
+});
+
+carregarFicha();
 </script>
 
 </body>
