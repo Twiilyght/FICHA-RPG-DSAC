@@ -63,32 +63,6 @@ input, select, textarea{
   font-size:13px;
 }
 
-.imagem-box{
-  border:2px dashed #4b5563;
-  border-radius:12px;
-  padding:20px;
-  text-align:center;
-  cursor:pointer;
-  margin-bottom:15px;
-}
-
-.imagem-box img{
-  max-width:160px;
-  border-radius:10px;
-  margin-top:10px;
-}
-
-.salvar-btn{
-  margin-top:15px;
-  padding:10px 20px;
-  border-radius:10px;
-  border:none;
-  background:#4f46e5;
-  color:white;
-  font-weight:bold;
-  cursor:pointer;
-}
-
 .status-card{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -162,16 +136,6 @@ input, select, textarea{
 </div>
 </div>
 
-<!-- IMAGEM -->
-<div class="bloco">
-<h2>Imagem do Personagem</h2>
-<div class="imagem-box" onclick="document.getElementById('imagemInput').click()">
-Clique para adicionar imagem
-<input type="file" id="imagemInput" accept="image/*" style="display:none">
-<img id="previewImg">
-</div>
-</div>
-
 <!-- BÁSICO -->
 <div class="bloco">
 <h2>Informações Básicas</h2>
@@ -185,6 +149,17 @@ Clique para adicionar imagem
 <!-- ATRIBUTOS -->
 <div class="bloco">
 <h2>Atributos</h2>
+
+<div class="linha">
+<label>Nível do Personagem (1 a 4)</label>
+<select id="nivel" onchange="recalcularVidaSanidade()">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+</select>
+</div>
+
 <div id="atributos"></div>
 </div>
 
@@ -201,13 +176,15 @@ Clique para adicionar imagem
 
 <div class="status-item">
 <div class="status-top"><div>Vida</div><span>❤️</span></div>
-<input id="vida" type="number" value="100" oninput="atualizarBarra('vida','vida-bar',100)">
+<input id="vida" type="number" readonly>
+<small id="vidaMaxTxt"></small>
 <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
 </div>
 
 <div class="status-item">
 <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
-<input id="sanidade" type="number" value="100" oninput="atualizarBarra('sanidade','sanidade-bar',100)">
+<input id="sanidade" type="number" readonly>
+<small id="sanidadeMaxTxt"></small>
 <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
 </div>
 
@@ -219,22 +196,6 @@ Clique para adicionar imagem
 </div>
 
 </div>
-</div>
-
-<!-- HABILIDADES -->
-<div class="bloco">
-<h2>Habilidades</h2>
-<div id="habilidades"></div>
-<button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
-</div>
-
-<!-- SALVAR -->
-<div class="bloco">
-<button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
-<div id="alerta" class="alerta">Ficha salva com sucesso!</div>
-<button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
-</div>
-
 </div>
 
 <script>
@@ -259,9 +220,6 @@ const pericias = [
 ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"],["POD","Energia"]
 ];
 
-let imagemBase64 = "";
-let habilidades = [];
-
 /* ================= INTERFACE ================= */
 function criarInterface(){
   const aBox = document.getElementById("atributos");
@@ -271,7 +229,7 @@ function criarInterface(){
     aBox.innerHTML += `
     <div class="atributo">
       <div>[${a.sigla}] ${a.nome}</div>
-      <select id="atr_${a.sigla}" onchange="recalcularAura()">
+      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade(); recalcularAura()">
         ${[...Array(11).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
       </select>
       <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
@@ -298,121 +256,29 @@ function criarInterface(){
   });
 }
 
-/* ================= DADOS ================= */
-function d20(){ return Math.floor(Math.random()*20)+1; }
+/* ================= VIDA & SANIDADE ================= */
+function recalcularVidaSanidade(){
+  const nivel = Number(document.getElementById("nivel").value) || 1;
+  const con = Number(document.getElementById("atr_CON").value) || 0;
 
-function limparDepois(id,ms=8000){
-  setTimeout(()=>{
-    const el = document.getElementById(id);
-    if(el) el.innerText="";
-  },ms);
-}
+  const vidaMax = (20 + con * 2) * nivel;
+  const sanidadeMax = 25 * nivel;
 
-function rolarAtributo(sigla){
-  const v = Number(document.getElementById("atr_"+sigla).value);
-  const resId = "resAtr_"+sigla;
-  const d = d20();
-  document.getElementById(resId).innerText = `1d20 (${d}) + ${v} = ${d+v}`;
-  limparDepois(resId);
-}
+  vida.value = vidaMax;
+  sanidade.value = sanidadeMax;
 
-function rolarPericia(id,sigla){
-  const per = Number(document.getElementById(id).value);
-  const atr = Number(document.getElementById("atr_"+sigla).value);
-  const bonus = atr;
+  vidaMaxTxt.innerText = "Máx: " + vidaMax;
+  sanidadeMaxTxt.innerText = "Máx: " + sanidadeMax;
 
-  const d1=d20(), d2=d20(), d3=d20();
-  let texto;
-
-  if(per===1){
-    texto = `1d20 (${d1}) + ${bonus} = ${d1+bonus}`;
-  }else if(per===2){
-    const maior=Math.max(d1,d2);
-    texto = `2d20 (${d1} | ${d2}) → ${maior} + ${bonus} = ${maior+bonus}`;
-  }else{
-    const maior=Math.max(d1,d2,d3);
-    texto = `3d20 (${d1} | ${d2} | ${d3}) → ${maior} + ${bonus} = ${maior+bonus}`;
-  }
-
-  const resId="res_"+id;
-  document.getElementById(resId).innerText=texto;
-  limparDepois(resId);
-}
-
-/* ================= HABILIDADES ================= */
-function adicionarHabilidade(){
-  habilidades.push({nome:"",desc:"",dado:""});
-  renderHabilidades();
-}
-
-function removerHabilidade(i){
-  habilidades.splice(i,1);
-  renderHabilidades();
-}
-
-function renderHabilidades(){
-  const box=document.getElementById("habilidades");
-  box.innerHTML="";
-
-  habilidades.forEach((h,i)=>{
-    box.innerHTML+=`
-    <div class="habilidade">
-      <input placeholder="Nome" value="${h.nome}" 
-        oninput="habilidades[${i}].nome=this.value">
-
-      <input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
-        oninput="habilidades[${i}].dado=this.value">
-
-      <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
-      <span id="resHab_${i}" class="resultado"></span>
-
-      <textarea placeholder="Descrição"
-        oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-
-      <button onclick="removerHabilidade(${i})">❌</button>
-    </div>`;
-  });
-}
-
-function rolarHabilidade(i){
-  const h=habilidades[i];
-  const resId="resHab_"+i;
-
-  const regex=/(\d+)d(\d+)([+-]\d+)?/i;
-  const match=h.dado.match(regex);
-
-  if(!match){
-    document.getElementById(resId).innerText="Formato inválido";
-    limparDepois(resId);
-    return;
-  }
-
-  const qtd=Number(match[1]);
-  const faces=Number(match[2]);
-  const mod=Number(match[3]||0);
-
-  let rolls=[];
-  let total=0;
-
-  for(let r=0;r<qtd;r++){
-    const v=Math.floor(Math.random()*faces)+1;
-    rolls.push(v);
-    total+=v;
-  }
-
-  total+=mod;
-
-  document.getElementById(resId).innerText=
-    `${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
-
-  limparDepois(resId);
+  atualizarBarra("vida","vida-bar",vidaMax);
+  atualizarBarra("sanidade","sanidade-bar",sanidadeMax);
 }
 
 /* ================= STATUS ================= */
-function atualizarBarra(inputId,barId,max=100){
-  const v=Math.max(0,Math.min(max,parseInt(document.getElementById(inputId).value)||0));
-  document.getElementById(inputId).value=v;
-  document.getElementById(barId).style.width=((v/max)*100)+"%";
+function atualizarBarra(inputId,barId,max){
+  const v = Number(document.getElementById(inputId).value) || 0;
+  document.getElementById(barId).style.width =
+    max > 0 ? ((v / max) * 100) + "%" : "0%";
 }
 
 function recalcularAura(){
@@ -446,11 +312,10 @@ function salvarFicha(){
     antecedencia:antecedencia.value,
     descricao:descricao.value,
     historia:historia.value,
+    nivel:nivel.value,
     vida:vida.value,
     sanidade:sanidade.value,
     aura:aura.value,
-    imagem:imagemBase64,
-    habilidades:habilidades,
     atributos:{},
     pericias:{}
   };
@@ -464,20 +329,16 @@ function salvarFicha(){
   });
 
   localStorage.setItem(chave,JSON.stringify(dados));
-
-  const alerta=document.getElementById("alerta");
-  alerta.style.display="block";
-  setTimeout(()=>alerta.style.display="none",2500);
 }
 
+/* ================= CARREGAR ================= */
 function carregarFicha(){
   const slot=document.getElementById("slot").value;
   const chave="fichaRPG_"+slot;
   const salvo=localStorage.getItem(chave);
 
   if(!salvo){
-    habilidades=[];
-    renderHabilidades();
+    recalcularVidaSanidade();
     return;
   }
 
@@ -488,12 +349,8 @@ function carregarFicha(){
   antecedencia.value=d.antecedencia||"";
   descricao.value=d.descricao||"";
   historia.value=d.historia||"";
-  vida.value=d.vida||100;
-  sanidade.value=d.sanidade||100;
+  nivel.value=d.nivel||1;
   aura.value=d.aura||0;
-
-  imagemBase64=d.imagem||"";
-  previewImg.src=imagemBase64;
 
   for(const s in d.atributos){
     const el=document.getElementById("atr_"+s);
@@ -505,40 +362,9 @@ function carregarFicha(){
     if(el) el.value=d.pericias[p];
   }
 
-  habilidades=d.habilidades||[];
-  renderHabilidades();
-
-  atualizarBarra("vida","vida-bar",100);
-  atualizarBarra("sanidade","sanidade-bar",100);
+  recalcularVidaSanidade();
   recalcularAura();
 }
-
-/* ================= PDF ================= */
-async function gerarPDF(){
-  const { jsPDF }=window.jspdf;
-  const ficha=document.getElementById("ficha");
-  const canvas=await html2canvas(ficha,{scale:2});
-  const img=canvas.toDataURL("image/png");
-
-  const pdf=new jsPDF("p","mm","a4");
-  const w=pdf.internal.pageSize.getWidth()-10;
-  const h=(canvas.height*w)/canvas.width;
-
-  pdf.addImage(img,"PNG",5,5,w,h);
-  pdf.save("ficha_rpg.pdf");
-}
-
-/* ================= IMAGEM ================= */
-document.getElementById("imagemInput").addEventListener("change",e=>{
-  const file=e.target.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    imagemBase64=reader.result;
-    previewImg.src=imagemBase64;
-  };
-  reader.readAsDataURL(file);
-});
 
 /* ================= START ================= */
 criarInterface();
