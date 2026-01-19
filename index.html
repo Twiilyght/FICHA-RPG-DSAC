@@ -89,6 +89,7 @@ input, select, textarea{
   border-radius:10px;
   overflow:hidden;
   margin-top:6px;
+  cursor:pointer;
 }
 
 .status-fill{
@@ -189,21 +190,27 @@ input, select, textarea{
 <div class="status-top"><div>Vida</div><span>❤️</span></div>
 <input id="vida" type="number" readonly>
 <small id="vidaMaxTxt"></small>
-<div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
+<div class="status-bar">
+  <div id="vida-bar" class="status-fill"></div>
+</div>
 </div>
 
 <div class="status-item">
 <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
 <input id="sanidade" type="number" readonly>
 <small id="sanidadeMaxTxt"></small>
-<div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
+<div class="status-bar">
+  <div id="sanidade-bar" class="status-fill sanity"></div>
+</div>
 </div>
 
 <div class="status-item">
 <div class="status-top"><div>Aura ✨</div></div>
 <input id="aura" type="number" value="0" oninput="atualizarAura()">
 <small id="auraMaxTxt">Máx: 0</small>
-<div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
+<div class="status-bar">
+  <div id="aura-bar" class="status-fill aura"></div>
+</div>
 </div>
 
 </div>
@@ -258,7 +265,7 @@ function criarInterface(){
     aBox.innerHTML += `
     <div class="atributo">
       <div>[${a.sigla}] ${a.nome}</div>
-      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade(); recalcularAura()">
+      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade()">
         ${[...Array(11).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
       </select>
       <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
@@ -326,13 +333,15 @@ function rolarPericia(id,sigla){
   limparDepois(resId);
 }
 
-/* ================= VIDA & SANIDADE ================= */
+/* ================= VIDA, SANIDADE & AURA ================= */
 function recalcularVidaSanidade(){
   const nivel = Number(document.getElementById("nivel").value) || 1;
   const con = Number(document.getElementById("atr_CON").value) || 0;
+  const pod = Number(document.getElementById("atr_POD").value) || 0;
 
   const vidaMax = (20 + con * 2) * nivel;
   const sanidadeMax = 25 * nivel;
+  const auraMax = (con + pod) * 3;
 
   vida.value = vidaMax;
   sanidade.value = sanidadeMax;
@@ -340,19 +349,18 @@ function recalcularVidaSanidade(){
   vidaMaxTxt.innerText = "Máx: " + vidaMax;
   sanidadeMaxTxt.innerText = "Máx: " + sanidadeMax;
 
+  aura.setAttribute("max", auraMax);
+  auraMaxTxt.innerText = "Máx: " + auraMax;
+
   atualizarBarra("vida","vida-bar",vidaMax);
   atualizarBarra("sanidade","sanidade-bar",sanidadeMax);
+  atualizarAura();
 }
 
-/* ================= AURA ================= */
-function recalcularAura(){
-  const con=Number(document.getElementById("atr_CON").value)||0;
-  const pod=Number(document.getElementById("atr_POD").value)||0;
-  const auraMax=(con+pod)*3;
-
-  aura.setAttribute("max",auraMax);
-  auraMaxTxt.innerText="Máx: "+auraMax;
-  atualizarAura();
+function atualizarBarra(inputId,barId,max){
+  const v = Number(document.getElementById(inputId).value) || 0;
+  document.getElementById(barId).style.width =
+    max > 0 ? ((v / max) * 100) + "%" : "0%";
 }
 
 function atualizarAura(){
@@ -497,7 +505,6 @@ function carregarFicha(){
   renderHabilidades();
 
   recalcularVidaSanidade();
-  recalcularAura();
 }
 
 /* ================= PDF ================= */
