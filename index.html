@@ -151,6 +151,15 @@ input, select, textarea{
 <!-- BÁSICO -->
 <div class="bloco">
 <h2>Informações Básicas</h2>
+<div class="linha">
+  <label>Imagem do Personagem</label>
+  <input type="file" id="imgUpload" accept="image/*" onchange="carregarImagem(event)">
+</div>
+
+<div class="linha" style="text-align:center;">
+  <img id="previewImg" 
+       style="max-width:200px; max-height:200px; border-radius:12px; border:1px solid #374151; display:none;">
+</div>
 <div class="linha"><label>Nome</label><input id="nome"></div>
 <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
 <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
@@ -436,11 +445,29 @@ function rolarHabilidade(i){
 }
 
 /* ================= SALVAR ================= */
+
+function carregarImagem(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = document.getElementById("previewImg");
+    img.src = e.target.result;
+    img.style.display = "block";
+
+    // salva imagem temporariamente para o slot
+    img.dataset.base64 = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+  
 function salvarFicha(){
   const slot=document.getElementById("slot").value;
   const chave="fichaRPG_"+slot;
 
   const dados={
+    imagem: document.getElementById("previewImg").dataset.base64 || "",
     nome:nome.value,
     idade:idade.value,
     antecedencia:antecedencia.value,
@@ -490,6 +517,15 @@ function carregarFicha(){
   historia.value=d.historia||"";
   nivel.value=d.nivel||1;
   aura.value=d.aura||0;
+  const img = document.getElementById("previewImg");
+if(d.imagem){
+  img.src = d.imagem;
+  img.style.display = "block";
+  img.dataset.base64 = d.imagem;
+}else{
+  img.style.display = "none";
+  img.dataset.base64 = "";
+}
 
   for(const s in d.atributos){
     const el=document.getElementById("atr_"+s);
