@@ -203,7 +203,7 @@ input, select, textarea{
 
 <div class="status-item">
 <div class="status-top"><div>Vida</div><span>❤️</span></div>
-<input id="vida" type="number" readonly>
+<input id="vida" type="number" oninput="atualizarVida()">
 <small id="vidaMaxTxt"></small>
 <div class="status-bar">
   <div id="vida-bar" class="status-fill"></div>
@@ -212,7 +212,7 @@ input, select, textarea{
 
 <div class="status-item">
 <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
-<input id="sanidade" type="number" readonly>
+<input id="sanidade" type="number" oninput="atualizarSanidade()">
 <small id="sanidadeMaxTxt"></small>
 <div class="status-bar">
   <div id="sanidade-bar" class="status-fill sanity"></div>
@@ -348,6 +348,7 @@ function rolarPericia(id,sigla){
   limparDepois(resId);
 }
 
+
 /* ================= VIDA, SANIDADE & AURA ================= */
 function recalcularVidaSanidade(){
   const nivel = Number(document.getElementById("nivel").value) || 1;
@@ -358,8 +359,21 @@ function recalcularVidaSanidade(){
   const sanidadeMax = 25 * nivel;
   const auraMax = (con + pod) * 3;
 
-  vida.value = vidaMax;
-  sanidade.value = sanidadeMax;
+const vidaInput = document.getElementById("vida");
+const sanidadeInput = document.getElementById("sanidade");
+
+// define max
+vidaInput.max = vidaMax;
+sanidadeInput.max = sanidadeMax;
+
+// só seta pro max se estiver vazio ou maior que max
+if(!vidaInput.value || vidaInput.value > vidaMax){
+  vidaInput.value = vidaMax;
+}
+
+if(!sanidadeInput.value || sanidadeInput.value > sanidadeMax){
+  sanidadeInput.value = sanidadeMax;
+}
 
   vidaMaxTxt.innerText = "Máx: " + vidaMax;
   sanidadeMaxTxt.innerText = "Máx: " + sanidadeMax;
@@ -386,6 +400,28 @@ function atualizarAura(){
   aura.value=v;
   document.getElementById("aura-bar").style.width=
     max>0?((v/max)*100)+"%":"0%";
+}
+
+  function atualizarVida(){
+  const max = Number(document.getElementById("vida").max) || 0;
+  let v = Number(document.getElementById("vida").value) || 0;
+
+  if(v > max) v = max;
+  if(v < 0) v = 0;
+
+  document.getElementById("vida").value = v;
+  atualizarBarra("vida","vida-bar",max);
+}
+
+function atualizarSanidade(){
+  const max = Number(document.getElementById("sanidade").max) || 0;
+  let v = Number(document.getElementById("sanidade").value) || 0;
+
+  if(v > max) v = max;
+  if(v < 0) v = 0;
+
+  document.getElementById("sanidade").value = v;
+  atualizarBarra("sanidade","sanidade-bar",max);
 }
 
 /* ================= HABILIDADES ================= */
