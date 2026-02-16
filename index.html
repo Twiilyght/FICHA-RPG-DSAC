@@ -542,6 +542,35 @@ function salvarFicha(){
   setTimeout(()=>alerta.style.display="none",2500);
 }
 
+function salvarFichaManual(chave){
+
+  const dados={
+    imagem: document.getElementById("previewImg").dataset.base64 || "",
+    nome:document.getElementById("nome").value,
+    idade:document.getElementById("idade").value,
+    antecedencia:document.getElementById("antecedencia").value,
+    descricao:document.getElementById("descricao").value,
+    historia:document.getElementById("historia").value,
+    nivel:document.getElementById("nivel").value,
+    vida:document.getElementById("vida").value,
+    sanidade:document.getElementById("sanidade").value,
+    aura:document.getElementById("aura").value,
+    habilidades:habilidades,
+    atributos:{},
+    pericias:{}
+  };
+
+  atributos.forEach(a=>{
+    dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
+  });
+
+  pericias.forEach((p,i)=>{
+    dados.pericias["per_"+i]=document.getElementById("per_"+i).value;
+  });
+
+  localStorage.setItem(chave,JSON.stringify(dados));
+}
+  
 function limparFicha(){
   document.querySelectorAll("input, textarea").forEach(el=>{
     if(el.type !== "file"){
@@ -638,9 +667,19 @@ async function gerarPDF(){
   pdf.save("ficha_rpg.pdf");
 }
 
-document.getElementById("slot").addEventListener("change", ()=>{
-  salvarFicha();   // salva o atual
-  carregarFicha(); // carrega o novo
+let slotAtual = document.getElementById("slot").value;
+
+document.getElementById("slot").addEventListener("change", function(){
+
+  // salva no slot antigo
+  const chaveAntiga = "fichaRPG_" + slotAtual;
+  salvarFichaManual(chaveAntiga);
+
+  // atualiza slot atual
+  slotAtual = this.value;
+
+  // carrega o novo
+  carregarFicha();
 });
 
   
