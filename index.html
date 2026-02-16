@@ -139,7 +139,7 @@ input, select, textarea{
 <h2>Seleção de Ficha</h2>
 <div class="linha">
 <label>Escolha o slot</label>
-<select id="slot" onchange="carregarFicha()">
+<select id="slot">
 <option value="1">Slot 1</option>
 <option value="2">Slot 2</option>
 <option value="3">Slot 3</option>
@@ -184,6 +184,12 @@ input, select, textarea{
 <option value="2">2</option>
 <option value="3">3</option>
 <option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
 </select>
 </div>
 
@@ -281,7 +287,7 @@ function criarInterface(){
     <div class="atributo">
       <div>[${a.sigla}] ${a.nome}</div>
       <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade()">
-        ${[...Array(11).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
+        ${[...Array(21).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
       </select>
       <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
       <span id="resAtr_${a.sigla}" class="resultado"></span>
@@ -296,11 +302,9 @@ function criarInterface(){
     pBox.innerHTML += `
     <div class="pericia">
       <div>[${p[0]}] ${p[1]}</div>
-      <select id="${id}">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-      </select>
+<select id="${id}">
+  ${[...Array(10).keys()].map(v=>`<option value="${v+1}">${v+1}</option>`).join("")}
+</select>
       <span class="dice" onclick="rolarPericia('${id}','${p[0]}')">🎲</span>
       <span id="res_${id}" class="resultado"></span>
     </div>`;
@@ -326,25 +330,24 @@ function rolarAtributo(sigla){
 }
 
 function rolarPericia(id,sigla){
-  const per=Number(document.getElementById(id).value);
-  const atr=Number(document.getElementById("atr_"+sigla).value);
-  const bonus=atr;
+  const qtd = Number(document.getElementById(id).value);
+  const atr = Number(document.getElementById("atr_"+sigla).value);
+  const bonus = atr;
 
-  const d1=d20(), d2=d20(), d3=d20();
-  let texto;
+  let rolls = [];
 
-  if(per===1){
-    texto=`1d20 (${d1}) + ${bonus} = ${d1+bonus}`;
-  }else if(per===2){
-    const maior=Math.max(d1,d2);
-    texto=`2d20 (${d1} | ${d2}) → ${maior} + ${bonus} = ${maior+bonus}`;
-  }else{
-    const maior=Math.max(d1,d2,d3);
-    texto=`3d20 (${d1} | ${d2} | ${d3}) → ${maior} + ${bonus} = ${maior+bonus}`;
+  for(let i=0;i<qtd;i++){
+    rolls.push(d20());
   }
 
-  const resId="res_"+id;
-  document.getElementById(resId).innerText=texto;
+  const maior = Math.max(...rolls);
+  const total = maior + bonus;
+
+  const resId = "res_"+id;
+
+  document.getElementById(resId).innerText =
+    `${qtd}d20 (${rolls.join(" | ")}) → ${maior} + ${bonus} = ${total}`;
+
   limparDepois(resId);
 }
 
@@ -539,16 +542,51 @@ function salvarFicha(){
   setTimeout(()=>alerta.style.display="none",2500);
 }
 
+function limparFicha(){
+  document.querySelectorAll("input, textarea").forEach(el=>{
+    if(el.type !== "file"){
+      el.value = "";
+    }
+  });
+
+  // resetar nível
+  document.getElementById("nivel").value = 1;
+
+  // reset atributos
+  atributos.forEach(a=>{
+    const el = document.getElementById("atr_"+a.sigla);
+    if(el) el.value = 0;
+  });
+
+  // reset perícias
+  pericias.forEach((p,i)=>{
+    const el = document.getElementById("per_"+i);
+    if(el) el.value = 1;
+  });
+
+  // reset habilidades
+  habilidades = [];
+  renderHabilidades();
+
+  // reset imagem
+  const img = document.getElementById("previewImg");
+  img.style.display="none";
+  img.dataset.base64="";
+  img.src="";
+
+  recalcularVidaSanidade();
+}
+  
 /* ================= CARREGAR ================= */
 function carregarFicha(){
   const slot=document.getElementById("slot").value;
   const chave="fichaRPG_"+slot;
   const salvo=localStorage.getItem(chave);
 
-  if(!salvo){
-    recalcularVidaSanidade();
-    return;
-  }
+if(!salvo){
+  limparFicha();
+  return;
+}
 
   const d=JSON.parse(salvo);
 
@@ -600,6 +638,12 @@ async function gerarPDF(){
   pdf.save("ficha_rpg.pdf");
 }
 
+document.getElementById("slot").addEventListener("change", ()=>{
+  salvarFicha();   // salva o atual
+  carregarFicha(); // carrega o novo
+});
+
+  
 /* ================= START ================= */
 criarInterface();
 carregarFicha();
