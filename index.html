@@ -340,7 +340,8 @@ function rolarAtributo(sigla){
 }
 
 function rolarPericia(id){
-  const nivel = parseInt(document.getElementById(id).value);
+
+  const qtdDados = parseInt(document.getElementById(id).value);
   const sigla = document.getElementById("atrKey_"+id).value;
   const bonus = parseInt(document.getElementById("bonus_"+id).value) || 0;
 
@@ -348,14 +349,21 @@ function rolarPericia(id){
     document.getElementById("atr_"+sigla).value
   ) || 0;
 
-  const dado = d20();
+  let resultados = [];
+  let maior = 0;
 
-  const total = dado + atributoValor + nivel + bonus;
+  for(let i = 0; i < qtdDados; i++){
+    const roll = d20();
+    resultados.push(roll);
+    if(roll > maior) maior = roll;
+  }
+
+  const total = maior + atributoValor + bonus;
 
   const resId = "res_" + id;
 
   document.getElementById(resId).innerText =
-    `🎲 ${dado} + ${atributoValor} + ${nivel} + ${bonus} = ${total}`;
+    `🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
 
   limparDepois(resId);
 }
