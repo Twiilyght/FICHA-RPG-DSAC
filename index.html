@@ -178,7 +178,7 @@ input, select, textarea{
 <h2>Atributos</h2>
 
 <div class="linha">
-<label>Nível do Personagem (1 a 4)</label>
+<label>Nível do Personagem</label>
 <select id="nivel" onchange="recalcularVidaSanidade()">
 <option value="1">1</option>
 <option value="2">2</option>
@@ -294,21 +294,31 @@ function criarInterface(){
     </div>`;
   });
 
-  const pBox = document.getElementById("pericias");
-  pBox.innerHTML = "";
+const pBox = document.getElementById("pericias");
+pBox.innerHTML = "";
+  
+pericias.forEach((p,i)=>{
+  const id = "per_"+i;
 
-  pericias.forEach((p,i)=>{
-    const id = "per_"+i;
-    pBox.innerHTML += `
-    <div class="pericia">
-      <div>[${p[0]}] ${p[1]}</div>
-<select id="${id}">
-  ${[...Array(10).keys()].map(v=>`<option value="${v+1}">${v+1}</option>`).join("")}
-</select>
-      <span class="dice" onclick="rolarPericia('${id}','${p[0]}')">🎲</span>
-      <span id="res_${id}" class="resultado"></span>
-    </div>`;
-  });
+  pBox.innerHTML += `
+  <div class="pericia">
+    <div>
+      <select id="atrKey_${id}">
+        ${atributos.map(a=>`<option value="${a.sigla}" ${a.sigla===p[0]?"selected":""}>[${a.sigla}]</option>`).join("")}
+      </select>
+      ${p[1]}
+    </div>
+
+    <select id="${id}">
+      ${[...Array(10).keys()].map(v=>`<option value="${v+1}">${v+1}</option>`).join("")}
+    </select>
+
+    <input type="number" id="bonus_${id}" value="0" style="width:60px">
+
+    <span class="dice" onclick="rolarPericia('${id}')">🎲</span>
+    <span id="res_${id}" class="resultado"></span>
+  </div>`;
+});
 }
 
 /* ================= ROLAGENS ================= */
@@ -329,24 +339,23 @@ function rolarAtributo(sigla){
   limparDepois(resId);
 }
 
-function rolarPericia(id,sigla){
-  const qtd = Number(document.getElementById(id).value);
-  const atr = Number(document.getElementById("atr_"+sigla).value);
-  const bonus = atr;
+function rolarPericia(id){
+  const nivel = parseInt(document.getElementById(id).value);
+  const sigla = document.getElementById("atrKey_"+id).value;
+  const bonus = parseInt(document.getElementById("bonus_"+id).value) || 0;
 
-  let rolls = [];
+  const atributoValor = parseInt(
+    document.getElementById("atr_"+sigla).value
+  ) || 0;
 
-  for(let i=0;i<qtd;i++){
-    rolls.push(d20());
-  }
+  const dado = d20();
 
-  const maior = Math.max(...rolls);
-  const total = maior + bonus;
+  const total = dado + atributoValor + nivel + bonus;
 
-  const resId = "res_"+id;
+  const resId = "res_" + id;
 
   document.getElementById(resId).innerText =
-    `${qtd}d20 (${rolls.join(" | ")}) → ${maior} + ${bonus} = ${total}`;
+    `🎲 ${dado} + ${atributoValor} + ${nivel} + ${bonus} = ${total}`;
 
   limparDepois(resId);
 }
@@ -355,34 +364,42 @@ function rolarPericia(id,sigla){
 /* ================= VIDA, SANIDADE & AURA ================= */
 function recalcularVidaSanidade(){
   const nivel = Number(document.getElementById("nivel").value) || 1;
+
   const con = Number(document.getElementById("atr_CON").value) || 0;
   const pod = Number(document.getElementById("atr_POD").value) || 0;
+  const intt = Number(document.getElementById("atr_INT").value) || 0;
 
   const vidaMax = (20 + con * 2) * nivel;
-  const sanidadeMax = 25 * nivel;
-  const auraMax = (con + pod) * 3;
 
-const vidaInput = document.getElementById("vida");
-const sanidadeInput = document.getElementById("sanidade");
+  const sanidadeMax = (20 + intt * 2) * nivel;
 
-// define max
-vidaInput.max = vidaMax;
-sanidadeInput.max = sanidadeMax;
+  const auraBase = (con + pod) * 3;
+  const auraNivel = (con + pod) * (nivel - 1);
+  const auraMax = auraBase + auraNivel;
 
-// só seta pro max se estiver vazio ou maior que max
-if(!vidaInput.value || vidaInput.value > vidaMax){
-  vidaInput.value = vidaMax;
-}
+  const vidaInput = document.getElementById("vida");
+  const sanidadeInput = document.getElementById("sanidade");
+  const auraInput = document.getElementById("aura");
 
-if(!sanidadeInput.value || sanidadeInput.value > sanidadeMax){
-  sanidadeInput.value = sanidadeMax;
-}
+  vidaInput.max = vidaMax;
+  sanidadeInput.max = sanidadeMax;
+  auraInput.max = auraMax;
 
-  vidaMaxTxt.innerText = "Máx: " + vidaMax;
-  sanidadeMaxTxt.innerText = "Máx: " + sanidadeMax;
+  if(!vidaInput.value || vidaInput.value > vidaMax){
+    vidaInput.value = vidaMax;
+  }
 
-  aura.setAttribute("max", auraMax);
-  auraMaxTxt.innerText = "Máx: " + auraMax;
+  if(!sanidadeInput.value || sanidadeInput.value > sanidadeMax){
+    sanidadeInput.value = sanidadeMax;
+  }
+
+  if(!auraInput.value || auraInput.value > auraMax){
+    auraInput.value = auraMax;
+  }
+
+  document.getElementById("vidaMaxTxt").innerText = "Máx: " + vidaMax;
+  document.getElementById("sanidadeMaxTxt").innerText = "Máx: " + sanidadeMax;
+  document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
 
   atualizarBarra("vida","vida-bar",vidaMax);
   atualizarBarra("sanidade","sanidade-bar",sanidadeMax);
@@ -396,13 +413,18 @@ function atualizarBarra(inputId,barId,max){
 }
 
 function atualizarAura(){
-  const max=Number(aura.getAttribute("max"))||0;
-  let v=Number(aura.value)||0;
-  if(v>max) v=max;
-  if(v<0) v=0;
-  aura.value=v;
-  document.getElementById("aura-bar").style.width=
-    max>0?((v/max)*100)+"%":"0%";
+  const auraEl = document.getElementById("aura");
+  const max = Number(auraEl.getAttribute("max")) || 0;
+
+  let v = Number(auraEl.value) || 0;
+
+  if(v > max) v = max;
+  if(v < 0) v = 0;
+
+  auraEl.value = v;
+
+  document.getElementById("aura-bar").style.width =
+    max > 0 ? ((v / max) * 100) + "%" : "0%";
 }
 
   function atualizarVida(){
@@ -625,7 +647,9 @@ if(!salvo){
   descricao.value=d.descricao||"";
   historia.value=d.historia||"";
   nivel.value=d.nivel||1;
-  aura.value=d.aura||0;
+  vida.value = d.vida || 0;
+  sanidade.value = d.sanidade || 0;
+  aura.value = d.aura || 0;
   const img = document.getElementById("previewImg");
 if(d.imagem){
   img.src = d.imagem;
