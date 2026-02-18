@@ -525,13 +525,17 @@ function carregarImagem(event){
   const file = event.target.files[0];
   if(!file) return;
 
+  // 🔴 Limite de 1MB
+  if(file.size > 1024 * 1024){
+    alert("Imagem muito grande! Use uma imagem menor que 1MB.");
+    return;
+  }
+
   const reader = new FileReader();
   reader.onload = function(e){
     const img = document.getElementById("previewImg");
     img.src = e.target.result;
     img.style.display = "block";
-
-    // salva imagem temporariamente para o slot
     img.dataset.base64 = e.target.result;
   };
   reader.readAsDataURL(file);
