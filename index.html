@@ -118,6 +118,13 @@ input, select, textarea{
 }
 
 .salvar-btn{
+  .status-sub{
+  background:#0f172a;
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid #374151;
+  font-size:14px;
+}
   margin-top:10px;
   padding:10px 20px;
   border-radius:10px;
@@ -234,20 +241,33 @@ input, select, textarea{
 </div>
 </div>
 
-</div>
+<div class="status-item">
+<div class="status-top"><div>Bloqueio 🛡</div></div>
+
+<div style="display:flex; gap:10px; margin-bottom:6px;">
+  <div class="status-sub">
+    🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
+  </div>
+  <div class="status-sub">
+    🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span>
+  </div>
 </div>
 
-  <div class="status-item">
+<div class="linha">
+  <label>RD Total</label>
+  <input type="number" id="rdTotal" value="0" oninput="atualizarBloqueio()">
+</div>
+</div>
   <div class="status-top"><div>Bloqueio 🛡</div></div>
 
-  <div style="display:flex; gap:10px; margin-bottom:6px;">
-    <div title="Bloqueio menor (falhou no teste)">
-      🔹 Menor: <span id="bloqueioMenor">0</span>
-    </div>
-    <div title="Bloqueio maior (passou no teste)">
-      🔸 Maior: <span id="bloqueioMaior">0</span>
-    </div>
+<div style="display:flex; gap:10px; margin-bottom:6px;">
+  <div class="status-sub">
+    🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
   </div>
+  <div class="status-sub">
+    🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span>
+  </div>
+</div>
 
   <div class="linha">
     <label>RD Total (equipamentos)</label>
@@ -384,13 +404,13 @@ function rolarPericia(id){
 
   document.getElementById(resId).innerText =
     `🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
-
+  const indice = parseInt(id.split("_")[1]);
+  if(pericias[indice][1] === "Fortitude"){
+    ultimoTesteFortitude = total;
+    atualizarBloqueio();
+  }
+  
   limparDepois(resId);
-}
-// Se for Fortitude, salva o último resultado
-if(pericias[parseInt(id.split("_")[1])][1] === "Fortitude"){
-  ultimoTesteFortitude = total;
-  atualizarBloqueio();
 }
 
 /* ================= VIDA, SANIDADE & AURA ================= */
@@ -487,7 +507,7 @@ function atualizarBloqueio(){
   const rd = parseInt(document.getElementById("rdTotal").value) || 0;
 
   // Bloqueio menor = CON + RD
-  const bloqueioMenor = con + rd;
+  const bloqueioMenor = (2 * con) + rd;
 
   // Bloqueio maior = último teste Fortitude + (2 × CON) + RD
   const bloqueioMaior = ultimoTesteFortitude + (2 * con) + rd;
