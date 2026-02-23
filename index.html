@@ -116,8 +116,6 @@ input, select, textarea{
   color:#d1fae5;
   display:none;
 }
-
-.salvar-btn{
   .status-sub{
   background:#0f172a;
   padding:6px 10px;
@@ -125,6 +123,8 @@ input, select, textarea{
   border:1px solid #374151;
   font-size:14px;
 }
+
+.salvar-btn{
   margin-top:10px;
   padding:10px 20px;
   border-radius:10px;
@@ -258,22 +258,6 @@ input, select, textarea{
   <input type="number" id="rdTotal" value="0" oninput="atualizarBloqueio()">
 </div>
 </div>
-  <div class="status-top"><div>Bloqueio 🛡</div></div>
-
-<div style="display:flex; gap:10px; margin-bottom:6px;">
-  <div class="status-sub">
-    🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
-  </div>
-  <div class="status-sub">
-    🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span>
-  </div>
-</div>
-
-  <div class="linha">
-    <label>RD Total (equipamentos)</label>
-    <input type="number" id="rdTotal" value="0" oninput="atualizarBloqueio()">
-  </div>
-
 </div>
 
 <!-- HABILIDADES -->
@@ -745,6 +729,7 @@ if(d.imagem){
   renderHabilidades();
 
   recalcularVidaSanidade();
+  atualizarBloqueio();
 }
 
 /* ================= PDF ================= */
