@@ -14,6 +14,28 @@ body{
   font-family: Arial, sans-serif;
 }
 
+.menu{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin:20px auto;
+}
+
+.menu button{
+  background:#4f46e5;
+  border:none;
+  color:white;
+  padding:10px 16px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.menu button:hover{
+  background:#6366f1;
+}
+  
 .bloco{
   background:#1f2937;
   padding:18px;
@@ -23,6 +45,14 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
 
+.aba{
+  display:none;
+}
+
+.aba.ativa{
+  display:block;
+}
+  
 h2{
   margin-top:0;
   color:#a5b4fc;
@@ -141,6 +171,17 @@ input, select, textarea{
 
 <div id="ficha">
 
+<div class="menu">
+
+<button onclick="mostrarAba('basico')">Básico</button>
+<button onclick="mostrarAba('atributos')">Atributos</button>
+<button onclick="mostrarAba('pericias')">Perícias</button>
+<button onclick="mostrarAba('status')">Status</button>
+<button onclick="mostrarAba('habilidades')">Habilidades</button>
+<button onclick="mostrarAba('salvar')">Salvar</button>
+
+</div>
+
 <!-- SLOT -->
 <div class="bloco">
 <h2>Seleção de Ficha</h2>
@@ -162,7 +203,7 @@ input, select, textarea{
 </div>
 
 <!-- BÁSICO -->
-<div class="bloco">
+<div class="bloco aba" id="basico">
 <h2>Informações Básicas</h2>
 <div class="linha">
   <label>Imagem do Personagem</label>
@@ -181,7 +222,7 @@ input, select, textarea{
 </div>
 
 <!-- ATRIBUTOS -->
-<div class="bloco">
+<div class="bloco aba" id="atributos">
 <h2>Atributos</h2>
 
 <div class="linha">
@@ -204,13 +245,13 @@ input, select, textarea{
 </div>
 
 <!-- PERÍCIAS -->
-<div class="bloco">
+<div class="bloco aba" id="pericias">
 <h2>Perícias</h2>
 <div id="pericias"></div>
 </div>
 
 <!-- STATUS -->
-<div class="bloco">
+<div class="bloco aba" id="status">
 <h2>Status</h2>
 <div class="status-card">
 
@@ -261,7 +302,7 @@ input, select, textarea{
 </div>
 
 <!-- HABILIDADES -->
-<div class="bloco">
+<div class="bloco aba" id="habilidades">
 <h2>Habilidades</h2>
 <div id="habilidades"></div>
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
@@ -302,6 +343,17 @@ let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* ================= INTERFACE ================= */
+
+function mostrarAba(id){
+
+  document.querySelectorAll(".aba").forEach(sec=>{
+    sec.classList.remove("ativa");
+  });
+
+  document.getElementById(id).classList.add("ativa");
+
+}
+  
 function criarInterface(){
   const aBox = document.getElementById("atributos");
   aBox.innerHTML = "";
@@ -766,6 +818,8 @@ document.getElementById("slot").addEventListener("change", function(){
 /* ================= START ================= */
 criarInterface();
 carregarFicha();
+
+mostrarAba("basico");
 </script>
 
 </body>
