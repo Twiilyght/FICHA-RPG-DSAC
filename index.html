@@ -304,12 +304,12 @@ input, select, textarea{
 <!-- HABILIDADES -->
 <div class="bloco aba" id="habilidades">
 <h2>Habilidades</h2>
-<div id="habilidades"></div>
+<div id="listaHabilidades"></div>
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
 </div>
 
 <!-- SALVAR / PDF -->
-<div class="bloco">
+<div class="bloco aba" id="salvar">
 <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
 <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
 <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
@@ -564,7 +564,7 @@ function removerHabilidade(i){
 }
 
 function renderHabilidades(){
-  const box=document.getElementById("habilidades");
+  const box=document.getElementById("listaHabilidades");
   box.innerHTML="";
 
   habilidades.forEach((h,i)=>{
