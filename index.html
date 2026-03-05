@@ -74,12 +74,20 @@ input, select, textarea{
   color:#e5e7eb;
 }
 
-.atributo, .pericia, .habilidade{
+.atributo, .pericia{
   display:grid;
   grid-template-columns: 1fr 90px 40px 160px;
   align-items:center;
   gap:10px;
   margin:6px 0;
+}
+
+.habilidade{
+  grid-template-columns: 1fr 120px 40px 160px 40px;
+}
+
+.habilidade textarea{
+  grid-column: 1 / -1;
 }
 
 .dice{
@@ -187,7 +195,7 @@ input, select, textarea{
 <h2>Seleção de Ficha</h2>
 <div class="linha">
 <label>Escolha o slot</label>
-<select id="slot">
+<select id="slot" onchange="carregarFicha()">
 <option value="1">Slot 1</option>
 <option value="2">Slot 2</option>
 <option value="3">Slot 3</option>
@@ -675,19 +683,19 @@ function salvarFichaManual(chave){
 
   const dados={
     imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome:document.getElementById("nome").value,
-    idade:document.getElementById("idade").value,
-    antecedencia:document.getElementById("antecedencia").value,
-    descricao:document.getElementById("descricao").value,
-    historia:document.getElementById("historia").value,
-    nivel:document.getElementById("nivel").value,
-    vida:document.getElementById("vida").value,
-    sanidade:document.getElementById("sanidade").value,
-    aura:document.getElementById("aura").value,
+    nome: document.getElementById("nome").value,
+    idade: document.getElementById("idade").value,
+    antecedencia: document.getElementById("antecedencia").value,
+    descricao: document.getElementById("descricao").value,
+    historia: document.getElementById("historia").value,
+    nivel: document.getElementById("nivel").value,
+    vida: document.getElementById("vida").value,
+    sanidade: document.getElementById("sanidade").value,
+    aura: document.getElementById("aura").value,
     habilidades:habilidades,
     atributos:{},
     pericias:{}
-  };
+};
 
   atributos.forEach(a=>{
     dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
