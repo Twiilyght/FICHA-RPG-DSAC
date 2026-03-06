@@ -531,6 +531,46 @@ function rolarPericia(id){
   limparDepois(resId);
 }
 
+function rolarDado(formula){
+
+  const partes = formula.toLowerCase().split("d");
+
+  const qtd = parseInt(partes[0]) || 1;
+
+  let lados = 0;
+  let bonus = 0;
+
+  if(partes[1].includes("+")){
+    const p = partes[1].split("+");
+    lados = parseInt(p[0]);
+    bonus = parseInt(p[1]);
+  }
+  else if(partes[1].includes("-")){
+    const p = partes[1].split("-");
+    lados = parseInt(p[0]);
+    bonus = -parseInt(p[1]);
+  }
+  else{
+    lados = parseInt(partes[1]);
+  }
+
+  let resultados = [];
+  let total = 0;
+
+  for(let i=0;i<qtd;i++){
+    const r = Math.floor(Math.random()*lados)+1;
+    resultados.push(r);
+    total += r;
+  }
+
+  total += bonus;
+
+  return {
+    total: total,
+    detalhe: `${qtd}d${lados} [${resultados.join(", ")}] ${bonus>=0?"+":""}${bonus}`
+  };
+}
+  
 function rolarHabilidade(i){
 
   const formula=habilidades[i].dado;
@@ -722,48 +762,38 @@ function carregarImagem(event){
   
 function salvarFicha(){
 
-  const ficha={
-    habilidades,
-    atributosValor,
-    pericias,
-    vida,
-    sanidade,
-    aura
-  };
+  const chave = "fichaRPG_" + slotAtual;
 
-  localStorage.setItem("ficha_"+slotAtual,JSON.stringify(ficha));
-
-  alert("Ficha salva!");
-}
-
-  const dados={
+  const dados = {
     imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome:nome.value,
-    idade:idade.value,
-    antecedencia:antecedencia.value,
-    descricao:descricao.value,
-    historia:historia.value,
-    nivel:nivel.value,
-    vida:vida.value,
-    sanidade:sanidade.value,
-    aura:aura.value,
-    habilidades:habilidades,
-    atributos:{},
-    pericias:{}
+    nome: document.getElementById("nome").value,
+    idade: document.getElementById("idade").value,
+    antecedencia: document.getElementById("antecedencia").value,
+    descricao: document.getElementById("descricao").value,
+    historia: document.getElementById("historia").value,
+    nivel: document.getElementById("nivel").value,
+    vida: document.getElementById("vida").value,
+    sanidade: document.getElementById("sanidade").value,
+    aura: document.getElementById("aura").value,
+    habilidades: habilidades,
+    atributos: {},
+    pericias: {}
   };
 
   atributos.forEach(a=>{
-    dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
+    dados.atributos[a.sigla] =
+      document.getElementById("atr_"+a.sigla).value;
   });
 
   pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i]=document.getElementById("per_"+i).value;
+    dados.pericias["per_"+i] =
+      document.getElementById("per_"+i).value;
   });
 
-  localStorage.setItem(chave,JSON.stringify(dados));
+  localStorage.setItem(chave, JSON.stringify(dados));
 
-  const alerta=document.getElementById("alerta");
-  alerta.style.display="block";
+  const alerta = document.getElementById("alerta");
+  alerta.style.display = "block";
   setTimeout(()=>alerta.style.display="none",2500);
 }
 
@@ -915,6 +945,7 @@ document.getElementById("slot").addEventListener("change", function(){
 criarInterface();
 carregarFicha();
 renderHabilidades();
+recalcularVidaSanidade();
 mostrarAba("basico");
 </script>
 
