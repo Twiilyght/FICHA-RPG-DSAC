@@ -9,24 +9,33 @@
 
 <style>
 body{
-  background:#0f172a;
+  background:#0b0b0c;
   color:#e5e7eb;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns: 300px 1fr 320px;
+  gap:20px;
+  max-width:1400px;
+  margin:auto;
 }
 
 .bloco{
-  background:#1f2937;
-  padding:18px;
-  border-radius:14px;
-  margin:18px auto;
-  max-width:900px;
-  box-shadow:0 10px 25px rgba(0,0,0,.3);
+  background:#111114;
+  border:1px solid #1f1f23;
+  padding:16px;
+  border-radius:10px;
+  box-shadow:none;
 }
 
 h2{
-  margin-top:0;
-  color:#a5b4fc;
-  border-bottom:1px solid #374151;
+  font-size:14px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#a78bfa;
+  border-bottom:1px solid #2a2a2f;
   padding-bottom:6px;
 }
 
@@ -54,8 +63,14 @@ input, select, textarea{
 
 .dice{
   cursor:pointer;
-  font-size:22px;
-  text-align:center;
+  font-size:16px;
+  opacity:.7;
+  transition:.2s;
+}
+
+.dice:hover{
+  opacity:1;
+  transform:scale(1.1);
 }
 
 .resultado{
@@ -175,8 +190,8 @@ input, select, textarea{
 </div>
 <div class="linha"><label>Nome</label><input id="nome"></div>
 <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-<div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
-<div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
+<div class="linha"><label>Raça</label><textarea id="antecedencia"></textarea></div>
+<div class="linha"><label>Personalidade</label><textarea id="descricao"></textarea></div>
 <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
 </div>
 
