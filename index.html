@@ -398,7 +398,7 @@ input:focus,select:focus,textarea:focus{
 
 <script>
 
-let slotAtual = "1";
+let slotAtual = document.getElementById("slot").value;
   
 /* ================= DADOS ================= */
 const atributos = [
@@ -703,14 +703,15 @@ function toggleDesc(i){
 
 function renderHabilidades(){
 
-  const box=document.getElementById("listaHabilidades");
-  box.innerHTML="";
+  const box = document.getElementById("listaHabilidades");
+  box.innerHTML = "";
 
   habilidades.forEach((h,i)=>{
 
-    box.innerHTML+=`
-    <div class="habilidade">
+    const div = document.createElement("div");
+    div.className = "habilidade";
 
+    div.innerHTML = `
       <div class="hab-top">
 
         <input placeholder="Nome" value="${h.nome}"
@@ -727,14 +728,15 @@ function renderHabilidades(){
 
       <span id="resHab_${i}" class="resultado"></span>
 
+      <button onclick="toggleDesc(${i})">Descrição</button>
+
       <div class="hab-desc" id="desc_${i}">
         <textarea placeholder="Descrição"
         oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
       </div>
+    `;
 
-      <button onclick="toggleDesc(${i})">Descrição</button>
-
-    </div>`;
+    box.appendChild(div);
   });
 }
 
@@ -761,7 +763,8 @@ function carregarImagem(event){
 }
   
 function salvarFicha(){
-
+  
+  const slotAtual = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slotAtual;
 
   const dados = {
@@ -798,6 +801,8 @@ function salvarFicha(){
 }
 
 function salvarFichaManual(chave){
+
+  if(!chave) return;
 
   const dados={
     imagem: document.getElementById("previewImg").dataset.base64 || "",
