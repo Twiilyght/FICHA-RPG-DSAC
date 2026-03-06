@@ -14,28 +14,6 @@ body{
   font-family: Arial, sans-serif;
 }
 
-.menu{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
-  margin:20px auto;
-}
-
-.menu button{
-  background:#4f46e5;
-  border:none;
-  color:white;
-  padding:10px 16px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:bold;
-}
-
-.menu button:hover{
-  background:#6366f1;
-}
-  
 .bloco{
   background:#1f2937;
   padding:18px;
@@ -45,19 +23,6 @@ body{
   box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
 
-.aba{
-  opacity:0;
-  transform:translateY(10px);
-  transition:0.3s;
-  display:none;
-}
-
-.aba.ativa{
-  display:block;
-  opacity:1;
-  transform:translateY(0);
-}
-  
 h2{
   margin-top:0;
   color:#a5b4fc;
@@ -79,32 +44,12 @@ input, select, textarea{
   color:#e5e7eb;
 }
 
-.atributo{
+.atributo, .pericia, .habilidade{
   display:grid;
   grid-template-columns: 1fr 90px 40px 160px;
   align-items:center;
   gap:10px;
   margin:6px 0;
-}
-
-.pericia{
-  display:grid;
-  grid-template-columns: 1fr 80px 70px 40px 160px;
-  align-items:center;
-  gap:10px;
-  margin:6px 0;
-}
-
-.habilidade{
-  display:grid;
-  grid-template-columns: 1fr 120px 40px 160px 40px;
-  align-items:center;
-  gap:10px;
-  margin:10px 0;
-}
-
-.habilidade textarea{
-  grid-column: 1 / -1;
 }
 
 .dice{
@@ -189,60 +134,6 @@ input, select, textarea{
   font-weight:bold;
   cursor:pointer;
 }
-
-.bloco{
-  background:linear-gradient(145deg,#1f2937,#111827);
-  border:1px solid #374151;
-}
-
-.menu button{
-  transition:0.2s;
-  box-shadow:0 4px 10px rgba(0,0,0,.3);
-}
-
-.menu button:hover{
-  transform:translateY(-2px);
-  box-shadow:0 6px 18px rgba(0,0,0,.5);
-}
-
-input,select,textarea{
-  transition:0.2s;
-}
-
-input:focus,select:focus,textarea:focus{
-  border-color:#6366f1;
-  box-shadow:0 0 0 1px #6366f1;
-}
-
-.habilidade{
-  background:#020617;
-  border:1px solid #374151;
-  border-radius:12px;
-  padding:12px;
-  margin:10px 0;
-  transition:0.2s;
-}
-
-.habilidade:hover{
-  border-color:#6366f1;
-}
-
-.hab-top{
-  display:grid;
-  grid-template-columns:1fr 120px 40px 40px;
-  gap:10px;
-  align-items:center;
-}
-
-.hab-desc{
-  margin-top:10px;
-  display:none;
-}
-
-.hab-desc.ativa{
-  display:block;
-}
-  
 </style>
 </head>
 
@@ -250,23 +141,12 @@ input:focus,select:focus,textarea:focus{
 
 <div id="ficha">
 
-<div class="menu">
-
-<button onclick="mostrarAba('basico')">Básico</button>
-<button onclick="mostrarAba('atributos')">Atributos</button>
-<button onclick="mostrarAba('pericias')">Perícias</button>
-<button onclick="mostrarAba('status')">Status</button>
-<button onclick="mostrarAba('habilidades')">Habilidades</button>
-<button onclick="mostrarAba('salvar')">Salvar</button>
-
-</div>
-
 <!-- SLOT -->
 <div class="bloco">
 <h2>Seleção de Ficha</h2>
 <div class="linha">
 <label>Escolha o slot</label>
-<select id="slot" onchange="carregarFicha()">
+<select id="slot">
 <option value="1">Slot 1</option>
 <option value="2">Slot 2</option>
 <option value="3">Slot 3</option>
@@ -282,7 +162,7 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 <!-- BÁSICO -->
-<div class="bloco aba" id="basico">
+<div class="bloco">
 <h2>Informações Básicas</h2>
 <div class="linha">
   <label>Imagem do Personagem</label>
@@ -301,7 +181,7 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 <!-- ATRIBUTOS -->
-<div class="bloco aba" id="atributos">
+<div class="bloco">
 <h2>Atributos</h2>
 
 <div class="linha">
@@ -324,13 +204,13 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 <!-- PERÍCIAS -->
-<div class="bloco aba" id="pericias">
+<div class="bloco">
 <h2>Perícias</h2>
 <div id="pericias"></div>
 </div>
 
 <!-- STATUS -->
-<div class="bloco aba" id="status">
+<div class="bloco">
 <h2>Status</h2>
 <div class="status-card">
 
@@ -381,14 +261,14 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 <!-- HABILIDADES -->
-<div class="bloco aba" id="habilidades">
+<div class="bloco">
 <h2>Habilidades</h2>
-<div id="listaHabilidades"></div>
+<div id="habilidades"></div>
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
 </div>
 
 <!-- SALVAR / PDF -->
-<div class="bloco aba" id="salvar">
+<div class="bloco">
 <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
 <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
 <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
@@ -397,9 +277,6 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 <script>
-
-let slotAtual = document.getElementById("slot").value;
-  
 /* ================= DADOS ================= */
 const atributos = [
 {sigla:"FOR", nome:"Força"},
@@ -425,17 +302,6 @@ let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* ================= INTERFACE ================= */
-
-function mostrarAba(id){
-
-  document.querySelectorAll(".aba").forEach(sec=>{
-    sec.classList.remove("ativa");
-  });
-
-  document.getElementById(id).classList.add("ativa");
-
-}
-  
 function criarInterface(){
   const aBox = document.getElementById("atributos");
   aBox.innerHTML = "";
@@ -529,56 +395,6 @@ function rolarPericia(id){
   }
   
   limparDepois(resId);
-}
-
-function rolarDado(formula){
-
-  const partes = formula.toLowerCase().split("d");
-
-  const qtd = parseInt(partes[0]) || 1;
-
-  let lados = 0;
-  let bonus = 0;
-
-  if(partes[1].includes("+")){
-    const p = partes[1].split("+");
-    lados = parseInt(p[0]);
-    bonus = parseInt(p[1]);
-  }
-  else if(partes[1].includes("-")){
-    const p = partes[1].split("-");
-    lados = parseInt(p[0]);
-    bonus = -parseInt(p[1]);
-  }
-  else{
-    lados = parseInt(partes[1]);
-  }
-
-  let resultados = [];
-  let total = 0;
-
-  for(let i=0;i<qtd;i++){
-    const r = Math.floor(Math.random()*lados)+1;
-    resultados.push(r);
-    total += r;
-  }
-
-  total += bonus;
-
-  return {
-    total: total,
-    detalhe: `${qtd}d${lados} [${resultados.join(", ")}] ${bonus>=0?"+":""}${bonus}`
-  };
-}
-  
-function rolarHabilidade(i){
-
-  const formula=habilidades[i].dado;
-
-  const r=rolarDado(formula);
-
-  document.getElementById("resHab_"+i).innerText=
-  r.detalhe+" = "+r.total;
 }
 
 /* ================= VIDA, SANIDADE & AURA ================= */
@@ -685,7 +501,6 @@ function atualizarBloqueio(){
 }
   
 /* ================= HABILIDADES ================= */
-
 function adicionarHabilidade(){
   habilidades.push({nome:"",desc:"",dado:""});
   renderHabilidades();
@@ -696,48 +511,55 @@ function removerHabilidade(i){
   renderHabilidades();
 }
 
-function toggleDesc(i){
-  const el=document.getElementById("desc_"+i);
-  el.classList.toggle("ativa");
-}
-
 function renderHabilidades(){
-
-  const box = document.getElementById("listaHabilidades");
-  box.innerHTML = "";
+  const box=document.getElementById("habilidades");
+  box.innerHTML="";
 
   habilidades.forEach((h,i)=>{
-
-    const div = document.createElement("div");
-    div.className = "habilidade";
-
-    div.innerHTML = `
-      <div class="hab-top">
-
-        <input placeholder="Nome" value="${h.nome}"
+    box.innerHTML+=`
+    <div class="habilidade">
+      <input placeholder="Nome" value="${h.nome}" 
         oninput="habilidades[${i}].nome=this.value">
-
-        <input placeholder="2d6+3" value="${h.dado}"
+      <input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
         oninput="habilidades[${i}].dado=this.value">
-
-        <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
-
-        <button onclick="removerHabilidade(${i})">❌</button>
-
-      </div>
-
+      <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
       <span id="resHab_${i}" class="resultado"></span>
-
-      <button onclick="toggleDesc(${i})">Descrição</button>
-
-      <div class="hab-desc" id="desc_${i}">
-        <textarea placeholder="Descrição"
+      <textarea placeholder="Descrição"
         oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-      </div>
-    `;
-
-    box.appendChild(div);
+      <button onclick="removerHabilidade(${i})">❌</button>
+    </div>`;
   });
+}
+
+function rolarHabilidade(i){
+  const h=habilidades[i];
+  const resId="resHab_"+i;
+
+  const regex=/(\d+)d(\d+)([+-]\d+)?/i;
+  const match=h.dado.match(regex);
+
+  if(!match){
+    document.getElementById(resId).innerText="Formato inválido";
+    limparDepois(resId);
+    return;
+  }
+
+  const qtd=Number(match[1]);
+  const faces=Number(match[2]);
+  const mod=Number(match[3]||0);
+
+  let rolls=[], total=0;
+  for(let r=0;r<qtd;r++){
+    const v=Math.floor(Math.random()*faces)+1;
+    rolls.push(v);
+    total+=v;
+  }
+  total+=mod;
+
+  document.getElementById(resId).innerText=
+    `${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
+
+  limparDepois(resId);
 }
 
 /* ================= SALVAR ================= */
@@ -763,62 +585,57 @@ function carregarImagem(event){
 }
   
 function salvarFicha(){
-  
-  const slotAtual = document.getElementById("slot").value;
-  const chave = "fichaRPG_" + slotAtual;
+  const slot=document.getElementById("slot").value;
+  const chave="fichaRPG_"+slot;
 
-  const dados = {
+  const dados={
     imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome: document.getElementById("nome").value,
-    idade: document.getElementById("idade").value,
-    antecedencia: document.getElementById("antecedencia").value,
-    descricao: document.getElementById("descricao").value,
-    historia: document.getElementById("historia").value,
-    nivel: document.getElementById("nivel").value,
-    vida: document.getElementById("vida").value,
-    sanidade: document.getElementById("sanidade").value,
-    aura: document.getElementById("aura").value,
-    habilidades: habilidades,
-    atributos: {},
-    pericias: {}
+    nome:nome.value,
+    idade:idade.value,
+    antecedencia:antecedencia.value,
+    descricao:descricao.value,
+    historia:historia.value,
+    nivel:nivel.value,
+    vida:vida.value,
+    sanidade:sanidade.value,
+    aura:aura.value,
+    habilidades:habilidades,
+    atributos:{},
+    pericias:{}
   };
 
   atributos.forEach(a=>{
-    dados.atributos[a.sigla] =
-      document.getElementById("atr_"+a.sigla).value;
+    dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
   });
 
   pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i] =
-      document.getElementById("per_"+i).value;
+    dados.pericias["per_"+i]=document.getElementById("per_"+i).value;
   });
 
-  localStorage.setItem(chave, JSON.stringify(dados));
+  localStorage.setItem(chave,JSON.stringify(dados));
 
-  const alerta = document.getElementById("alerta");
-  alerta.style.display = "block";
+  const alerta=document.getElementById("alerta");
+  alerta.style.display="block";
   setTimeout(()=>alerta.style.display="none",2500);
 }
 
 function salvarFichaManual(chave){
 
-  if(!chave) return;
-
   const dados={
     imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome: document.getElementById("nome").value,
-    idade: document.getElementById("idade").value,
-    antecedencia: document.getElementById("antecedencia").value,
-    descricao: document.getElementById("descricao").value,
-    historia: document.getElementById("historia").value,
-    nivel: document.getElementById("nivel").value,
-    vida: document.getElementById("vida").value,
-    sanidade: document.getElementById("sanidade").value,
-    aura: document.getElementById("aura").value,
+    nome:document.getElementById("nome").value,
+    idade:document.getElementById("idade").value,
+    antecedencia:document.getElementById("antecedencia").value,
+    descricao:document.getElementById("descricao").value,
+    historia:document.getElementById("historia").value,
+    nivel:document.getElementById("nivel").value,
+    vida:document.getElementById("vida").value,
+    sanidade:document.getElementById("sanidade").value,
+    aura:document.getElementById("aura").value,
     habilidades:habilidades,
     atributos:{},
     pericias:{}
-};
+  };
 
   atributos.forEach(a=>{
     dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
@@ -930,7 +747,7 @@ async function gerarPDF(){
   pdf.save("ficha_rpg.pdf");
 }
 
-slotAtual = document.getElementById("slot").value;
+let slotAtual = document.getElementById("slot").value;
 
 document.getElementById("slot").addEventListener("change", function(){
 
@@ -949,9 +766,6 @@ document.getElementById("slot").addEventListener("change", function(){
 /* ================= START ================= */
 criarInterface();
 carregarFicha();
-renderHabilidades();
-recalcularVidaSanidade();
-mostrarAba("basico");
 </script>
 
 </body>
