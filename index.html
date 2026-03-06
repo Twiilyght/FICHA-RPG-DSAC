@@ -531,6 +531,16 @@ function rolarPericia(id){
   limparDepois(resId);
 }
 
+function rolarHabilidade(i){
+
+  const formula=habilidades[i].dado;
+
+  const r=rolarDado(formula);
+
+  document.getElementById("resHab_"+i).innerText=
+  r.detalhe+" = "+r.total;
+}
+
 /* ================= VIDA, SANIDADE & AURA ================= */
 function recalcularVidaSanidade(){
   const nivel = Number(document.getElementById("nivel").value) || 1;
@@ -647,7 +657,7 @@ function removerHabilidade(i){
 }
 
 function toggleDesc(i){
-  const el = document.getElementById("desc_"+i);
+  const el=document.getElementById("desc_"+i);
   el.classList.toggle("ativa");
 }
 
@@ -688,52 +698,6 @@ function renderHabilidades(){
   });
 }
 
-function rolarHabilidade(i){
-
-  const h = habilidades[i];
-  const resId = "resHab_"+i;
-
-  const regex=/(\d+)d(\d+)([+-]\d+)?/i;
-  const match=h.dado.match(regex);
-
-  if(!match){
-    document.getElementById(resId).innerText="Formato inválido";
-    limparDepois(resId);
-    return;
-  }
-
-  const qtd=Number(match[1]);
-  const faces=Number(match[2]);
-  const mod=Number(match[3]||0);
-
-  let rolls=[];
-  let total=0;
-
-  for(let r=0;r<qtd;r++){
-    const v=Math.floor(Math.random()*faces)+1;
-    rolls.push(v);
-    total+=v;
-  }
-
-  total+=mod;
-
-  const critico = rolls.includes(faces);
-  const falha = rolls.includes(1);
-
-  let texto = `🎲 ${qtd}d${faces} → [${rolls.join(", ")}]`;
-
-  if(mod !== 0) texto += ` ${mod>0?"+":""}${mod}`;
-
-  texto += ` = ${total}`;
-
-  if(critico) texto += " ✨ CRÍTICO!";
-  if(falha) texto += " 💀 FALHA";
-
-  document.getElementById(resId).innerText = texto;
-
-  limparDepois(resId,10000);
-}
-
 /* ================= SALVAR ================= */
 
 function carregarImagem(event){
@@ -757,8 +721,20 @@ function carregarImagem(event){
 }
   
 function salvarFicha(){
-  const slot=document.getElementById("slot").value;
-  const chave="fichaRPG_"+slot;
+
+  const ficha={
+    habilidades,
+    atributosValor,
+    pericias,
+    vida,
+    sanidade,
+    aura
+  };
+
+  localStorage.setItem("ficha_"+slotAtual,JSON.stringify(ficha));
+
+  alert("Ficha salva!");
+}
 
   const dados={
     imagem: document.getElementById("previewImg").dataset.base64 || "",
@@ -938,7 +914,7 @@ document.getElementById("slot").addEventListener("change", function(){
 /* ================= START ================= */
 criarInterface();
 carregarFicha();
-
+renderHabilidades();
 mostrarAba("basico");
 </script>
 
