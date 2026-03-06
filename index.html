@@ -8,77 +8,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
-
-#ficha{
-  max-width:95%;
-  margin:auto;
-  display:grid;
-  grid-template-columns: 350px 1fr 400px;
-  grid-template-rows: auto auto;
-  gap:30px;
-  padding:20px;
-}
-  
 body{
-  background:#020617;
+  background:#0f172a;
   color:#e5e7eb;
-  font-family: "Segoe UI", Arial, sans-serif;
-}
-
-.layout{
-  display:grid;
-  grid-template-columns: 300px 1fr 320px;
-  gap:20px;
-  max-width:1400px;
-  margin:auto;
+  font-family: Arial, sans-serif;
 }
 
 .bloco{
-  background:#111114;
-  border:1px solid #1f1f23;
-  padding:16px;
-  border-radius:10px;
-  box-shadow:none;
-}
-
-#ficha .bloco:nth-child(1){
-  grid-column:1;
-}
-
-#ficha .bloco:nth-child(2){
-  grid-column:2;
-}
-
-#ficha .bloco:nth-child(3){
-  grid-column:3;
-}
-
-#ficha .bloco:nth-child(4){
-  grid-column:1;
-}
-
-#ficha .bloco:nth-child(5){
-  grid-column:2;
-}
-
-#ficha .bloco:nth-child(6){
-  grid-column:2;
-}
-
-#ficha .bloco:nth-child(7){
-  grid-column:2;
-}
-
-#ficha .bloco:nth-child(8){
-  grid-column:2;
+  background:#1f2937;
+  padding:18px;
+  border-radius:14px;
+  margin:18px auto;
+  max-width:900px;
+  box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
 
 h2{
-  font-size:14px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  color:#818cf8;
-  border-bottom:1px solid #1f2937;
+  margin-top:0;
+  color:#a5b4fc;
+  border-bottom:1px solid #374151;
   padding-bottom:6px;
 }
 
@@ -89,19 +37,14 @@ h2{
 }
 
 input, select, textarea{
-  width:100%;
-  border-radius:6px;
-  border:1px solid #1f2937;
-  padding:6px;
+  border-radius:10px;
+  border:1px solid #374151;
+  padding:8px;
   background:#020617;
   color:#e5e7eb;
 }
 
-textarea{
-  resize:vertical;
-}
-
-.atributo{
+.atributo, .pericia, .habilidade{
   display:grid;
   grid-template-columns: 1fr 90px 40px 160px;
   align-items:center;
@@ -109,36 +52,10 @@ textarea{
   margin:6px 0;
 }
 
-.habilidade{
-  display:grid;
-  grid-template-columns: 1fr 80px 40px 1fr 30px;
-  gap:6px;
-  margin-bottom:8px;
-}
-
-.pericia{
-  display:grid;
-  grid-template-columns:140px 1fr 60px 50px 90px;
-  align-items:center;
-  gap:6px;
-  padding:4px 0;
-  border-bottom:1px solid #1f2937;
-}
-
-.pericia:hover{
-  background:#151519;
-}
-
 .dice{
   cursor:pointer;
-  font-size:16px;
-  opacity:.7;
-  transition:.2s;
-}
-
-.dice:hover{
-  opacity:1;
-  transform:scale(1.1);
+  font-size:22px;
+  text-align:center;
 }
 
 .resultado{
@@ -224,8 +141,6 @@ textarea{
 
 <div id="ficha">
 
-<div class="layout">
-
 <!-- SLOT -->
 <div class="bloco">
 <h2>Seleção de Ficha</h2>
@@ -260,8 +175,8 @@ textarea{
 </div>
 <div class="linha"><label>Nome</label><input id="nome"></div>
 <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-<div class="linha"><label>Raça</label><textarea id="antecedencia"></textarea></div>
-<div class="linha"><label>Personalidade</label><textarea id="descricao"></textarea></div>
+<div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
+<div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
 <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
 </div>
 
@@ -359,8 +274,6 @@ textarea{
 <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
 </div>
 
-</div>
-  
 </div>
 
 <script>
