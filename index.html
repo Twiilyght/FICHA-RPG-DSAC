@@ -46,11 +46,16 @@ body{
 }
 
 .aba{
+  opacity:0;
+  transform:translateY(10px);
+  transition:0.3s;
   display:none;
 }
 
 .aba.ativa{
   display:block;
+  opacity:1;
+  transform:translateY(0);
 }
   
 h2{
@@ -74,12 +79,16 @@ input, select, textarea{
   color:#e5e7eb;
 }
 
-.atributo, .pericia{
+.atributo, .habilidade{
   display:grid;
   grid-template-columns: 1fr 90px 40px 160px;
   align-items:center;
   gap:10px;
   margin:6px 0;
+}
+
+.pericia{
+grid-template-columns: 1fr 80px 70px 40px 160px;
 }
 
 .habilidade{
@@ -172,6 +181,60 @@ input, select, textarea{
   font-weight:bold;
   cursor:pointer;
 }
+
+.bloco{
+  background:linear-gradient(145deg,#1f2937,#111827);
+  border:1px solid #374151;
+}
+
+.menu button{
+  transition:0.2s;
+  box-shadow:0 4px 10px rgba(0,0,0,.3);
+}
+
+.menu button:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(0,0,0,.5);
+}
+
+input,select,textarea{
+  transition:0.2s;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#6366f1;
+  box-shadow:0 0 0 1px #6366f1;
+}
+
+.habilidade{
+  background:#020617;
+  border:1px solid #374151;
+  border-radius:12px;
+  padding:12px;
+  margin:10px 0;
+  transition:0.2s;
+}
+
+.habilidade:hover{
+  border-color:#6366f1;
+}
+
+.hab-top{
+  display:grid;
+  grid-template-columns:1fr 120px 40px 40px;
+  gap:10px;
+  align-items:center;
+}
+
+.hab-desc{
+  margin-top:10px;
+  display:none;
+}
+
+.hab-desc.ativa{
+  display:block;
+}
+  
 </style>
 </head>
 
@@ -326,6 +389,9 @@ input, select, textarea{
 </div>
 
 <script>
+
+let slotAtual = "1";
+  
 /* ================= DADOS ================= */
 const atributos = [
 {sigla:"FOR", nome:"Força"},
@@ -561,6 +627,7 @@ function atualizarBloqueio(){
 }
   
 /* ================= HABILIDADES ================= */
+
 function adicionarHabilidade(){
   habilidades.push({nome:"",desc:"",dado:""});
   renderHabilidades();
@@ -571,29 +638,52 @@ function removerHabilidade(i){
   renderHabilidades();
 }
 
+function toggleDesc(i){
+  const el = document.getElementById("desc_"+i);
+  el.classList.toggle("ativa");
+}
+
 function renderHabilidades(){
+
   const box=document.getElementById("listaHabilidades");
   box.innerHTML="";
 
   habilidades.forEach((h,i)=>{
+
     box.innerHTML+=`
     <div class="habilidade">
-      <input placeholder="Nome" value="${h.nome}" 
+
+      <div class="hab-top">
+
+        <input placeholder="Nome" value="${h.nome}"
         oninput="habilidades[${i}].nome=this.value">
-      <input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
+
+        <input placeholder="2d6+3" value="${h.dado}"
         oninput="habilidades[${i}].dado=this.value">
-      <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
+
+        <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
+
+        <button onclick="removerHabilidade(${i})">❌</button>
+
+      </div>
+
       <span id="resHab_${i}" class="resultado"></span>
-      <textarea placeholder="Descrição"
+
+      <div class="hab-desc" id="desc_${i}">
+        <textarea placeholder="Descrição"
         oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-      <button onclick="removerHabilidade(${i})">❌</button>
+      </div>
+
+      <button onclick="toggleDesc(${i})">Descrição</button>
+
     </div>`;
   });
 }
 
 function rolarHabilidade(i){
-  const h=habilidades[i];
-  const resId="resHab_"+i;
+
+  const h = habilidades[i];
+  const resId = "resHab_"+i;
 
   const regex=/(\d+)d(\d+)([+-]\d+)?/i;
   const match=h.dado.match(regex);
@@ -608,18 +698,32 @@ function rolarHabilidade(i){
   const faces=Number(match[2]);
   const mod=Number(match[3]||0);
 
-  let rolls=[], total=0;
+  let rolls=[];
+  let total=0;
+
   for(let r=0;r<qtd;r++){
     const v=Math.floor(Math.random()*faces)+1;
     rolls.push(v);
     total+=v;
   }
+
   total+=mod;
 
-  document.getElementById(resId).innerText=
-    `${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
+  const critico = rolls.includes(faces);
+  const falha = rolls.includes(1);
 
-  limparDepois(resId);
+  let texto = `🎲 ${qtd}d${faces} → [${rolls.join(", ")}]`;
+
+  if(mod !== 0) texto += ` ${mod>0?"+":""}${mod}`;
+
+  texto += ` = ${total}`;
+
+  if(critico) texto += " ✨ CRÍTICO!";
+  if(falha) texto += " 💀 FALHA";
+
+  document.getElementById(resId).innerText = texto;
+
+  limparDepois(resId,10000);
 }
 
 /* ================= SALVAR ================= */
