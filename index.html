@@ -585,53 +585,51 @@ function salvarFicha(){
 document.getElementById("slot").addEventListener("change",carregarFicha);
 
 function carregarFicha(){
-
   const slot=document.getElementById("slot").value;
-  const dadosSalvos = localStorage.getItem("ficha_"+slot);
+  const chave="fichaRPG_"+slot;
+  const salvo=localStorage.getItem(chave);
 
-  if(!dadosSalvos) return;
+if(!salvo){
+  limparFicha();
+  return;
+}
 
-  const dados = JSON.parse(dadosSalvos);
+  const d=JSON.parse(salvo);
 
-  /* ===== GARANTE CAMPOS NOVOS ===== */
+  nome.value=d.nome||"";
+  idade.value=d.idade||"";
+  antecedencia.value=d.antecedencia||"";
+  descricao.value=d.descricao||"";
+  historia.value=d.historia||"";
+  nivel.value=d.nivel||1;
+  vida.value = d.vida || 0;
+  sanidade.value = d.sanidade || 0;
+  aura.value = d.aura || 0;
+  const img = document.getElementById("previewImg");
+if(d.imagem){
+  img.src = d.imagem;
+  img.style.display = "block";
+  img.dataset.base64 = d.imagem;
+}else{
+  img.style.display = "none";
+  img.dataset.base64 = "";
+}
 
-  dados.atributos = dados.atributos || {};
-  dados.habilidades = dados.habilidades || [];
+  for(const s in d.atributos){
+    const el=document.getElementById("atr_"+s);
+    if(el) el.value=d.atributos[s];
+  }
 
-  dados.nome = dados.nome || "";
-  dados.idade = dados.idade || "";
-  dados.antecedentes = dados.antecedentes || "";
-  dados.descricao = dados.descricao || "";
-  dados.historia = dados.historia || "";
-  dados.nivel = dados.nivel || 1;
+  for(const p in d.pericias){
+    const el=document.getElementById(p);
+    if(el) el.value=d.pericias[p];
+  }
 
-  dados.vida = dados.vida || 0;
-  dados.sanidade = dados.sanidade || 0;
-  dados.aura = dados.aura || 0;
+  habilidades=d.habilidades||[];
+  renderHabilidades();
 
-  /* ===== CARREGA CAMPOS ===== */
-
-  document.getElementById("nome").value=dados.nome;
-  document.getElementById("idade").value=dados.idade;
-  document.getElementById("antecedencia").value=dados.antecedentes;
-  document.getElementById("descricao").value=dados.descricao;
-  document.getElementById("historia").value=dados.historia;
-
-  document.getElementById("nivel").value=dados.nivel;
-
-  atributos.forEach(a=>{
-    document.getElementById("atr_"+a.sigla).value =
-    dados.atributos[a.sigla] || 0;
-  });
-
-  document.getElementById("vida").value=dados.vida;
-  document.getElementById("sanidade").value=dados.sanidade;
-  document.getElementById("aura").value=dados.aura;
-
-  habilidades = dados.habilidades;
-
-  renderizarHabilidades();
   recalcularVidaSanidade();
+  atualizarBloqueio();
 }
 
 /* ================= PDF ================= */
