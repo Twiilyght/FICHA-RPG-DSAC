@@ -587,28 +587,48 @@ document.getElementById("slot").addEventListener("change",carregarFicha);
 function carregarFicha(){
 
   const slot=document.getElementById("slot").value;
-  const dados=JSON.parse(localStorage.getItem("ficha_"+slot));
+  const dadosSalvos = localStorage.getItem("ficha_"+slot);
 
-  if(!dados) return;
+  if(!dadosSalvos) return;
 
-  document.getElementById("nome").value=dados.nome||"";
-  document.getElementById("idade").value=dados.idade||"";
-  document.getElementById("antecedencia").value=dados.antecedentes||"";
-  document.getElementById("descricao").value=dados.descricao||"";
-  document.getElementById("historia").value=dados.historia||"";
+  const dados = JSON.parse(dadosSalvos);
 
-  document.getElementById("nivel").value=dados.nivel||1;
+  /* ===== GARANTE CAMPOS NOVOS ===== */
+
+  dados.atributos = dados.atributos || {};
+  dados.habilidades = dados.habilidades || [];
+
+  dados.nome = dados.nome || "";
+  dados.idade = dados.idade || "";
+  dados.antecedentes = dados.antecedentes || "";
+  dados.descricao = dados.descricao || "";
+  dados.historia = dados.historia || "";
+  dados.nivel = dados.nivel || 1;
+
+  dados.vida = dados.vida || 0;
+  dados.sanidade = dados.sanidade || 0;
+  dados.aura = dados.aura || 0;
+
+  /* ===== CARREGA CAMPOS ===== */
+
+  document.getElementById("nome").value=dados.nome;
+  document.getElementById("idade").value=dados.idade;
+  document.getElementById("antecedencia").value=dados.antecedentes;
+  document.getElementById("descricao").value=dados.descricao;
+  document.getElementById("historia").value=dados.historia;
+
+  document.getElementById("nivel").value=dados.nivel;
 
   atributos.forEach(a=>{
     document.getElementById("atr_"+a.sigla).value =
-    dados.atributos?.[a.sigla]||0;
+    dados.atributos[a.sigla] || 0;
   });
 
-  document.getElementById("vida").value=dados.vida||0;
-  document.getElementById("sanidade").value=dados.sanidade||0;
-  document.getElementById("aura").value=dados.aura||0;
+  document.getElementById("vida").value=dados.vida;
+  document.getElementById("sanidade").value=dados.sanidade;
+  document.getElementById("aura").value=dados.aura;
 
-  habilidades=dados.habilidades||[];
+  habilidades = dados.habilidades;
 
   renderizarHabilidades();
   recalcularVidaSanidade();
