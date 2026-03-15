@@ -668,51 +668,57 @@ function rolarHabilidade(i){
   somDado.currentTime = 0;
   somDado.play();
   
-  const h=habilidades[i];
-  const resId="resHab_"+i;
+  const h = habilidades[i];
+  const resId = "resHab_" + i;
 
-// Regex para múltiplos dados e modificadores: ex: "3d6+1d6+2"
-const regex = /(\d+d\d+|\+|\-|\d+)/gi;
-const tokens = h.dado.match(regex);
-
-if(!tokens){
-  document.getElementById(resId).innerText = "Formato inválido";
-  limparDepois(resId);
-  return;
-}
-
-let total = 0;
-let detalhes = [];
-let operador = "+"; // operador atual, inicia com "+"
-tokens.forEach(tok=>{
-  tok = tok.trim();
-  if(tok === "+" || tok === "-"){
-    operador = tok;
-  } else if(tok.includes("d") || tok.includes("D")){
-    const [qtd,f] = tok.toLowerCase().split("d").map(Number);
-    for(let i=0;i<qtd;i++){
-      const r = Math.floor(Math.random()*f)+1;
-      detalhes.push(`${r}`);
-      total = operador === "+" ? total+r : total-r;
-    }
-  } else {
-    // é um número simples
-    const n = Number(tok);
-    total = operador === "+" ? total+n : total-n;
-    detalhes.push(tok);
+  if(!h || !h.dado){
+    document.getElementById(resId).innerText = "Insira um dado válido!";
+    limparDepois(resId);
+    return;
   }
-});
 
-mostrarPopup(
-  h.nome || "Habilidade",
-  h.dado + " → [" + detalhes.join(" + ") + "]",
-  total
-);
+  const regex = /(\d+d\d+|\+|\-|\d+)/gi;
+  const tokens = h.dado.match(regex);
 
-document.getElementById(resId).innerText = 
-`${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
+  if(!tokens){
+    document.getElementById(resId).innerText = "Formato inválido";
+    limparDepois(resId);
+    return;
+  }
 
-limparDepois(resId);
+  let total = 0;
+  let detalhes = [];
+  let operador = "+";
+
+  tokens.forEach(tok=>{
+    tok = tok.trim();
+    if(tok === "+" || tok === "-"){
+      operador = tok;
+    } else if(tok.toLowerCase().includes("d")){
+      const [qtd, f] = tok.toLowerCase().split("d").map(Number);
+      for(let j=0; j<qtd; j++){
+        const r = Math.floor(Math.random()*f)+1;
+        detalhes.push(`${r}`);
+        total = operador === "+" ? total+r : total-r;
+      }
+    } else {
+      const n = Number(tok);
+      total = operador === "+" ? total+n : total-n;
+      detalhes.push(tok);
+    }
+  });
+
+  mostrarPopup(
+    h.nome || "Habilidade",
+    h.dado + " → [" + detalhes.join(" + ") + "]",
+    total
+  );
+
+  document.getElementById(resId).innerText = 
+    `${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
+
+  limparDepois(resId);
+}
 
 /* ================= SALVAR ================= */
 
