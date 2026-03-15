@@ -671,18 +671,37 @@ function rolarHabilidade(i){
   const h=habilidades[i];
   const resId="resHab_"+i;
 
-  const regex=/(\d+)d(\d+)([+-]\d+)?/i;
-  const match=h.dado.match(regex);
+// Regex para múltiplos dados e modificadores: ex: "3d6+1d6+2"
+const regex = /(\d+d\d+|\+|\-|\d+)/gi;
+const tokens = h.dado.match(regex);
 
-  if(!match){
-    document.getElementById(resId).innerText="Formato inválido";
-    limparDepois(resId);
-    return;
+if(!tokens){
+  document.getElementById(resId).innerText = "Formato inválido";
+  limparDepois(resId);
+  return;
+}
+
+let total = 0;
+let detalhes = [];
+let operador = "+"; // operador atual, inicia com "+"
+tokens.forEach(tok=>{
+  tok = tok.trim();
+  if(tok === "+" || tok === "-"){
+    operador = tok;
+  } else if(tok.includes("d") || tok.includes("D")){
+    const [qtd,f] = tok.toLowerCase().split("d").map(Number);
+    for(let i=0;i<qtd;i++){
+      const r = Math.floor(Math.random()*f)+1;
+      detalhes.push(`${r}`);
+      total = operador === "+" ? total+r : total-r;
+    }
+  } else {
+    // é um número simples
+    const n = Number(tok);
+    total = operador === "+" ? total+n : total-n;
+    detalhes.push(tok);
   }
-
-  const qtd=Number(match[1]);
-  const faces=Number(match[2]);
-  const mod=Number(match[3]||0);
+});
 
   let rolls=[], total=0;
   for(let r=0;r<qtd;r++){
@@ -694,15 +713,14 @@ function rolarHabilidade(i){
 
 mostrarPopup(
   h.nome || "Habilidade",
-  `${qtd}d${faces} [${rolls.join(", ")}]`,
+  h.dado + " → [" + detalhes.join(" + ") + "]",
   total
 );
 
-  document.getElementById(resId).innerText=
-    `${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
+document.getElementById(resId).innerText = 
+`${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
 
-  limparDepois(resId);
-}
+limparDepois(resId);
 
 /* ================= SALVAR ================= */
 
