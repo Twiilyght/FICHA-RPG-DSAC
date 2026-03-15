@@ -313,7 +313,7 @@ input, select, textarea{
 </div>
 
 <script>
-/* ================= DADOS ================= */
+/* ================= DADOS ================= */  
 const atributos = [
 {sigla:"FOR", nome:"Força"},
 {sigla:"CON", nome:"Constituição"},
@@ -336,6 +336,7 @@ const pericias = [
 
 let habilidades = [];
 let ultimoTesteFortitude = 0;
+const somDado = new Audio("dado.mp3")
 
 /* ================= INTERFACE ================= */
 function criarInterface(){
@@ -393,6 +394,10 @@ function limparDepois(id,ms=8000){
 }
 
 function rolarAtributo(sigla){
+
+  somDado.currentTime = 0
+  somDado.play()
+  
   const v=Number(document.getElementById("atr_"+sigla).value);
   const resId="resAtr_"+sigla;
   const d=d20();
@@ -400,7 +405,10 @@ function rolarAtributo(sigla){
   limparDepois(resId);
 }
 
-function rolarPericia(id){
+function rolarPericia(id){]
+
+  somDado.currentTime = 0
+  somDado.play()
 
   const qtdDados = parseInt(document.getElementById(id).value);
   const sigla = document.getElementById("atrKey_"+id).value;
@@ -575,6 +583,10 @@ function renderHabilidades(){
 }
 
 function rolarHabilidade(i){
+
+  somDado.currentTime = 0
+  somDado.play()
+  
   const h=habilidades[i];
   const resId="resHab_"+i;
 
