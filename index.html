@@ -8,6 +8,57 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
+
+.dice-popup{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+
+  width:260px;
+  padding:14px;
+
+  background:#111827;
+  border:2px solid #facc15;
+  border-radius:10px;
+
+  box-shadow:0 0 20px rgba(0,0,0,0.6);
+
+  z-index:9999;
+}
+
+.dice-popup-header{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  font-size:16px;
+  margin-bottom:8px;
+}
+
+.popup-close{
+  cursor:pointer;
+}
+
+.popup-close:hover{
+  color:#f87171;
+}
+
+.dice-popup-body{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+#popupDetalhe{
+  font-size:13px;
+  color:#d1d5db;
+}
+
+#popupTotal{
+  font-size:26px;
+  font-weight:bold;
+  color:#facc15;
+}
+  
 body{
   background:#0f172a;
   color:#e5e7eb;
@@ -313,6 +364,22 @@ input, select, textarea{
 </div>
 
 <script>
+
+function mostrarPopup(titulo, detalhe, total){
+
+  const popup = document.getElementById("dicePopup");
+
+  document.getElementById("popupTitulo").innerText = titulo;
+  document.getElementById("popupDetalhe").innerText = detalhe;
+  document.getElementById("popupTotal").innerText = total;
+
+  popup.style.display = "block";
+}
+
+function fecharPopup(){
+  document.getElementById("dicePopup").style.display = "none";
+}
+  
 /* ================= DADOS ================= */  
 const somDado = new Audio("dado.mp3")
   
@@ -407,6 +474,16 @@ function rolarAtributo(sigla){
   const resId="resAtr_"+sigla;
   const d=d20();
   document.getElementById(resId).innerText=`1d20 (${d}) + ${v} = ${d+v}`;
+  const total = d + v;
+document.getElementById(resId).innerText =
+`1d20 (${d}) + ${v} = ${total}`;
+
+mostrarPopup(
+  sigla,
+  `1d20 (${d}) + ${v}`,
+  total
+  );
+  
   limparDepois(resId);
 }
 
@@ -430,6 +507,12 @@ function rolarPericia(id){
   }
 
   const total = maior + atributoValor + bonus;
+
+  mostrarPopup(
+  pericias[indice][1],
+  `${qtdDados}d20 [${resultados.join(", ")}]`,
+  total
+);
 
   const resId = "res_" + id;
 
@@ -590,6 +673,12 @@ function rolarHabilidade(i){
   const regex=/(\d+)d(\d+)([+-]\d+)?/i;
   const match=h.dado.match(regex);
 
+  mostrarPopup(
+  h.nome || "Habilidade",
+  `${qtd}d${faces} [${rolls.join(", ")}]`,
+  total
+);
+
   if(!match){
     document.getElementById(resId).innerText="Formato inválido";
     limparDepois(resId);
@@ -607,6 +696,12 @@ function rolarHabilidade(i){
     total+=v;
   }
   total+=mod;
+
+  mostrarPopup(
+  pericias[indice][1],
+  `${qtdDados}d20 [${resultados.join(", ")}]`,
+  total
+);
 
   document.getElementById(resId).innerText=
     `${qtd}d${faces} [${rolls.join(" + ")}] ${mod>=0?"+":""}${mod} = ${total}`;
@@ -820,5 +915,17 @@ criarInterface();
 carregarFicha();
 </script>
 
+<div id="dicePopup" class="dice-popup" style="display:none;">
+  <div class="dice-popup-header">
+    <span id="popupTitulo">Teste</span>
+    <span class="popup-close" onclick="fecharPopup()">✖</span>
+  </div>
+
+  <div class="dice-popup-body">
+    <span id="popupDetalhe"></span>
+    <span id="popupTotal"></span>
+  </div>
+</div>
+  
 </body>
 </html>
