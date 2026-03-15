@@ -703,14 +703,6 @@ tokens.forEach(tok=>{
   }
 });
 
-  let rolls=[], total=0;
-  for(let r=0;r<qtd;r++){
-    const v=Math.floor(Math.random()*faces)+1;
-    rolls.push(v);
-    total+=v;
-  }
-  total+=mod;
-
 mostrarPopup(
   h.nome || "Habilidade",
   h.dado + " → [" + detalhes.join(" + ") + "]",
