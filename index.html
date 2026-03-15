@@ -314,6 +314,8 @@ input, select, textarea{
 
 <script>
 /* ================= DADOS ================= */  
+const somDado = new Audio("dado.mp3")
+  
 const atributos = [
 {sigla:"FOR", nome:"Força"},
 {sigla:"CON", nome:"Constituição"},
@@ -336,7 +338,6 @@ const pericias = [
 
 let habilidades = [];
 let ultimoTesteFortitude = 0;
-const somDado = new Audio("dado.mp3")
 
 /* ================= INTERFACE ================= */
 function criarInterface(){
@@ -386,6 +387,13 @@ pericias.forEach((p,i)=>{
   
 function d20(){ return Math.floor(Math.random()*20)+1; }
 
+  somDado.currentTime = 0;
+  somDado.play();
+
+  return Math.floor(Math.random()*20)+1;
+
+}
+
 function limparDepois(id,ms=8000){
   setTimeout(()=>{
     const el=document.getElementById(id);
@@ -394,9 +402,6 @@ function limparDepois(id,ms=8000){
 }
 
 function rolarAtributo(sigla){
-
-  somDado.currentTime = 0
-  somDado.play()
   
   const v=Number(document.getElementById("atr_"+sigla).value);
   const resId="resAtr_"+sigla;
@@ -405,11 +410,8 @@ function rolarAtributo(sigla){
   limparDepois(resId);
 }
 
-function rolarPericia(id){]
-
-  somDado.currentTime = 0
-  somDado.play()
-
+function rolarPericia(id){
+  
   const qtdDados = parseInt(document.getElementById(id).value);
   const sigla = document.getElementById("atrKey_"+id).value;
   const bonus = parseInt(document.getElementById("bonus_"+id).value) || 0;
@@ -440,11 +442,6 @@ function rolarPericia(id){]
   }
   
   limparDepois(resId);
-}
-
-function tocarSomDado(){
-  const audio = new Audio("dado.mp3");
-  audio.play();
 }
 
 /* ================= VIDA, SANIDADE & AURA ================= */
@@ -584,8 +581,8 @@ function renderHabilidades(){
 
 function rolarHabilidade(i){
 
-  somDado.currentTime = 0
-  somDado.play()
+  somDado.currentTime = 0;
+  somDado.play();
   
   const h=habilidades[i];
   const resId="resHab_"+i;
