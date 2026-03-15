@@ -506,19 +506,20 @@ function rolarPericia(id){
     if(roll > maior) maior = roll;
   }
 
-  const total = maior + atributoValor + bonus;
+const total = maior + atributoValor + bonus;
 
-  mostrarPopup(
+const indice = parseInt(id.split("_")[1]);
+
+mostrarPopup(
   pericias[indice][1],
   `${qtdDados}d20 [${resultados.join(", ")}]`,
   total
 );
 
-  const resId = "res_" + id;
+const resId = "res_" + id;
 
-  document.getElementById(resId).innerText =
-    `🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
-  const indice = parseInt(id.split("_")[1]);
+document.getElementById(resId).innerText =
+`🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
   if(pericias[indice][1] === "Fortitude"){
     ultimoTesteFortitude = total;
     atualizarBloqueio();
@@ -673,12 +674,6 @@ function rolarHabilidade(i){
   const regex=/(\d+)d(\d+)([+-]\d+)?/i;
   const match=h.dado.match(regex);
 
-  mostrarPopup(
-  h.nome || "Habilidade",
-  `${qtd}d${faces} [${rolls.join(", ")}]`,
-  total
-);
-
   if(!match){
     document.getElementById(resId).innerText="Formato inválido";
     limparDepois(resId);
@@ -697,9 +692,9 @@ function rolarHabilidade(i){
   }
   total+=mod;
 
-  mostrarPopup(
-  pericias[indice][1],
-  `${qtdDados}d20 [${resultados.join(", ")}]`,
+mostrarPopup(
+  h.nome || "Habilidade",
+  `${qtd}d${faces} [${rolls.join(", ")}]`,
   total
 );
 
