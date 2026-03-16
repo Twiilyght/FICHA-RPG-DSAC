@@ -694,6 +694,7 @@ function rolarHabilidade(i){
     tok = tok.trim();
     if(tok === "+" || tok === "-"){
       operador = tok;
+    }
 else if(tok.toLowerCase().includes("d")){
 
   let qtd, faces, explosao = null;
@@ -709,6 +710,11 @@ else if(tok.toLowerCase().includes("d")){
     [qtd, faces] = base.split("d").map(Number);
 
     explosao = crit ? Number(crit) : faces;
+
+    if(qtd > 100 || faces > 1000){
+      document.getElementById(resId).innerText = "Dado muito grande!";
+      return;
+    }
 
   }else{
 
@@ -726,14 +732,19 @@ else if(tok.toLowerCase().includes("d")){
 
     if(explosao){
 
-      while(r >= explosao){
-
+      let limiteExplosao = 100;
+      let cont = 0;
+      
+      while(r >= explosao && cont < limiteExplosao){
+        
+        cont++;
         r = Math.floor(Math.random()*faces)+1;
 
         detalhes.push("💥"+r);
 
         total = operador === "+" ? total+r : total-r;
-
+        
+        }
       }
 
     }
