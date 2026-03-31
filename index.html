@@ -95,6 +95,12 @@ input, select, textarea{
   color:#e5e7eb;
 }
 
+input:focus, textarea:focus, select:focus{
+  outline:none;
+  border:1px solid #6366f1;
+  box-shadow:0 0 5px #6366f1;
+}
+
 .atributo, .pericia, .habilidade{
   display:grid;
   grid-template-columns: 1fr 90px 40px 160px;
@@ -147,23 +153,32 @@ input, select, textarea{
 
 .status-card{
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "vida sanidade"
+    "aura deslocamento"
+    "dt bloqueio";
   gap:14px;
 }
 
-.dt{
-  grid-column: 1;
-}
-  
-.bloqueio{
-  grid-column: 2;
-}
+.vida { grid-area: vida; }
+.sanidade { grid-area: sanidade; }
+.aura { grid-area: aura; }
+.deslocamento { grid-area: deslocamento; }
+.dt { grid-area: dt; }
+.bloqueio { grid-area: bloqueio; }
 
 .status-item{
   background:#020617;
   border:1px solid #374151;
   padding:12px;
   border-radius:12px;
+  transition: 0.2s;
+}
+
+.status-item:hover{
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 }
 
 .status-top{
@@ -171,6 +186,11 @@ input, select, textarea{
   justify-content:space-between;
   align-items:center;
   margin-bottom:6px;
+}
+
+.status-top div{
+  font-weight:600;
+  font-size:15px;
 }
 
 .status-bar{
@@ -186,7 +206,7 @@ input, select, textarea{
   height:8px;
   background:linear-gradient(90deg,#4ade80,#22c55e);
   width:100%;
-  transition:.25s;
+  transition: width 0.4s ease;
 }
 
 .status-fill.sanity{
@@ -304,7 +324,7 @@ input, select, textarea{
 <h2>Status</h2>
 <div class="status-card">
 
-<div class="status-item bloqueio">
+<div class="status-item vida">
 <div class="status-top"><div>Vida</div><span>❤️</span></div>
 <input id="vida" type="number" oninput="atualizarVida()">
 <small id="vidaMaxTxt"></small>
@@ -313,7 +333,7 @@ input, select, textarea{
 </div>
 </div>
 
-<div class="status-item">
+<div class="status-item sanidade">
 <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
 <input id="sanidade" type="number" oninput="atualizarSanidade()">
 <small id="sanidadeMaxTxt"></small>
@@ -322,7 +342,7 @@ input, select, textarea{
 </div>
 </div>
 
-<div class="status-item">
+<div class="status-item aura">
 <div class="status-top"><div>Aura ✨</div></div>
 <input id="aura" type="number" value="0" oninput="atualizarAura()">
 <small id="auraMaxTxt">Máx: 0</small>
@@ -331,12 +351,12 @@ input, select, textarea{
 </div>
 </div>
 
-<div class="status-item">
+<div class="status-item deslocamento">
   <div class="status-top"><div>Deslocamento (Quadrados)</div></div>
   <input id="deslocamento" type="number" disabled>
 </div>
 
-<div class="status-item">
+<div class="status-item dt">
   <div class="status-top">
     <div>DT de Habilidades</div>
   </div>
@@ -351,7 +371,7 @@ input, select, textarea{
   </div>
 </div>
   
-<div class="status-item">
+<div class="status-item bloqueio">
 <div class="status-top"><div>Bloqueio 🛡</div></div>
 
 <div style="display:flex; gap:10px; margin-bottom:6px;">
