@@ -350,14 +350,8 @@ input, select, textarea{
   <input type="number" id="rdMental" value="0">
 </div>
 </div>
-
-<div class="linha">
-  <label>RD Total</label>
-  <input type="number" id="rdTotal" value="0" oninput="atualizarBloqueio()">
 </div>
-</div>
-</div>
-
+  
 <!-- HABILIDADES -->
 <div class="bloco">
 <h2>Habilidades</h2>
@@ -819,7 +813,7 @@ function salvarFicha(){
     aura:aura.value,
     habilidades:habilidades,
     atributos:{},
-    pericias:{}
+    pericias:{},
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
   };
@@ -854,7 +848,9 @@ function salvarFichaManual(chave){
     aura:document.getElementById("aura").value,
     habilidades:habilidades,
     atributos:{},
-    pericias:{}
+    pericias:{},
+    rdFisica: document.getElementById("rdFisica").value,
+    rdMental: document.getElementById("rdMental").value,
   };
 
   atributos.forEach(a=>{
