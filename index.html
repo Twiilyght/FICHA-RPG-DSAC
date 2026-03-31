@@ -121,6 +121,31 @@ input:focus, textarea:focus, select:focus{
   transition: 0.2s;
 }
 
+#logRolagens{
+  max-height:300px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column-reverse;
+  gap:6px;
+}
+
+.log-item{
+  background:#020617;
+  border:1px solid #374151;
+  padding:8px;
+  border-radius:8px;
+  font-size:13px;
+}
+
+.log-nome{
+  color:#a5b4fc;
+  font-weight:bold;
+}
+
+.log-valor{
+  color:#facc15;
+}
+
 .resultado{
   color:#a5f3fc;
   font-size:13px;
@@ -271,6 +296,11 @@ input:focus, textarea:focus, select:focus{
 </div>
 </div>
 
+<div class="bloco">
+  <h2>📜 Histórico de Rolagens</h2>
+  <div id="logRolagens"></div>
+</div>
+  
 <!-- BÁSICO -->
 <div class="bloco">
 <h2>Informações Básicas</h2>
@@ -282,6 +312,10 @@ input:focus, textarea:focus, select:focus{
 <div class="linha" style="text-align:center;">
   <img id="previewImg" 
        style="max-width:200px; max-height:200px; border-radius:12px; border:1px solid #374151; display:none;">
+</div>
+<div class="linha">
+  <label>Nome do Jogador</label>
+  <input id="jogador" placeholder="Ex: Ícaro">
 </div>
 <div class="linha"><label>Nome</label><input id="nome"></div>
 <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
@@ -413,6 +447,48 @@ input:focus, textarea:focus, select:focus{
 
 <script>
 
+let logRolagens = [];
+
+function registrarLog(tipo, detalhe, total){
+
+  const nome = document.getElementById("jogador").value || "Anônimo";
+
+  const log = {
+    nome,
+    tipo,
+    detalhe,
+    total,
+    hora: new Date().toLocaleTimeString()
+  };
+
+logRolagens.push(log);
+
+if(logRolagens.length > 100){
+  logRolagens.shift();
+}
+
+  atualizarLog();
+}
+
+function atualizarLog(){
+
+  const box = document.getElementById("logRolagens");
+
+  box.innerHTML = "";
+
+  logRolagens.slice(-20).reverse().forEach(l => {
+    box.innerHTML += `
+      <div class="log-item">
+        <span class="log-nome">${l.nome}</span> 
+        → ${l.tipo} <br>
+        ${l.detalhe} = <span class="log-valor">${l.total}</span>
+        <div style="font-size:11px; opacity:0.6">${l.hora}</div>
+      </div>
+    `;
+  });
+
+}
+
 function mostrarPopup(titulo, detalhe, total){
 
   const popup = document.getElementById("dicePopup");
@@ -531,6 +607,12 @@ mostrarPopup(
   `1d20 (${d}) + ${v}`,
   total
   );
+
+registrarLog(
+  h.nome || "Habilidade",
+  `${h.dado} → [${detalhes.join(" + ")}]`,
+  total
+);
   
   limparDepois(resId);
 }
@@ -563,6 +645,8 @@ mostrarPopup(
   `${qtdDados}d20 [${resultados.join(", ")}]`,
   total
 );
+
+registrarLog(sigla, `1d20 (${d}) + ${v}`, total);
 
 const resId = "res_" + id;
 
@@ -670,10 +754,8 @@ function atualizarBloqueio(){
   const con = parseInt(document.getElementById("atr_CON").value) || 0;
   const rd = parseInt(document.getElementById("rdFisica").value) || 0;
 
-  // Bloqueio menor = CON + RD
   const bloqueioMenor = (2 * con) + rd;
 
-  // Bloqueio maior = último teste Fortitude + (2 × CON) + RD
   const bloqueioMaior = ultimoTesteFortitude + (2 * con) + rd;
 
   document.getElementById("bloqueioMenor").innerText = bloqueioMenor;
@@ -817,6 +899,12 @@ else if(tok.toLowerCase().includes("d")){
   mostrarPopup(
     h.nome || "Habilidade",
     h.dado + " → [" + detalhes.join(" + ") + "]",
+    total
+  );
+
+  registrarLog(
+    pericias[indice][1],
+    `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} + ${bonus}`,
     total
   );
 
