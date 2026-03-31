@@ -331,6 +331,21 @@ input, select, textarea{
 <div class="status-item">
 <div class="status-top"><div>Bloqueio 🛡</div></div>
 
+<div class="status-item">
+  <div class="status-top">
+    <div>DT de Habilidades</div>
+  </div>
+
+  <div class="linha">
+    <label>Bônus adicional</label>
+    <input type="number" id="dtBonus" value="0" oninput="atualizarDT()">
+  </div>
+
+  <div class="status-sub">
+    🎯 <strong>DT:</strong> <span id="dtTotal">15</span>
+  </div>
+</div>
+
 <div style="display:flex; gap:10px; margin-bottom:6px;">
   <div class="status-sub">
     🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
@@ -420,7 +435,7 @@ function criarInterface(){
     aBox.innerHTML += `
     <div class="atributo">
       <div>[${a.sigla}] ${a.nome}</div>
-      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade(); atualizarBloqueio();">
+      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT();">
         ${[...Array(21).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
       </select>
       <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
@@ -636,6 +651,15 @@ function atualizarBloqueio(){
   document.getElementById("bloqueioMenor").innerText = bloqueioMenor;
   document.getElementById("bloqueioMaior").innerText = bloqueioMaior;
 }
+
+function atualizarDT(){
+  const poder = parseInt(document.getElementById("atr_POD").value) || 0;
+  const bonus = parseInt(document.getElementById("dtBonus").value) || 0;
+
+  const dt = 15 + poder + bonus;
+
+  document.getElementById("dtTotal").innerText = dt;
+}
   
 /* ================= HABILIDADES ================= */
 function adicionarHabilidade(){
@@ -816,6 +840,7 @@ function salvarFicha(){
     pericias:{},
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
+    dtBonus: document.getElementById("dtBonus").value,
   };
 
   atributos.forEach(a=>{
@@ -926,6 +951,7 @@ if(!salvo){
   aura.value = d.aura || 0;
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
+  document.getElementById("dtBonus").value = d.dtBonus || 0;
   const img = document.getElementById("previewImg");
 if(d.imagem){
   img.src = d.imagem;
@@ -948,6 +974,8 @@ if(d.imagem){
 
   habilidades=d.habilidades||[];
   renderHabilidades();
+
+  atualizarDT();
 
   recalcularVidaSanidade();
   atualizarBloqueio();
