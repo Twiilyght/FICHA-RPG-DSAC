@@ -151,6 +151,10 @@ input, select, textarea{
   gap:14px;
 }
 
+.bloqueio{
+  grid-column: 1 / span 2;
+}
+
 .status-item{
   background:#020617;
   border:1px solid #374151;
@@ -296,7 +300,7 @@ input, select, textarea{
 <h2>Status</h2>
 <div class="status-card">
 
-<div class="status-item">
+<div class="status-item bloqueio">
 <div class="status-top"><div>Vida</div><span>❤️</span></div>
 <input id="vida" type="number" oninput="atualizarVida()">
 <small id="vidaMaxTxt"></small>
