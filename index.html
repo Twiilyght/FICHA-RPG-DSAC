@@ -151,8 +151,12 @@ input, select, textarea{
   gap:14px;
 }
 
+.dt{
+  grid-column: 1;
+}
+  
 .bloqueio{
-  grid-column: 1 / span 2;
+  grid-column: 2;
 }
 
 .status-item{
@@ -333,9 +337,6 @@ input, select, textarea{
 </div>
 
 <div class="status-item">
-<div class="status-top"><div>Bloqueio 🛡</div></div>
-
-<div class="status-item">
   <div class="status-top">
     <div>DT de Habilidades</div>
   </div>
@@ -349,6 +350,9 @@ input, select, textarea{
     🎯 <strong>DT:</strong> <span id="dtTotal">15</span>
   </div>
 </div>
+  
+<div class="status-item">
+<div class="status-top"><div>Bloqueio 🛡</div></div>
 
 <div style="display:flex; gap:10px; margin-bottom:6px;">
   <div class="status-sub">
