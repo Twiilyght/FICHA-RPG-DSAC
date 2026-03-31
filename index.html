@@ -608,11 +608,7 @@ mostrarPopup(
   total
   );
 
-registrarLog(
-  h.nome || "Habilidade",
-  `${h.dado} → [${detalhes.join(" + ")}]`,
-  total
-);
+registrarLog(sigla, `1d20 (${d}) + ${v}`, total);;
   
   limparDepois(resId);
 }
@@ -646,7 +642,7 @@ mostrarPopup(
   total
 );
 
-registrarLog(sigla, `1d20 (${d}) + ${v}`, total);
+registrarLog(pericias[indice][1], `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} + ${bonus}`, total);
 
 const resId = "res_" + id;
 
@@ -902,11 +898,7 @@ else if(tok.toLowerCase().includes("d")){
     total
   );
 
-  registrarLog(
-    pericias[indice][1],
-    `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} + ${bonus}`,
-    total
-  );
+registrarLog(h.nome || "Habilidade", h.dado + " → [" + detalhes.join(" + ") + "]", total);
 
   document.getElementById(resId).innerText = 
     `${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
