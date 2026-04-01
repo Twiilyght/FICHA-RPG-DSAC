@@ -445,12 +445,44 @@ input:focus, textarea:focus, select:focus{
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCHCD7rOMIo848m4IE3hKdvJxOtLEpLNOA",
+    authDomain: "do-submundo-aos-ceus.firebaseapp.com",
+    databaseURL: "https://do-submundo-aos-ceus-default-rtdb.firebaseio.com",
+    projectId: "do-submundo-aos-ceus",
+    storageBucket: "do-submundo-aos-ceus.firebasestorage.app",
+    messagingSenderId: "792746263716",
+    appId: "1:792746263716:web:21c8ca497a838d874ed231",
+    measurementId: "G-LNS0KVYKDE"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+
+  const database = firebase.database();
+
+  const rolagensRef = database.ref('rolagens');
+  rolagensRef.on('child_added', (snapshot) => {
+    const novaRolagem = snapshot.val();
+    logRolagens.push(novaRolagem);
+  // Limita o número de logs mostrados se necessário
+    if(logRolagens.length > 20) { // Ajuste conforme desejar
+      logRolagens.shift();
+  }
+    atualizarLog();
+});
+
+
+</script>
+  
 <script>
 
 let logRolagens = [];
 
 function registrarLog(tipo, detalhe, total){
-
   const nome = document.getElementById("jogador").value || "Anônimo";
 
   const log = {
@@ -458,8 +490,18 @@ function registrarLog(tipo, detalhe, total){
     tipo,
     detalhe,
     total,
-    hora: new Date().toLocaleTimeString()
+    hora: new Date().toLocaleString('pt-BR') // Formato local da data/hora
   };
+
+  database.ref('rolagens').push(log)
+    .then(() => {
+      console.log("Log de rolagem enviado para o Firebase!");
+    })
+    .catch((error) => {
+      console.error("Erro ao enviar log para o Firebase: ", error);
+    });
+}
+
 
 logRolagens.push(log);
 
@@ -471,22 +513,20 @@ if(logRolagens.length > 100){
 }
 
 function atualizarLog(){
-
   const box = document.getElementById("logRolagens");
-
   box.innerHTML = "";
 
-  logRolagens.slice(-20).reverse().forEach(l => {
+  // Mostra os últimos 20 logs, do mais recente para o mais antigo
+  logRolagens.slice().reverse().forEach(l => { // .slice() para criar uma cópia e não inverter o original
     box.innerHTML += `
       <div class="log-item">
-        <span class="log-nome">${l.nome}</span> 
+        <span class="log-nome">${l.nome}</span>
         → ${l.tipo} <br>
         ${l.detalhe} = <span class="log-valor">${l.total}</span>
         <div style="font-size:11px; opacity:0.6">${l.hora}</div>
       </div>
     `;
   });
-
 }
 
 function mostrarPopup(titulo, detalhe, total){
