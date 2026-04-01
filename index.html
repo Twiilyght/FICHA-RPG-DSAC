@@ -441,6 +441,20 @@ input:focus, textarea:focus, select:focus{
 <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
 <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
 <button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
+
+  <div id="dicePopup" class="dice-popup" style="display:none">
+    <div class="dice-popup-header">
+      <span id="popupTitulo"></span>
+      <span class="popup-close" onclick="fecharPopup()">✖</span>
+    </div>
+    <div class="dice-popup-body">
+      <span id="popupDetalhe"></span>
+      <span id="popupTotal"></span>
+    </div>
+  </div>
+
+  <!-- Seus scripts JS aqui -->
+  <script src="seu-script.js"></script>
 </div>
 
 </div>
@@ -501,17 +515,7 @@ function registrarLog(tipo, detalhe, total){
       console.error("Erro ao enviar log para o Firebase: ", error);
     });
 }
-
-
-logRolagens.push(log);
-
-if(logRolagens.length > 100){
-  logRolagens.shift();
-}
-
-  atualizarLog();
-}
-
+  
 function atualizarLog(){
   const box = document.getElementById("logRolagens");
   box.innerHTML = "";
