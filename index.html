@@ -395,6 +395,14 @@ input:focus, textarea:focus, select:focus{
 .habilidade textarea{
   grid-column: 1 / -1; /* ocupa linha inteira */
 }
+
+.habilidade input{
+  margin-bottom:6px;
+}
+
+.habilidade textarea{
+  margin-top:6px;
+}
   
 </style>
 </head>
@@ -420,12 +428,6 @@ input:focus, textarea:focus, select:focus{
     <button onclick="trocarAba('habilidades', this)">Habilidades</button>
   </div>
 </div>
-
-  <h2>Habilidades</h2>
-
-  <div id="listaHabilidades"></div>
-
-  <button onclick="criarNovaHabilidade()">+ Nova Habilidade</button>
 </div>
   
 <!-- SLOT -->
@@ -594,20 +596,10 @@ input:focus, textarea:focus, select:focus{
   
 <!-- HABILIDADES -->
 <div class="aba" id="aba_habilidades">
-<div class="bloco">
-<h2>Habilidades</h2>
-<div id="habilidadesLista"></div>
-
-<div class="bloco">
-  <input id="novaNome" placeholder="Nome da habilidade">
-
-  <input id="novoDado" placeholder="Dado (ex: 2d6+3)">
-
-  <textarea id="novaDesc" placeholder="Descrição da habilidade"></textarea>
-
-  <button onclick="criarNovaHabilidade()">Criar Habilidade</button>
-</div>
-</div>
+  <div class="bloco">
+    <h2>Habilidades</h2>
+    <div id="habilidadesLista"></div>
+    <button onclick="criarNovaHabilidade()">+ Nova Habilidade</button>
 </div>
 
   <div id="dicePopup" class="dice-popup" style="display:none">
@@ -712,8 +704,6 @@ function atualizarLog(){
     `;
   });
 }
-
-let listaHabilidades = [];
 
 function mostrarPopup(titulo, detalhe, total){
 
@@ -1055,49 +1045,42 @@ function atualizarDT(){
 
 function criarNovaHabilidade(){
 
-  const nome = document.getElementById("novaNome").value;
-  const dado = document.getElementById("novoDado").value;
-  const desc = document.getElementById("novaDesc").value;
+  const box = document.getElementById("habilidadesLista");
 
-  if(!nome){
-    alert("Dê um nome para a habilidade!");
-    return;
-  }
+  const id = Date.now();
 
-  listaHabilidades.push({nome, dado, desc});
+  const habilidade = document.createElement("div");
+  habilidade.className = "habilidade";
+  habilidade.dataset.id = id;
 
-  atualizarListaHabilidades();
+  habilidade.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <input placeholder="Nome da técnica" class="hab-nome">
 
-  // limpa campos
-  document.getElementById("novaNome").value = "";
-  document.getElementById("novoDado").value = "";
-  document.getElementById("novaDesc").value = "";
+      <span style="cursor:pointer; color:#f87171; font-weight:bold;"
+            onclick="this.parentElement.parentElement.remove()">✖</span>
+    </div>
+
+    <input placeholder="Dano (ex: 2d6+3, 5d8!7)" class="hab-dado">
+
+    <textarea placeholder="Descrição da técnica" class="hab-desc"></textarea>
+  `;
+
+  box.appendChild(habilidade);
 }
 
-function atualizarListaHabilidades(){
+function coletarHabilidades(){
+  const habilidades = [];
 
-  const box = document.getElementById("habilidadesLista");
-  box.innerHTML = "";
-
-  listaHabilidades.forEach((h, i)=>{
-
-    box.innerHTML += `
-      <div class="habilidade">
-        <strong>${h.nome}</strong>
-        <div>${h.dado}</div>
-        <div>${h.desc}</div>
-
-        <button onclick="deletarHabilidade(${i})">❌ Deletar</button>
-      </div>
-    `;
-
+  document.querySelectorAll("#habilidadesLista .habilidade").forEach(h => {
+    habilidades.push({
+      nome: h.querySelector(".hab-nome").value,
+      dado: h.querySelector(".hab-dado").value,
+      desc: h.querySelector(".hab-desc").value
+    });
   });
 
-}
-
-function deletarHabilidade(i){
-  listaHabilidades.splice(i,1);
-  atualizarListaHabilidades();
+  return habilidades;
 }
 
 /* ================= SALVAR ================= */
@@ -1139,7 +1122,7 @@ function salvarFicha(){
     aura:aura.value,
     atributos:{},
     pericias:{},
-    habilidades: listaHabilidades,
+    habilidades: coletarHabilidades(),
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
     dtBonus: document.getElementById("dtBonus").value,
@@ -1179,7 +1162,7 @@ function salvarFichaManual(chave){
     vida:document.getElementById("vida").value,
     sanidade:document.getElementById("sanidade").value,
     aura:document.getElementById("aura").value,
-    habilidades: listaHabilidades,
+    habilidades: coletarHabilidades(),
     atributos:{},
     pericias:{},
     rdFisica: document.getElementById("rdFisica").value,
@@ -1253,8 +1236,18 @@ if(!salvo){
   vida.value = d.vida || 0;
   sanidade.value = d.sanidade || 0;
   aura.value = d.aura || 0;
-  listaHabilidades = d.habilidades || [];
-  atualizarListaHabilidades();
+  const box = document.getElementById("habilidadesLista");
+  box.innerHTML = "";
+
+  (d.habilidades || []).forEach(h => {
+  criarNovaHabilidade();
+
+  const ultima = box.lastElementChild;
+
+  ultima.querySelector(".hab-nome").value = h.nome || "";
+  ultima.querySelector(".hab-dado").value = h.dado || "";
+  ultima.querySelector(".hab-desc").value = h.desc || "";
+});
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
   document.getElementById("dtBonus").value = d.dtBonus || 0;
