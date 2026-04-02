@@ -553,21 +553,23 @@ function exportarFicha(){
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
 
-  const dados = JSON.parse(localStorage.getItem(chave));
+  const bruto = localStorage.getItem(chave);
 
-  if(!dados){
+  if(!bruto){
     alert("Nenhuma ficha salva nesse slot!");
     return;
   }
 
-  // ❌ remove imagem
+  const dados = JSON.parse(bruto);
+
+  // remove imagem
   dados.imagem = "";
 
   const codigo = btoa(JSON.stringify(dados));
 
   document.getElementById("codigoFicha").value = codigo;
 
-  alert("Ficha exportada (sem imagem)!");
+  alert("Ficha exportada!");
 }
 
 function importarFicha(){
@@ -579,7 +581,7 @@ function importarFicha(){
   }
 
   try{
-    const dados = JSON.parse(codigo);
+    const dados = JSON.parse(atob(codigo)); // ✅ AQUI está o fix
 
     const slot = document.getElementById("slot").value;
     const chave = "fichaRPG_" + slot;
@@ -590,6 +592,7 @@ function importarFicha(){
 
     alert("Ficha importada com sucesso!");
   }catch(e){
+    console.error(e);
     alert("Código inválido!");
   }
 }
