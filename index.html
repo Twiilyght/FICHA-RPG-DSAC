@@ -598,6 +598,10 @@ input:focus, textarea:focus, select:focus{
 <div class="aba" id="aba_habilidades">
   <div class="bloco">
     <h2>Habilidades</h2>
+    <div class="habilidade">
+    <input id="nomeHabilidade" placeholder="Nome da habilidade">
+  <textarea id="descHabilidade" placeholder="Descrição..."></textarea>
+</div>
 
   <div id="dicePopup" class="dice-popup" style="display:none">
     <div class="dice-popup-header">
@@ -1079,6 +1083,8 @@ function salvarFicha(){
     aura:aura.value,
     atributos:{},
     pericias:{},
+    habilidadeNome: document.getElementById("nomeHabilidade").value,
+  habilidadeDesc: document.getElementById("descHabilidade").value,
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
     dtBonus: document.getElementById("dtBonus").value,
@@ -1191,6 +1197,8 @@ if(!salvo){
   vida.value = d.vida || 0;
   sanidade.value = d.sanidade || 0;
   aura.value = d.aura || 0;
+  document.getElementById("nomeHabilidade").value = d.habilidadeNome || "";
+  document.getElementById("descHabilidade").value = d.habilidadeDesc || "";
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
   document.getElementById("dtBonus").value = d.dtBonus || 0;
