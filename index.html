@@ -1302,7 +1302,7 @@ function limparFicha(){
 function carregarFicha(){
   const slot=document.getElementById("slot").value;
   const chave="fichaRPG_"+slot;
-  const d = JSON.parse(localStorage.getItem(chave) || "{}");
+  const salvo=localStorage.getItem(chave);
 
 if(!salvo){
   limparFicha();
