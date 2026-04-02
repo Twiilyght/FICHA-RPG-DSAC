@@ -604,7 +604,6 @@ input:focus, textarea:focus, select:focus{
   </div>
 
   <!-- Seus scripts JS aqui -->
-  <script src="seu-script.js"></script>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1298,7 +1297,7 @@ function limparFicha(){
   });
 
   // reset habilidades
-  habilidades = [];
+  habilidades = [{nome:"",desc:"",dado:""}];
   renderHabilidades();
 
   // reset imagem
