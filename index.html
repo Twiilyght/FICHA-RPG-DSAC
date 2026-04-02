@@ -409,6 +409,17 @@ input:focus, textarea:focus, select:focus{
 
 <body>
 
+  <div id="dicePopup" class="dice-popup" style="display:none">
+    <div class="dice-popup-header">
+      <span id="popupTitulo"></span>
+      <span class="popup-close" onclick="fecharPopup()">✖</span>
+    </div>
+    <div class="dice-popup-body">
+      <span id="popupDetalhe"></span>
+      <span id="popupTotal"></span>
+    </div>
+  </div>
+
 <div class="floating-menu">
   <button onclick="exportarFicha()">Exportar</button>
   <button onclick="importarFicha()">Importar</button>
@@ -602,17 +613,8 @@ input:focus, textarea:focus, select:focus{
     <input id="nomeHabilidade" placeholder="Nome da habilidade">
   <textarea id="descHabilidade" placeholder="Descrição..."></textarea>
 </div>
-
-  <div id="dicePopup" class="dice-popup" style="display:none">
-    <div class="dice-popup-header">
-      <span id="popupTitulo"></span>
-      <span class="popup-close" onclick="fecharPopup()">✖</span>
-    </div>
-    <div class="dice-popup-body">
-      <span id="popupDetalhe"></span>
-      <span id="popupTotal"></span>
-    </div>
-  </div>
+  </div> 
+</div>
 
   <!-- Seus scripts JS aqui -->
 </div>
