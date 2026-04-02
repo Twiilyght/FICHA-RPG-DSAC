@@ -140,7 +140,7 @@ input:focus, textarea:focus, select:focus{
   box-shadow:0 0 5px #6366f1;
 }
 
-.atributo, .pericia, .habilidade{
+.atributo, .pericia{
   display:grid;
   grid-template-columns: 1fr 90px 40px 160px;
   align-items:center;
@@ -384,10 +384,12 @@ input:focus, textarea:focus, select:focus{
 }
 
 .habilidade{
-  display:grid;
-  grid-template-columns: 1fr 120px 40px 1fr auto;
-  gap:10px;
-  margin:10px 0;
+  display:flex;
+  flex-direction:column;
+  background:#020617;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid #374151;
 }
 
 .habilidade textarea{
@@ -1170,7 +1172,7 @@ function salvarFichaManual(chave){
     vida:document.getElementById("vida").value,
     sanidade:document.getElementById("sanidade").value,
     aura:document.getElementById("aura").value,
-    habilidades:habilidades,
+    habilidades: listaHabilidades,
     atributos:{},
     pericias:{},
     rdFisica: document.getElementById("rdFisica").value,
@@ -1287,25 +1289,23 @@ for(const p in d.pericias){
   atualizarBloqueio();
 }
 
-let slotAtual = document.getElementById("slot").value;
+window.onload = () => {
 
-document.getElementById("slot").addEventListener("change", function(){
-
-  const chaveAntiga = "fichaRPG_" + slotAtual;
-  salvarFicha(); 
-
-  // atualiza slot atual
-  slotAtual = this.value;
-
-  // carrega o novo
+  criarInterface();
+  trocarAba("basico", document.querySelector(".tabs button"));
   carregarFicha();
-});
+  
+  let slotAtual = document.getElementById("slot").value;
 
+  document.getElementById("slot").addEventListener("change", function(){
+    salvarFicha();
+    slotAtual = this.value;
+    carregarFicha();
+  });
+
+};
   
 /* ================= START ================= */
-criarInterface();
-trocarAba("basico", document.querySelector(".tabs button"));
-carregarFicha();
 </script>
   
 </body>
