@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <title>Ficha RPG</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <style>
 
 .dice-popup{
@@ -438,9 +435,13 @@ input:focus, textarea:focus, select:focus{
 
 <!-- SALVAR / PDF -->
 <div class="bloco">
+<button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
+<button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
+
+<textarea id="codigoFicha" placeholder="Código da ficha..." style="width:100%; margin-top:10px; height:120px;"></textarea>
+  
 <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
 <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
-<button class="salvar-btn" onclick="gerarPDF()">Baixar PDF da ficha</button>
 
   <div id="dicePopup" class="dice-popup" style="display:none">
     <div class="dice-popup-header">
@@ -546,6 +547,46 @@ function mostrarPopup(titulo, detalhe, total){
 
 function fecharPopup(){
   document.getElementById("dicePopup").style.display = "none";
+}
+
+function exportarFicha(){
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
+
+  const dados = localStorage.getItem(chave);
+
+  if(!dados){
+    alert("Nenhuma ficha salva nesse slot!");
+    return;
+  }
+
+  document.getElementById("codigoFicha").value = dados;
+
+  alert("Ficha exportada! Copie o código.");
+}
+
+function importarFicha(){
+  const codigo = document.getElementById("codigoFicha").value;
+
+  if(!codigo){
+    alert("Cole um código válido!");
+    return;
+  }
+
+  try{
+    const dados = JSON.parse(codigo);
+
+    const slot = document.getElementById("slot").value;
+    const chave = "fichaRPG_" + slot;
+
+    localStorage.setItem(chave, JSON.stringify(dados));
+
+    carregarFicha();
+
+    alert("Ficha importada com sucesso!");
+  }catch(e){
+    alert("Código inválido!");
+  }
 }
   
 /* ================= DADOS ================= */  
@@ -1144,21 +1185,6 @@ for(const p in d.pericias){
   atualizarBloqueio();
 }
 
-/* ================= PDF ================= */
-async function gerarPDF(){
-  const { jsPDF }=window.jspdf;
-  const ficha=document.getElementById("ficha");
-  const canvas=await html2canvas(ficha,{scale:2});
-  const img=canvas.toDataURL("image/png");
-
-  const pdf=new jsPDF("p","mm","a4");
-  const w=pdf.internal.pageSize.getWidth()-10;
-  const h=(canvas.height*w)/canvas.width;
-
-  pdf.addImage(img,"PNG",5,5,w,h);
-  pdf.save("ficha_rpg.pdf");
-}
-
 let slotAtual = document.getElementById("slot").value;
 
 document.getElementById("slot").addEventListener("change", function(){
@@ -1180,7 +1206,6 @@ criarInterface();
 carregarFicha();
 </script>
 
-<div id="dicePopup" class="dice-popup" style="display:none;">
   <div class="dice-popup-header">
     <span id="popupTitulo">Teste</span>
     <span class="popup-close" onclick="fecharPopup()">✖</span>
