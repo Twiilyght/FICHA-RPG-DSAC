@@ -587,8 +587,17 @@ input:focus, textarea:focus, select:focus{
 <div class="aba" id="aba_habilidades">
 <div class="bloco">
 <h2>Habilidades</h2>
-<div id="habilidades"></div>
-<button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
+<div id="habilidadesLista"></div>
+
+<div class="bloco">
+  <input id="novaNome" placeholder="Nome da habilidade">
+
+  <input id="novoDado" placeholder="Dado (ex: 2d6+3)">
+
+  <textarea id="novaDesc" placeholder="Descrição da habilidade"></textarea>
+
+  <button onclick="criarNovaHabilidade()">Criar Habilidade</button>
+</div>
 </div>
 </div>
 
@@ -654,9 +663,6 @@ function trocarAba(nome, el){
   document.getElementById("aba_"+nome).classList.add("ativa");
 
   el.classList.add("ativa"); 
-    if(nome === "habilidades"){
-    renderHabilidades();
-  }
 }
 
 let logVisivel = true;
@@ -697,6 +703,8 @@ function atualizarLog(){
     `;
   });
 }
+
+let listaHabilidades = [];
 
 function mostrarPopup(titulo, detalhe, total){
 
@@ -794,10 +802,6 @@ const pericias = [
 ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"],["POD","Energia"]
 ];
 
-let habilidades = [];
-if(habilidades.length === 0){
-  habilidades.push({nome:"",desc:"",dado:""});
-}
 let ultimoTesteFortitude = 0;
 
 /* ================= INTERFACE ================= */
@@ -1039,142 +1043,52 @@ function atualizarDT(){
 }
   
 /* ================= HABILIDADES ================= */
-function adicionarHabilidade(){
-  habilidades.push({nome:"",desc:"",dado:""});
-  renderHabilidades();
-}
 
-function removerHabilidade(i){
-  habilidades.splice(i,1);
-  renderHabilidades();
-}
+function criarNovaHabilidade(){
 
-function renderHabilidades(){
-  const box=document.getElementById("habilidades");
-  box.innerHTML="";
+  const nome = document.getElementById("novaNome").value;
+  const dado = document.getElementById("novoDado").value;
+  const desc = document.getElementById("novaDesc").value;
 
-  habilidades.forEach((h,i)=>{
-    box.innerHTML+=`
-    <div class="habilidade">
-      <input placeholder="Nome" value="${h.nome}" 
-        oninput="habilidades[${i}].nome=this.value">
-      <input placeholder="Dado (ex: 2d6+3)" value="${h.dado}"
-        oninput="habilidades[${i}].dado=this.value">
-      <span class="dice" onclick="rolarHabilidade(${i})">🎲</span>
-      <span id="resHab_${i}" class="resultado"></span>
-      <textarea placeholder="Descrição"
-        oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-      <button onclick="removerHabilidade(${i})">❌</button>
-    </div>`;
-  });
-}
-
-function rolarHabilidade(i){
-
-  somDado.currentTime = 0;
-  somDado.play();
-  
-  const h = habilidades[i];
-  const resId = "resHab_" + i;
-
-  if(!h || !h.dado){
-    document.getElementById(resId).innerText = "Insira um dado válido!";
-    limparDepois(resId);
+  if(!nome){
+    alert("Dê um nome para a habilidade!");
     return;
   }
 
-  const regex = /(\d+d\d+!\d+|\d+d\d+!|\d+d\d+|\+|\-|\d+)/gi;
-  const tokens = h.dado.match(regex);
+  listaHabilidades.push({nome, dado, desc});
 
-  if(!tokens){
-    document.getElementById(resId).innerText = "Formato inválido";
-    limparDepois(resId);
-    return;
-  }
+  atualizarListaHabilidades();
 
-  let total = 0;
-  let detalhes = [];
-  let operador = "+";
+  // limpa campos
+  document.getElementById("novaNome").value = "";
+  document.getElementById("novoDado").value = "";
+  document.getElementById("novaDesc").value = "";
+}
 
-  tokens.forEach(tok=>{
-    tok = tok.trim();
-    if(tok === "+" || tok === "-"){
-      operador = tok;
-    }
-else if(tok.toLowerCase().includes("d")){
+function atualizarListaHabilidades(){
 
-  let qtd, faces, explosao = null;
+  const box = document.getElementById("habilidadesLista");
+  box.innerHTML = "";
 
-  const dado = tok.toLowerCase();
+  listaHabilidades.forEach((h, i)=>{
 
-  if(dado.includes("!")){
+    box.innerHTML += `
+      <div class="habilidade">
+        <strong>${h.nome}</strong>
+        <div>${h.dado}</div>
+        <div>${h.desc}</div>
 
-    const partes = dado.split("!");
-    const base = partes[0];
-    const crit = partes[1];
+        <button onclick="deletarHabilidade(${i})">❌ Deletar</button>
+      </div>
+    `;
 
-    [qtd, faces] = base.split("d").map(Number);
-
-    explosao = crit ? Number(crit) : faces;
-
-    if(qtd > 100 || faces > 1000){
-      document.getElementById(resId).innerText = "Dado muito grande!";
-      return;
-    }
-
-  }else{
-
-    [qtd, faces] = dado.split("d").map(Number);
-
-  }
-
-  for(let j=0; j<qtd; j++){
-
-    let r = Math.floor(Math.random()*faces)+1;
-
-    detalhes.push(r);
-
-    total = operador === "+" ? total+r : total-r;
-
-    if(explosao){
-
-      let limiteExplosao = 100;
-      let cont = 0;
-      
-      while(r >= explosao && cont < limiteExplosao){
-        
-        cont++;
-        r = Math.floor(Math.random()*faces)+1;
-
-        detalhes.push("💥"+r);
-
-        total = operador === "+" ? total+r : total-r;
-        
-      }
-
-    }
-
-  }
-
-} else {
-      const n = Number(tok);
-      total = operador === "+" ? total+n : total-n;
-      detalhes.push(tok);
-    }
   });
 
-  mostrarPopup(
-    h.nome || "Habilidade",
-    h.dado + " → [" + detalhes.join(" + ") + "]",
-    total
-  );
+}
 
-registrarLog(h.nome || "Habilidade", h.dado + " → [" + detalhes.join(" + ") + "]", total);
-
-  document.getElementById(resId).innerText = 
-    `${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
-
-  limparDepois(resId);
+function deletarHabilidade(i){
+  listaHabilidades.splice(i,1);
+  atualizarListaHabilidades();
 }
 
 /* ================= SALVAR ================= */
@@ -1214,9 +1128,9 @@ function salvarFicha(){
     vida:vida.value,
     sanidade:sanidade.value,
     aura:aura.value,
-    habilidades:habilidades,
     atributos:{},
     pericias:{},
+    habilidades: listaHabilidades,
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
     dtBonus: document.getElementById("dtBonus").value,
@@ -1299,10 +1213,6 @@ function limparFicha(){
     if(el) el.value = 1;
   });
 
-  // reset habilidades
-  habilidades = [{nome:"",desc:"",dado:""}];
-  renderHabilidades();
-
   // reset imagem
   const img = document.getElementById("previewImg");
   img.style.display="none";
@@ -1334,6 +1244,8 @@ if(!salvo){
   vida.value = d.vida || 0;
   sanidade.value = d.sanidade || 0;
   aura.value = d.aura || 0;
+  listaHabilidades = d.habilidades || [];
+  atualizarListaHabilidades();
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
   document.getElementById("dtBonus").value = d.dtBonus || 0;
@@ -1368,11 +1280,6 @@ for(const p in d.pericias){
     document.getElementById(p).value = data;
   }
 }
-    habilidades = Array.isArray(d.habilidades) && d.habilidades.length > 0
-      ? d.habilidades
-      : [{nome:"",desc:"",dado:""}];
-    console.log("Habilidades carregadas:", d.habilidades);
-    renderHabilidades();
 
   atualizarDT();
 
