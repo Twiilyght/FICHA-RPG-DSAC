@@ -1302,7 +1302,7 @@ function limparFicha(){
 function carregarFicha(){
   const slot=document.getElementById("slot").value;
   const chave="fichaRPG_"+slot;
-  const salvo=localStorage.getItem(chave);
+  const d = JSON.parse(localStorage.getItem(chave) || "{}");
 
 if(!salvo){
   limparFicha();
@@ -1351,7 +1351,6 @@ for(const p in d.pericias){
     if(document.getElementById("atrKey_"+p))
       document.getElementById("atrKey_"+p).value = data.atributo || "FOR";
   } else {
-    // compatibilidade com saves antigos
     document.getElementById(p).value = data;
   }
 }
