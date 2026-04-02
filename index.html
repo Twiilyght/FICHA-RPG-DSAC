@@ -337,6 +337,42 @@ input:focus, textarea:focus, select:focus{
   background:#6366f1;
 }
 
+.floating-menu .alerta{
+  display:none;
+  font-size:12px;
+  padding:6px;
+}
+
+.floating-log{
+  position:fixed;
+  top:20px;
+  left:20px;
+  width:280px;
+  max-height:400px;
+  background:#111827;
+  border:2px solid #60a5fa;
+  border-radius:12px;
+  padding:10px;
+  z-index:9999;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+  display:flex;
+  flex-direction:column;
+}
+
+.log-header{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.floating-log #logRolagens{
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column-reverse;
+  gap:6px;
+}
+
 #codigoFicha{
   width:220px;
   height:80px;
@@ -358,6 +394,7 @@ input:focus, textarea:focus, select:focus{
   <button onclick="salvarFicha()">Salvar</button>
 
   <textarea id="codigoFicha" placeholder="Código..."></textarea>
+  <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
 </div>
 
 <div id="ficha">
@@ -391,13 +428,12 @@ input:focus, textarea:focus, select:focus{
 </div>
 </div>
 
-<div class="bloco">
-  <h2>
-    📜 Histórico de Rolagens 
-    <span id="toggleLog" style="cursor:pointer; font-size:14px; color:#60a5fa;">
-      (ocultar)
-    </span>
-  </h2>
+<div id="logFloating" class="floating-log">
+  <div class="log-header">
+    🎲 Rolagens
+    <span onclick="toggleLogFloating()">✖</span>
+  </div>
+
   <div id="logRolagens"></div>
 </div>
   
@@ -549,11 +585,8 @@ input:focus, textarea:focus, select:focus{
 <div class="bloco">
 <button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
 <button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
-
-<textarea id="codigoFicha" placeholder="Código da ficha..." style="width:100%; margin-top:10px; height:120px;"></textarea>
   
 <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
-<div id="alerta" class="alerta">Ficha salva com sucesso!</div>
 
   <div id="dicePopup" class="dice-popup" style="display:none">
     <div class="dice-popup-header">
@@ -1356,8 +1389,8 @@ document.getElementById("slot").addEventListener("change", function(){
   
 /* ================= START ================= */
 criarInterface();
-carregarFicha();
 trocarAba("basico");
+carregarFicha();
 </script>
   
 </body>
