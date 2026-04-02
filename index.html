@@ -654,6 +654,9 @@ function trocarAba(nome, el){
   document.getElementById("aba_"+nome).classList.add("ativa");
 
   el.classList.add("ativa"); 
+    if(nome === "habilidades"){
+    renderHabilidades();
+  }
 }
 
 let logVisivel = true;
@@ -1365,7 +1368,9 @@ for(const p in d.pericias){
     document.getElementById(p).value = data;
   }
 }
-    habilidades = Array.isArray(d.habilidades) ? d.habilidades : [];
+    habilidades = Array.isArray(d.habilidades) && d.habilidades.length > 0
+      ? d.habilidades
+      : [{nome:"",desc:"",dado:""}];
     console.log("Habilidades carregadas:", d.habilidades);
     renderHabilidades();
 
@@ -1392,7 +1397,6 @@ document.getElementById("slot").addEventListener("change", function(){
   
 /* ================= START ================= */
 criarInterface();
-renderHabilidades();
 trocarAba("basico", document.querySelector(".tabs button"));
 carregarFicha();
 </script>
