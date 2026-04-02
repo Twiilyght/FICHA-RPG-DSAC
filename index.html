@@ -1380,7 +1380,9 @@ for(const p in d.pericias){
   atualizarBloqueio();
 }
 
-let slotAtual = document.getElementById("slot").value;
+window.onload = () => {
+  
+  let slotAtual = document.getElementById("slot").value;
 
 document.getElementById("slot").addEventListener("change", function(){
 
