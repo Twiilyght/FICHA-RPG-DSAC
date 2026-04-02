@@ -624,6 +624,7 @@ input:focus, textarea:focus, select:focus{
 
   const database = firebase.database();
 
+  let logRolagens = [];
   const rolagensRef = database.ref('rolagens').limitToLast(20);
   rolagensRef.on('child_added', (snapshot) => {
     const novaRolagem = snapshot.val();
@@ -655,23 +656,6 @@ function trocarAba(nome, el){
 }
 
 let logVisivel = true;
-
-document.getElementById("toggleLog").onclick = function(){
-  const log = document.getElementById("logRolagens");
-  const btn = document.getElementById("toggleLog");
-
-  logVisivel = !logVisivel;
-
-  if(logVisivel){
-    log.style.display = "flex";
-    btn.innerText = "(ocultar)";
-  } else {
-    log.style.display = "none";
-    btn.innerText = "(mostrar)";
-  }
-};
-  
-let logRolagens = [];
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
