@@ -6,6 +6,34 @@
 
 <style>
 
+.tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.tabs button{
+  padding:10px 16px;
+  border:none;
+  border-radius:10px;
+  background:#1f2937;
+  color:#e5e7eb;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.tabs button:hover{
+  background:#374151;
+}
+
+.aba{
+  display:none;
+}
+
+.aba.ativa{
+  display:block;
+}
+  
 .dice-popup{
   position:fixed;
   bottom:20px;
@@ -273,6 +301,15 @@ input:focus, textarea:focus, select:focus{
 
 <div id="ficha">
 
+<div class="bloco">
+  <div class="tabs">
+    <button onclick="trocarAba('basico')">Informações Básicas</button>
+    <button onclick="trocarAba('atributos')">Atributos e Perícias</button>
+    <button onclick="trocarAba('status')">Status</button>
+    <button onclick="trocarAba('habilidades')">Habilidades</button>
+  </div>
+</div>
+  
 <!-- SLOT -->
 <div class="bloco">
 <h2>Seleção de Ficha</h2>
@@ -299,8 +336,10 @@ input:focus, textarea:focus, select:focus{
 </div>
   
 <!-- BÁSICO -->
+<div class="aba" id="aba_basico">
 <div class="bloco">
 <h2>Informações Básicas</h2>
+
 <div class="linha">
   <label>Imagem do Personagem</label>
   <input type="file" id="imgUpload" accept="image/*" onchange="carregarImagem(event)">
@@ -320,8 +359,10 @@ input:focus, textarea:focus, select:focus{
 <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
 <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
 </div>
+</div>
 
 <!-- ATRIBUTOS -->
+<div class="aba" id="aba_atributos">
 <div class="bloco">
 <h2>Atributos</h2>
 
@@ -349,8 +390,10 @@ input:focus, textarea:focus, select:focus{
 <h2>Perícias</h2>
 <div id="pericias"></div>
 </div>
+</div>
 
 <!-- STATUS -->
+<div class="aba" id="aba_status">
 <div class="bloco">
 <h2>Status</h2>
 <div class="status-card">
@@ -425,12 +468,15 @@ input:focus, textarea:focus, select:focus{
 </div>
 </div>
 </div>
+</div>
   
 <!-- HABILIDADES -->
+<div class="aba" id="aba_habilidades">
 <div class="bloco">
 <h2>Habilidades</h2>
 <div id="habilidades"></div>
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
+</div>
 </div>
 
 <!-- SALVAR / PDF -->
@@ -495,6 +541,14 @@ input:focus, textarea:focus, select:focus{
   
 <script>
 
+function trocarAba(nome){
+  document.querySelectorAll(".aba").forEach(a=>{
+    a.classList.remove("ativa");
+  });
+
+  document.getElementById("aba_"+nome).classList.add("ativa");
+}
+  
 let logRolagens = [];
 
 function registrarLog(tipo, detalhe, total){
@@ -853,9 +907,10 @@ function atualizarBloqueio(){
 
 function atualizarDT(){
   const poder = parseInt(document.getElementById("atr_POD").value) || 0;
+  const intelecto = parseInt(document.getElementById("atr_INT").value) || 0;
   const bonus = parseInt(document.getElementById("dtBonus").value) || 0;
 
-  const dt = 15 + poder + bonus;
+  const dt = 15 + poder + intelecto + bonus;
 
   document.getElementById("dtTotal").innerText = dt;
 }
@@ -1212,18 +1267,8 @@ document.getElementById("slot").addEventListener("change", function(){
 /* ================= START ================= */
 criarInterface();
 carregarFicha();
+trocarAba("basico");
 </script>
-
-  <div class="dice-popup-header">
-    <span id="popupTitulo">Teste</span>
-    <span class="popup-close" onclick="fecharPopup()">✖</span>
-  </div>
-
-  <div class="dice-popup-body">
-    <span id="popupDetalhe"></span>
-    <span id="popupTotal"></span>
-  </div>
-</div>
   
 </body>
 </html>
