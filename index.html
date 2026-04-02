@@ -624,7 +624,7 @@ input:focus, textarea:focus, select:focus{
 
   const database = firebase.database();
 
-  const rolagensRef = database.ref('rolagens');
+  const rolagensRef = database.ref('rolagens').limitToLast(20);
   rolagensRef.on('child_added', (snapshot) => {
     const novaRolagem = snapshot.val();
     logRolagens.push(novaRolagem);
@@ -723,6 +723,16 @@ function mostrarPopup(titulo, detalhe, total){
 
 function fecharPopup(){
   document.getElementById("dicePopup").style.display = "none";
+}
+
+function toggleLogFloating(){
+  const log = document.getElementById("logFloating");
+
+  if(log.style.display === "none"){
+    log.style.display = "flex";
+  } else {
+    log.style.display = "none";
+  }
 }
 
 function exportarFicha(){
@@ -1225,17 +1235,13 @@ function salvarFicha(){
     dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
   });
 
-  pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i] = {
-      valor: document.getElementById("per_"+i).value,
-      const id = "per_" + i;
+pericias.forEach((p,i)=>{
+  const id = "per_" + i;
 
-     dados.pericias[id] = {
-       valor: document.getElementById(id).value,
-       bonus: document.getElementById("bonus_" + id).value,
-       atributo: document.getElementById("atrKey_" + id).value
-};
-      atributo: document.getElementById("atrKey_per_"+i).value
+  dados.pericias[id] = {
+    valor: document.getElementById(id).value,
+    bonus: document.getElementById("bonus_" + id).value,
+    atributo: document.getElementById("atrKey_" + id).value
   };
 });
 
@@ -1399,7 +1405,7 @@ document.getElementById("slot").addEventListener("change", function(){
   
 /* ================= START ================= */
 criarInterface();
-trocarAba("basico");
+trocarAba("basico", document.querySelector(".tabs button"));
 carregarFicha();
 </script>
   
