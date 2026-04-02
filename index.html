@@ -382,6 +382,17 @@ input:focus, textarea:focus, select:focus{
   color:#e5e7eb;
   padding:6px;
 }
+
+.habilidade{
+  display:grid;
+  grid-template-columns: 1fr 120px 40px 1fr auto;
+  gap:10px;
+  margin:10px 0;
+}
+
+.habilidade textarea{
+  grid-column: 1 / -1; /* ocupa linha inteira */
+}
   
 </style>
 </head>
@@ -782,6 +793,9 @@ const pericias = [
 ];
 
 let habilidades = [];
+if(habilidades.length === 0){
+  habilidades.push({nome:"",desc:"",dado:""});
+}
 let ultimoTesteFortitude = 0;
 
 /* ================= INTERFACE ================= */
