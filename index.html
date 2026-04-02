@@ -580,11 +580,6 @@ input:focus, textarea:focus, select:focus{
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
 </div>
 </div>
-
-<!-- SALVAR / PDF -->
-<div class="bloco">
-<button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
-<button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
   
 <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
 
@@ -1362,8 +1357,8 @@ for(const p in d.pericias){
     document.getElementById(p).value = data;
   }
 }
-  habilidades=d.habilidades||[];
-  renderHabilidades();
+    habilidades = Array.isArray(d.habilidades) ? d.habilidades : [];
+    renderHabilidades();
 
   atualizarDT();
 
@@ -1375,9 +1370,8 @@ let slotAtual = document.getElementById("slot").value;
 
 document.getElementById("slot").addEventListener("change", function(){
 
-  // salva no slot antigo
   const chaveAntiga = "fichaRPG_" + slotAtual;
-  salvarFichaManual(chaveAntiga);
+  salvarFicha(); 
 
   // atualiza slot atual
   slotAtual = this.value;
