@@ -598,9 +598,6 @@ input:focus, textarea:focus, select:focus{
 <div class="aba" id="aba_habilidades">
   <div class="bloco">
     <h2>Habilidades</h2>
-    <div id="habilidadesLista"></div>
-    <button onclick="criarNovaHabilidade()">+ Nova Habilidade</button>
-</div>
 
   <div id="dicePopup" class="dice-popup" style="display:none">
     <div class="dice-popup-header">
@@ -1043,46 +1040,6 @@ function atualizarDT(){
   
 /* ================= HABILIDADES ================= */
 
-function criarNovaHabilidade(){
-
-  const box = document.getElementById("habilidadesLista");
-
-  const id = Date.now();
-
-  const habilidade = document.createElement("div");
-  habilidade.className = "habilidade";
-  habilidade.dataset.id = id;
-
-  habilidade.innerHTML = `
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <input placeholder="Nome da técnica" class="hab-nome">
-
-      <span style="cursor:pointer; color:#f87171; font-weight:bold;"
-            onclick="this.parentElement.parentElement.remove()">✖</span>
-    </div>
-
-    <input placeholder="Dano (ex: 2d6+3, 5d8!7)" class="hab-dado">
-
-    <textarea placeholder="Descrição da técnica" class="hab-desc"></textarea>
-  `;
-
-  box.appendChild(habilidade);
-}
-
-function coletarHabilidades(){
-  const habilidades = [];
-
-  document.querySelectorAll("#habilidadesLista .habilidade").forEach(h => {
-    habilidades.push({
-      nome: h.querySelector(".hab-nome").value,
-      dado: h.querySelector(".hab-dado").value,
-      desc: h.querySelector(".hab-desc").value
-    });
-  });
-
-  return habilidades;
-}
-
 /* ================= SALVAR ================= */
 
 function carregarImagem(event){
@@ -1122,7 +1079,6 @@ function salvarFicha(){
     aura:aura.value,
     atributos:{},
     pericias:{},
-    habilidades: coletarHabilidades(),
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
     dtBonus: document.getElementById("dtBonus").value,
@@ -1162,7 +1118,6 @@ function salvarFichaManual(chave){
     vida:document.getElementById("vida").value,
     sanidade:document.getElementById("sanidade").value,
     aura:document.getElementById("aura").value,
-    habilidades: coletarHabilidades(),
     atributos:{},
     pericias:{},
     rdFisica: document.getElementById("rdFisica").value,
@@ -1236,18 +1191,7 @@ if(!salvo){
   vida.value = d.vida || 0;
   sanidade.value = d.sanidade || 0;
   aura.value = d.aura || 0;
-  const box = document.getElementById("habilidadesLista");
   box.innerHTML = "";
-
-  (d.habilidades || []).forEach(h => {
-  criarNovaHabilidade();
-
-  const ultima = box.lastElementChild;
-
-  ultima.querySelector(".hab-nome").value = h.nome || "";
-  ultima.querySelector(".hab-dado").value = h.dado || "";
-  ultima.querySelector(".hab-desc").value = h.desc || "";
-});
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
   document.getElementById("dtBonus").value = d.dtBonus || 0;
@@ -1302,17 +1246,6 @@ window.onload = () => {
     slotAtual = this.value;
     carregarFicha();
   });
-
-const box = document.getElementById("habilidadesLista");
-
-if(box.children.length === 0){
-  criarNovaHabilidade();
-}
-
-if(box.children.length === 0){
-  box.innerHTML = "<p style='opacity:0.6'>Nenhuma habilidade ainda...</p>";
-}
-
 };
   
 /* ================= START ================= */
