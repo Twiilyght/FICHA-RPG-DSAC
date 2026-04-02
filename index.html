@@ -8,24 +8,36 @@
 
 .tabs{
   display:flex;
-  gap:10px;
+  gap:12px;
   flex-wrap:wrap;
+  justify-content:center;
 }
 
 .tabs button{
-  padding:10px 16px;
+  padding:12px 22px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
   background:#1f2937;
   color:#e5e7eb;
   cursor:pointer;
-  transition:0.2s;
+  font-size:16px;
+  font-weight:bold;
+  letter-spacing:0.5px;
+
+  transition:0.25s;
 }
 
 .tabs button:hover{
   background:#374151;
+  transform:translateY(-2px);
 }
 
+.tabs button.ativa{
+  background:linear-gradient(135deg,#6366f1,#4f46e5);
+  box-shadow:0 0 15px rgba(99,102,241,0.6);
+  transform:scale(1.05);
+}
+  
 .aba{
   display:none;
 }
@@ -88,6 +100,7 @@ body{
   background:#0f172a;
   color:#e5e7eb;
   font-family: Arial, sans-serif;
+  font-size:16px; 
 }
 
 .bloco{
@@ -104,6 +117,7 @@ h2{
   color:#a5b4fc;
   border-bottom:1px solid #374151;
   padding-bottom:6px;
+  font-size:22px;
 }
 
 .linha{
@@ -294,10 +308,57 @@ input:focus, textarea:focus, select:focus{
   font-weight:bold;
   cursor:pointer;
 }
+
+.floating-menu{
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:9999;
+
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.floating-menu button{
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  background:#4f46e5;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,0.4);
+  transition:0.2s;
+}
+
+.floating-menu button:hover{
+  transform:scale(1.05);
+  background:#6366f1;
+}
+
+#codigoFicha{
+  width:220px;
+  height:80px;
+  border-radius:10px;
+  border:1px solid #374151;
+  background:#020617;
+  color:#e5e7eb;
+  padding:6px;
+}
+  
 </style>
 </head>
 
 <body>
+
+<div class="floating-menu">
+  <button onclick="exportarFicha()">Exportar</button>
+  <button onclick="importarFicha()">Importar</button>
+  <button onclick="salvarFicha()">Salvar</button>
+
+  <textarea id="codigoFicha" placeholder="Código..."></textarea>
+</div>
 
 <div id="ficha">
 
@@ -331,7 +392,12 @@ input:focus, textarea:focus, select:focus{
 </div>
 
 <div class="bloco">
-  <h2>📜 Histórico de Rolagens</h2>
+  <h2>
+    📜 Histórico de Rolagens 
+    <span id="toggleLog" style="cursor:pointer; font-size:14px; color:#60a5fa;">
+      (ocultar)
+    </span>
+  </h2>
   <div id="logRolagens"></div>
 </div>
   
@@ -542,12 +608,36 @@ input:focus, textarea:focus, select:focus{
 <script>
 
 function trocarAba(nome){
+
   document.querySelectorAll(".aba").forEach(a=>{
     a.classList.remove("ativa");
   });
 
+  document.querySelectorAll(".tabs button").forEach(b=>{
+    b.classList.remove("ativa");
+  });
+
   document.getElementById("aba_"+nome).classList.add("ativa");
+
+  event.target.classList.add("ativa");
 }
+
+let logVisivel = true;
+
+document.getElementById("toggleLog").onclick = function(){
+  const log = document.getElementById("logRolagens");
+  const btn = document.getElementById("toggleLog");
+
+  logVisivel = !logVisivel;
+
+  if(logVisivel){
+    log.style.display = "flex";
+    btn.innerText = "(ocultar)";
+  } else {
+    log.style.display = "none";
+    btn.innerText = "(mostrar)";
+  }
+};
   
 let logRolagens = [];
 
