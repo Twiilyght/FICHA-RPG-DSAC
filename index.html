@@ -580,8 +580,6 @@ input:focus, textarea:focus, select:focus{
 <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
 </div>
 </div>
-  
-<button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
 
   <div id="dicePopup" class="dice-popup" style="display:none">
     <div class="dice-popup-header">
@@ -1358,6 +1356,7 @@ for(const p in d.pericias){
   }
 }
     habilidades = Array.isArray(d.habilidades) ? d.habilidades : [];
+    console.log("Habilidades carregadas:", d.habilidades);
     renderHabilidades();
 
   atualizarDT();
