@@ -1303,6 +1303,16 @@ window.onload = () => {
     carregarFicha();
   });
 
+const box = document.getElementById("habilidadesLista");
+
+if(box.children.length === 0){
+  criarNovaHabilidade();
+}
+
+if(box.children.length === 0){
+  box.innerHTML = "<p style='opacity:0.6'>Nenhuma habilidade ainda...</p>";
+}
+
 };
   
 /* ================= START ================= */
