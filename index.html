@@ -553,16 +553,21 @@ function exportarFicha(){
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
 
-  const dados = localStorage.getItem(chave);
+  const dados = JSON.parse(localStorage.getItem(chave));
 
   if(!dados){
     alert("Nenhuma ficha salva nesse slot!");
     return;
   }
 
-  document.getElementById("codigoFicha").value = dados;
+  // ❌ remove imagem
+  dados.imagem = "";
 
-  alert("Ficha exportada! Copie o código.");
+  const codigo = btoa(JSON.stringify(dados));
+
+  document.getElementById("codigoFicha").value = codigo;
+
+  alert("Ficha exportada (sem imagem)!");
 }
 
 function importarFicha(){
