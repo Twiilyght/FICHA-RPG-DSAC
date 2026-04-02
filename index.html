@@ -1000,8 +1000,12 @@ function salvarFicha(){
   });
 
   pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i]=document.getElementById("per_"+i).value;
-  });
+    dados.pericias["per_"+i] = {
+      valor: document.getElementById("per_"+i).value,
+      bonus: document.getElementById("bonus_per_"+i).value,
+      atributo: document.getElementById("atrKey_per_"+i).value
+  };
+});
 
   localStorage.setItem(chave,JSON.stringify(dados));
 
@@ -1119,11 +1123,18 @@ if(d.imagem){
     if(el) el.value=d.atributos[s];
   }
 
-  for(const p in d.pericias){
-    const el=document.getElementById(p);
-    if(el) el.value=d.pericias[p];
-  }
+for(const p in d.pericias){
+  const data = d.pericias[p];
 
+  if(typeof data === "object"){
+    document.getElementById(p).value = data.valor || 1;
+    document.getElementById("bonus_"+p).value = data.bonus || 0;
+    document.getElementById("atrKey_"+p).value = data.atributo || "FOR";
+  } else {
+    // compatibilidade com saves antigos
+    document.getElementById(p).value = data;
+  }
+}
   habilidades=d.habilidades||[];
   renderHabilidades();
 
