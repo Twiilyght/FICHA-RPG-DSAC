@@ -437,6 +437,7 @@ input:focus, textarea:focus, select:focus{
     <button onclick="trocarAba('atributos', this)">Atributos e Perícias</button>
     <button onclick="trocarAba('status', this)">Status</button>
     <button onclick="trocarAba('habilidades', this)">Habilidades</button>
+    <button onclick="trocarAba('inventario', this)">Inventário</button>
   </div>
 </div>
 </div>
@@ -614,6 +615,24 @@ input:focus, textarea:focus, select:focus{
   <textarea id="descHabilidade" placeholder="Descrição..."></textarea>
 </div>
   </div> 
+</div>
+
+<!-- INVENTÁRIO -->
+<div class="aba" id="aba_inventario">
+  <div class="bloco">
+    <h2>Inventário</h2>
+
+    <div class="linha">
+      <label>Nome do Item</label>
+      <input id="nomeItem" placeholder="Ex: Espada antiga">
+    </div>
+
+    <div class="linha">
+      <label>Descrição</label>
+      <textarea id="descItem" placeholder="Descrição do item..."></textarea>
+    </div>
+
+  </div>
 </div>
 
   <!-- Seus scripts JS aqui -->
