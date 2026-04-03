@@ -984,7 +984,7 @@ function rolarHabilidade(i){
     return;
   }
 
-  const regex = /(\d+d\d+!\d+|\d+d\d+!|\d+d\d+|\+|\-|\d+)/gi;
+  const regex = /(\d+d\d+(kh\d+|kl\d+)?!\d+|\d+d\d+(kh\d+|kl\d+)?!|\d+d\d+(kh\d+|kl\d+)?|\+|\-|\d+)/gi;
   const tokens = h.dado.match(regex);
 
   if(!tokens){
@@ -1004,52 +1004,78 @@ function rolarHabilidade(i){
     }
     else if(tok.toLowerCase().includes("d")){
 
-      let qtd, faces, explosao = null;
+ let qtd, faces;
+let explosao = null;
+let keepType = null;
+let keepQtd = null;
 
-      const dado = tok.toLowerCase();
+let dado = tok.toLowerCase();
 
-      if(dado.includes("!")){
+// Detecta KH/KL
+const keepMatch = dado.match(/(kh|kl)(\d+)/);
 
-        const partes = dado.split("!");
-        const base = partes[0];
-        const crit = partes[1];
+if(keepMatch){
+  keepType = keepMatch[1]; // kh ou kl
+  keepQtd = Number(keepMatch[2]);
+  dado = dado.replace(keepMatch[0], "");
+}
 
-        [qtd, faces] = base.split("d").map(Number);
+// Detecta explosão
+if(dado.includes("!")){
+  const partes = dado.split("!");
+  const base = partes[0];
+  const crit = partes[1];
 
-        explosao = crit ? Number(crit) : faces;
+  [qtd, faces] = base.split("d").map(Number);
+  explosao = crit ? Number(crit) : faces;
 
-        if(qtd > 100 || faces > 1000){
-          document.getElementById(resId).innerText = "Dado muito grande!";
-          return;
-        }
+}else{
+  [qtd, faces] = dado.split("d").map(Number);
+}
 
-      }else{
+// segurança
+if(qtd > 100 || faces > 1000){
+  document.getElementById(resId).innerText = "Dado muito grande!";
+  return;
+}
 
-        [qtd, faces] = dado.split("d").map(Number);
+// rolar dados
+let rolls = [];
 
-      }
+for(let j=0; j<qtd; j++){
+  let r = Math.floor(Math.random()*faces)+1;
+  rolls.push(r);
 
-      for(let j=0; j<qtd; j++){
+  if(explosao){
+    let cont = 0;
+    while(r >= explosao && cont < 100){
+      cont++;
+      r = Math.floor(Math.random()*faces)+1;
+      rolls.push(r);
+    }
+  }
+}
 
-        let r = Math.floor(Math.random()*faces)+1;
+// aplicar KH/KL
+let selecionados = [...rolls];
 
-        detalhes.push(r);
+if(keepType && keepQtd){
+  if(keepType === "kh"){
+    selecionados = rolls.sort((a,b)=>b-a).slice(0, keepQtd);
+  }else if(keepType === "kl"){
+    selecionados = rolls.sort((a,b)=>a-b).slice(0, keepQtd);
+  }
+}
 
-        total = operador === "+" ? total+r : total-r;
+// somar
+const soma = selecionados.reduce((acc,v)=>acc+v,0);
 
-        if(explosao){
+// detalhe visual
+detalhes.push(
+  `${tok} → [${rolls.join(", ")}] ⇒ ${selecionados.join(", ")}`
+);
 
-          let limiteExplosao = 100;
-          let cont = 0;
-          
-          while(r >= explosao && cont < limiteExplosao){
-            
-            cont++;
-            r = Math.floor(Math.random()*faces)+1;
-
-            detalhes.push("💥"+r);
-
-            total = operador === "+" ? total+r : total-r;
+total = operador === "+" ? total + soma : total - soma;
             
           }
 
