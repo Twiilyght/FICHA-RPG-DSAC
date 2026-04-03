@@ -60,6 +60,12 @@ body{
   background:#0f172a;
   color:#e5e7eb;
   font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0 18px 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .bloco{
@@ -266,198 +272,277 @@ input:focus, textarea:focus, select:focus{
   font-weight:bold;
   cursor:pointer;
 }
+
+.tab-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 27px 0 10px 0;
+  flex-wrap: wrap;
+  max-width: 900px;
+  width: 100%;
+}
+
+.tab-button {
+  flex-grow: 1;
+  flex-basis: 28%;
+  background: #1e293b; /* Slightly lighter than .bloco background */
+  color: #facc15;
+  text-align: center;
+  font-weight: 700;
+  font-size: 20px;
+  padding: 14px 0;
+  cursor: pointer;
+  border-radius: 14px;
+  border: 3px solid #4f46e5;
+  user-select: none;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tab-button:hover {
+  background-color: #4f46e5;
+  color: #e0e7ff;
+  border-color: #facc15;
+  box-shadow: 0 0 10px #facc15;
+}
+
+.tab-button.active {
+  background-color: #facc15;
+  color: #0f172a;
+  border-color: #4f46e5;
+  box-shadow: 0 0 20px #facc15;
+  font-size: 22px;
+}
+
+.tab-content {
+  max-width:900px;
+  width:100%;
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Adjustments for general inputs and layout */
+
+.linha input[type="file"] {
+  padding: 6px;
+  background: #020617;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  color: #e5e7eb;
+  cursor: pointer;
+}
+  
+/* Smaller scrollbars for logRolagens */
+
+#logRolagens::-webkit-scrollbar {
+  width: 6px;
+}
+
+#logRolagens::-webkit-scrollbar-thumb {
+  background-color: #4f46e5;
+  border-radius: 10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div id="ficha">
+<h1 style="text-align:center; margin-top: 30px; font-weight: 700; color: #a5b4fc;">Ficha RPG</h1>
 
-<!-- SLOT -->
-<div class="bloco">
-<h2>Seleção de Ficha</h2>
-<div class="linha">
-<label>Escolha o slot</label>
-<select id="slot">
-<option value="1">Slot 1</option>
-<option value="2">Slot 2</option>
-<option value="3">Slot 3</option>
-<option value="4">Slot 4</option>
-<option value="5">Slot 5</option>
-<option value="6">Slot 6</option> 
-<option value="7">Slot 7</option> 
-<option value="8">Slot 8</option>
-<option value="9">Slot 9</option> 
-<option value="10">Slot 10</option> 
-</select>
-</div>
+<div class="tab-container">
+  <div class="tab-button active" data-tab="geral">Geral</div>
+  <div class="tab-button" data-tab="atributos-pericias">Atributos e Perícias</div>
+  <div class="tab-button" data-tab="estatisticas">Estatísticas</div>
 </div>
 
-<div class="bloco">
-  <h2>📜 Histórico de Rolagens</h2>
-  <div id="logRolagens"></div>
-</div>
-  
-<!-- BÁSICO -->
-<div class="bloco">
-<h2>Informações Básicas</h2>
-<div class="linha">
-  <label>Imagem do Personagem</label>
-  <input type="file" id="imgUpload" accept="image/*" onchange="carregarImagem(event)">
-</div>
-
-<div class="linha" style="text-align:center;">
-  <img id="previewImg" 
-       style="max-width:200px; max-height:200px; border-radius:12px; border:1px solid #374151; display:none;">
-</div>
-<div class="linha">
-  <label>Nome do Jogador</label>
-  <input id="jogador" placeholder="Ex: Ícaro">
-</div>
-<div class="linha"><label>Nome</label><input id="nome"></div>
-<div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-<div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
-<div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
-<div class="linha"><label>História</label><textarea id="historia"></textarea></div>
-</div>
-
-<!-- ATRIBUTOS -->
-<div class="bloco">
-<h2>Atributos</h2>
-
-<div class="linha">
-<label>Nível do Personagem</label>
-<select id="nivel" onchange="recalcularVidaSanidade()">
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-<option value="8">8</option>
-<option value="9">9</option>
-<option value="10">10</option>
-</select>
-</div>
-
-<div id="atributos"></div>
-</div>
-
-<!-- PERÍCIAS -->
-<div class="bloco">
-<h2>Perícias</h2>
-<div id="pericias"></div>
-</div>
-
-<!-- STATUS -->
-<div class="bloco">
-<h2>Status</h2>
-<div class="status-card">
-
-<div class="status-item vida">
-<div class="status-top"><div>Vida</div><span>❤️</span></div>
-<input id="vida" type="number" oninput="atualizarVida()">
-<small id="vidaMaxTxt"></small>
-<div class="status-bar">
-  <div id="vida-bar" class="status-fill"></div>
-</div>
-</div>
-
-<div class="status-item sanidade">
-<div class="status-top"><div>Sanidade</div><span>🧠</span></div>
-<input id="sanidade" type="number" oninput="atualizarSanidade()">
-<small id="sanidadeMaxTxt"></small>
-<div class="status-bar">
-  <div id="sanidade-bar" class="status-fill sanity"></div>
-</div>
-</div>
-
-<div class="status-item aura">
-<div class="status-top"><div>Aura ✨</div></div>
-<input id="aura" type="number" value="0" oninput="atualizarAura()">
-<small id="auraMaxTxt">Máx: 0</small>
-<div class="status-bar">
-  <div id="aura-bar" class="status-fill aura"></div>
-</div>
-</div>
-
-<div class="status-item deslocamento">
-  <div class="status-top"><div>Deslocamento (Quadrados)</div></div>
-  <input id="deslocamento" type="number" disabled>
-</div>
-
-<div class="status-item dt">
-  <div class="status-top">
-    <div>DT de Habilidades</div>
-  </div>
-
-  <div class="linha">
-    <label>Bônus adicional</label>
-    <input type="number" id="dtBonus" value="0" oninput="atualizarDT()">
-  </div>
-
-  <div class="status-sub">
-    🎯 <strong>DT:</strong> <span id="dtTotal">15</span>
-  </div>
-</div>
-  
-<div class="status-item bloqueio">
-<div class="status-top"><div>Bloqueio 🛡</div></div>
-
-<div style="display:flex; gap:10px; margin-bottom:6px;">
-  <div class="status-sub">
-    🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
-  </div>
-  <div class="status-sub">
-    🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span>
-  </div>
-</div>
-
-<div class="linha">
-  <label>RD Física</label>
-  <input type="number" id="rdFisica" value="0" oninput="atualizarBloqueio()">
-</div>
-
-<div class="linha">
-  <label>RD Mental 🧠</label>
-  <input type="number" id="rdMental" value="0">
-</div>
-</div>
-</div>
-  
-<!-- HABILIDADES -->
-<div class="bloco">
-<h2>Habilidades</h2>
-<div id="habilidades"></div>
-<button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
-</div>
-
-<!-- SALVAR / PDF -->
-<div class="bloco">
-<button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
-<button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
-
-<textarea id="codigoFicha" placeholder="Código da ficha..." style="width:100%; margin-top:10px; height:120px;"></textarea>
-  
-<button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
-<div id="alerta" class="alerta">Ficha salva com sucesso!</div>
-
-  <div id="dicePopup" class="dice-popup" style="display:none">
-    <div class="dice-popup-header">
-      <span id="popupTitulo"></span>
-      <span class="popup-close" onclick="fecharPopup()">✖</span>
-    </div>
-    <div class="dice-popup-body">
-      <span id="popupDetalhe"></span>
-      <span id="popupTotal"></span>
+<!-- Geral Tab -->
+<div id="geral" class="tab-content active">
+  <div class="bloco">
+    <h2>Seleção de Ficha</h2>
+    <div class="linha">
+      <label>Escolha o slot</label>
+      <select id="slot">
+        <option value="1">Slot 1</option>
+        <option value="2">Slot 2</option>
+        <option value="3">Slot 3</option>
+        <option value="4">Slot 4</option>
+        <option value="5">Slot 5</option>
+        <option value="6">Slot 6</option> 
+        <option value="7">Slot 7</option> 
+        <option value="8">Slot 8</option>
+        <option value="9">Slot 9</option> 
+        <option value="10">Slot 10</option> 
+      </select>
     </div>
   </div>
 
-  <!-- Seus scripts JS aqui -->
-  <script src="seu-script.js"></script>
+  <div class="bloco">
+    <h2>📜 Histórico de Rolagens</h2>
+    <div id="logRolagens"></div>
+  </div>
+
+  <div class="bloco">
+    <h2>Informações Básicas</h2>
+    <div class="linha">
+      <label>Imagem do Personagem</label>
+      <input type="file" id="imgUpload" accept="image/*" onchange="carregarImagem(event)">
+    </div>
+
+    <div class="linha" style="text-align:center;">
+      <img id="previewImg" 
+           style="max-width:200px; max-height:200px; border-radius:12px; border:1px solid #374151; display:none;">
+    </div>
+    <div class="linha">
+      <label>Nome do Jogador</label>
+      <input id="jogador" placeholder="Ex: Ícaro">
+    </div>
+    <div class="linha"><label>Nome</label><input id="nome"></div>
+    <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
+    <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
+    <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
+    <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
+  </div>
 </div>
 
+
+<!-- Atributos e Perícias Tab -->
+<div id="atributos-pericias" class="tab-content">
+  <div class="bloco">
+    <h2>Atributos</h2>
+
+    <div class="linha">
+      <label>Nível do Personagem</label>
+      <select id="nivel" onchange="recalcularVidaSanidade()">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+    </div>
+
+    <div id="atributos"></div>
+  </div>
+
+  <div class="bloco">
+    <h2>Perícias</h2>
+    <div id="pericias"></div>
+  </div>
+</div>
+
+<!-- Estatísticas Tab -->
+<div id="estatisticas" class="tab-content">
+  <div class="bloco">
+    <h2>Status</h2>
+    <div class="status-card">
+
+      <div class="status-item vida">
+        <div class="status-top"><div>Vida</div><span>❤️</span></div>
+        <input id="vida" type="number" oninput="atualizarVida()">
+        <small id="vidaMaxTxt"></small>
+        <div class="status-bar">
+          <div id="vida-bar" class="status-fill"></div>
+        </div>
+      </div>
+
+      <div class="status-item sanidade">
+        <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
+        <input id="sanidade" type="number" oninput="atualizarSanidade()">
+        <small id="sanidadeMaxTxt"></small>
+        <div class="status-bar">
+          <div id="sanidade-bar" class="status-fill sanity"></div>
+        </div>
+      </div>
+
+      <div class="status-item aura">
+        <div class="status-top"><div>Aura ✨</div></div>
+        <input id="aura" type="number" value="0" oninput="atualizarAura()">
+        <small id="auraMaxTxt">Máx: 0</small>
+        <div class="status-bar">
+          <div id="aura-bar" class="status-fill aura"></div>
+        </div>
+      </div>
+
+      <div class="status-item deslocamento">
+        <div class="status-top"><div>Deslocamento (Quadrados)</div></div>
+        <input id="deslocamento" type="number" disabled>
+      </div>
+
+      <div class="status-item dt">
+        <div class="status-top">
+          <div>DT de Habilidades</div>
+        </div>
+
+        <div class="linha">
+          <label>Bônus adicional</label>
+          <input type="number" id="dtBonus" value="0" oninput="atualizarDT()">
+        </div>
+
+        <div class="status-sub">
+          🎯 <strong>DT:</strong> <span id="dtTotal">15</span>
+        </div>
+      </div>
+
+      <div class="status-item bloqueio">
+        <div class="status-top"><div>Bloqueio 🛡</div></div>
+
+        <div style="display:flex; gap:10px; margin-bottom:6px;">
+          <div class="status-sub">
+            🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
+          </div>
+          <div class="status-sub">
+            🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span>
+          </div>
+        </div>
+
+        <div class="linha">
+          <label>RD Física</label>
+          <input type="number" id="rdFisica" value="0" oninput="atualizarBloqueio()">
+        </div>
+
+        <div class="linha">
+          <label>RD Mental 🧠</label>
+          <input type="number" id="rdMental" value="0">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bloco">
+    <h2>Habilidades</h2>
+    <div id="habilidades"></div>
+    <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
+  </div>
+
+  <div class="bloco">
+    <button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
+    <button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
+
+    <textarea id="codigoFicha" placeholder="Código da ficha..." style="width:100%; margin-top:10px; height:120px;"></textarea>
+
+    <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
+    <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
+
+    <div id="dicePopup" class="dice-popup" style="display:none">
+      <div class="dice-popup-header">
+        <span id="popupTitulo"></span>
+        <span class="popup-close" onclick="fecharPopup()">✖</span>
+      </div>
+      <div class="dice-popup-body">
+        <span id="popupDetalhe"></span>
+        <span id="popupTotal"></span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -483,13 +568,11 @@ input:focus, textarea:focus, select:focus{
   rolagensRef.on('child_added', (snapshot) => {
     const novaRolagem = snapshot.val();
     logRolagens.push(novaRolagem);
-  // Limita o número de logs mostrados se necessário
-    if(logRolagens.length > 20) { // Ajuste conforme desejar
+    if(logRolagens.length > 20) {
       logRolagens.shift();
-  }
+    }
     atualizarLog();
-});
-
+  });
 
 </script>
   
@@ -505,7 +588,7 @@ function registrarLog(tipo, detalhe, total){
     tipo,
     detalhe,
     total,
-    hora: new Date().toLocaleString('pt-BR') // Formato local da data/hora
+    hora: new Date().toLocaleString('pt-BR')
   };
 
   database.ref('rolagens').push(log)
@@ -521,8 +604,7 @@ function atualizarLog(){
   const box = document.getElementById("logRolagens");
   box.innerHTML = "";
 
-  // Mostra os últimos 20 logs, do mais recente para o mais antigo
-  logRolagens.slice().reverse().forEach(l => { // .slice() para criar uma cópia e não inverter o original
+  logRolagens.slice().reverse().forEach(l => {
     box.innerHTML += `
       <div class="log-item">
         <span class="log-nome">${l.nome}</span>
@@ -562,7 +644,6 @@ function exportarFicha(){
 
   const dados = JSON.parse(bruto);
 
-  // remove imagem
   dados.imagem = "";
 
   const codigo = btoa(JSON.stringify(dados));
@@ -581,7 +662,7 @@ function importarFicha(){
   }
 
   try{
-    const dados = JSON.parse(atob(codigo)); // ✅ AQUI está o fix
+    const dados = JSON.parse(atob(codigo));
 
     const slot = document.getElementById("slot").value;
     const chave = "fichaRPG_" + slot;
@@ -597,7 +678,6 @@ function importarFicha(){
   }
 }
   
-/* ================= DADOS ================= */  
 const somDado = new Audio("dado.mp3")
   
 const atributos = [
@@ -623,7 +703,7 @@ const pericias = [
 let habilidades = [];
 let ultimoTesteFortitude = 0;
 
-/* ================= INTERFACE ================= */
+/* =============== INTERFACE =============== */
 function criarInterface(){
   const aBox = document.getElementById("atributos");
   aBox.innerHTML = "";
@@ -640,34 +720,34 @@ function criarInterface(){
     </div>`;
   });
 
-const pBox = document.getElementById("pericias");
-pBox.innerHTML = "";
+  const pBox = document.getElementById("pericias");
+  pBox.innerHTML = "";
   
-pericias.forEach((p,i)=>{
-  const id = "per_"+i;
+  pericias.forEach((p,i)=>{
+    const id = "per_"+i;
 
-  pBox.innerHTML += `
-  <div class="pericia">
-    <div>
-      <select id="atrKey_${id}">
-        ${atributos.map(a=>`<option value="${a.sigla}" ${a.sigla===p[0]?"selected":""}>[${a.sigla}]</option>`).join("")}
+    pBox.innerHTML += `
+    <div class="pericia">
+      <div>
+        <select id="atrKey_${id}">
+          ${atributos.map(a=>`<option value="${a.sigla}" ${a.sigla===p[0]?"selected":""}>[${a.sigla}]</option>`).join("")}
+        </select>
+        ${p[1]}
+      </div>
+
+      <select id="${id}">
+        ${[...Array(10).keys()].map(v=>`<option value="${v+1}">${v+1}</option>`).join("")}
       </select>
-      ${p[1]}
-    </div>
 
-    <select id="${id}">
-      ${[...Array(10).keys()].map(v=>`<option value="${v+1}">${v+1}</option>`).join("")}
-    </select>
+      <input type="number" id="bonus_${id}" value="0" style="width:60px">
 
-    <input type="number" id="bonus_${id}" value="0" style="width:60px">
-
-    <span class="dice" onclick="rolarPericia('${id}')">🎲</span>
-    <span id="res_${id}" class="resultado"></span>
-  </div>`;
-});
+      <span class="dice" onclick="rolarPericia('${id}')">🎲</span>
+      <span id="res_${id}" class="resultado"></span>
+    </div>`;
+  });
 }
 
-/* ================= ROLAGENS ================= */
+/* =============== ROLAGENS =============== */
   
 function d20(){
 
@@ -690,18 +770,17 @@ function rolarAtributo(sigla){
   const v=Number(document.getElementById("atr_"+sigla).value);
   const resId="resAtr_"+sigla;
   const d=d20();
-  document.getElementById(resId).innerText=`1d20 (${d}) + ${v} = ${d+v}`;
   const total = d + v;
-document.getElementById(resId).innerText =
+  document.getElementById(resId).innerText =
 `1d20 (${d}) + ${v} = ${total}`;
 
-mostrarPopup(
-  sigla,
-  `1d20 (${d}) + ${v}`,
-  total
-  );
+  mostrarPopup(
+    sigla,
+    `1d20 (${d}) + ${v}`,
+    total
+    );
 
-registrarLog(sigla, `1d20 (${d}) + ${v}`, total);;
+  registrarLog(sigla, `1d20 (${d}) + ${v}`, total);
   
   limparDepois(resId);
 }
@@ -725,22 +804,22 @@ function rolarPericia(id){
     if(roll > maior) maior = roll;
   }
 
-const total = maior + atributoValor + bonus;
+  const total = maior + atributoValor + bonus;
 
-const indice = parseInt(id.split("_")[1]);
+  const indice = parseInt(id.split("_")[1]);
 
-mostrarPopup(
-  pericias[indice][1],
-  `${qtdDados}d20 [${resultados.join(", ")}]`,
-  total
-);
+  mostrarPopup(
+    pericias[indice][1],
+    `${qtdDados}d20 [${resultados.join(", ")}]`,
+    total
+  );
 
-registrarLog(pericias[indice][1], `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} + ${bonus}`, total);
+  registrarLog(pericias[indice][1], `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} + ${bonus}`, total);
 
-const resId = "res_" + id;
+  const resId = "res_" + id;
 
-document.getElementById(resId).innerText =
-`🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
+  document.getElementById(resId).innerText =
+  `🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
   if(pericias[indice][1] === "Fortitude"){
     ultimoTesteFortitude = total;
     atualizarBloqueio();
@@ -749,7 +828,7 @@ document.getElementById(resId).innerText =
   limparDepois(resId);
 }
 
-/* ================= VIDA, SANIDADE & AURA ================= */
+/* =============== VIDA, SANIDADE & AURA =============== */
 function recalcularVidaSanidade(){
   const nivel = Number(document.getElementById("nivel").value) || 1;
 
@@ -816,7 +895,7 @@ function atualizarAura(){
     max > 0 ? ((v / max) * 100) + "%" : "0%";
 }
 
-  function atualizarVida(){
+function atualizarVida(){
   const max = Number(document.getElementById("vida").max) || 0;
   let v = Number(document.getElementById("vida").value) || 0;
 
@@ -860,7 +939,7 @@ function atualizarDT(){
   document.getElementById("dtTotal").innerText = dt;
 }
   
-/* ================= HABILIDADES ================= */
+/* =============== HABILIDADES =============== */
 function adicionarHabilidade(){
   habilidades.push({nome:"",desc:"",dado:""});
   renderHabilidades();
@@ -923,62 +1002,62 @@ function rolarHabilidade(i){
     if(tok === "+" || tok === "-"){
       operador = tok;
     }
-else if(tok.toLowerCase().includes("d")){
+    else if(tok.toLowerCase().includes("d")){
 
-  let qtd, faces, explosao = null;
+      let qtd, faces, explosao = null;
 
-  const dado = tok.toLowerCase();
+      const dado = tok.toLowerCase();
 
-  if(dado.includes("!")){
+      if(dado.includes("!")){
 
-    const partes = dado.split("!");
-    const base = partes[0];
-    const crit = partes[1];
+        const partes = dado.split("!");
+        const base = partes[0];
+        const crit = partes[1];
 
-    [qtd, faces] = base.split("d").map(Number);
+        [qtd, faces] = base.split("d").map(Number);
 
-    explosao = crit ? Number(crit) : faces;
+        explosao = crit ? Number(crit) : faces;
 
-    if(qtd > 100 || faces > 1000){
-      document.getElementById(resId).innerText = "Dado muito grande!";
-      return;
-    }
+        if(qtd > 100 || faces > 1000){
+          document.getElementById(resId).innerText = "Dado muito grande!";
+          return;
+        }
 
-  }else{
+      }else{
 
-    [qtd, faces] = dado.split("d").map(Number);
+        [qtd, faces] = dado.split("d").map(Number);
 
-  }
-
-  for(let j=0; j<qtd; j++){
-
-    let r = Math.floor(Math.random()*faces)+1;
-
-    detalhes.push(r);
-
-    total = operador === "+" ? total+r : total-r;
-
-    if(explosao){
-
-      let limiteExplosao = 100;
-      let cont = 0;
-      
-      while(r >= explosao && cont < limiteExplosao){
-        
-        cont++;
-        r = Math.floor(Math.random()*faces)+1;
-
-        detalhes.push("💥"+r);
-
-        total = operador === "+" ? total+r : total-r;
-        
       }
 
-    }
+      for(let j=0; j<qtd; j++){
 
-  }
+        let r = Math.floor(Math.random()*faces)+1;
 
-} else {
+        detalhes.push(r);
+
+        total = operador === "+" ? total+r : total-r;
+
+        if(explosao){
+
+          let limiteExplosao = 100;
+          let cont = 0;
+          
+          while(r >= explosao && cont < limiteExplosao){
+            
+            cont++;
+            r = Math.floor(Math.random()*faces)+1;
+
+            detalhes.push("💥"+r);
+
+            total = operador === "+" ? total+r : total-r;
+            
+          }
+
+        }
+
+      }
+
+    } else {
       const n = Number(tok);
       total = operador === "+" ? total+n : total-n;
       detalhes.push(tok);
@@ -991,7 +1070,7 @@ else if(tok.toLowerCase().includes("d")){
     total
   );
 
-registrarLog(h.nome || "Habilidade", h.dado + " → [" + detalhes.join(" + ") + "]", total);
+  registrarLog(h.nome || "Habilidade", h.dado + " → [" + detalhes.join(" + ") + "]", total);
 
   document.getElementById(resId).innerText = 
     `${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
@@ -999,13 +1078,12 @@ registrarLog(h.nome || "Habilidade", h.dado + " → [" + detalhes.join(" + ") + 
   limparDepois(resId);
 }
 
-/* ================= SALVAR ================= */
+/* =============== SALVAR =============== */
 
 function carregarImagem(event){
   const file = event.target.files[0];
   if(!file) return;
 
-  // 🔴 Limite de 1MB
   if(file.size > 1024 * 1024){
     alert("Imagem muito grande! Use uma imagem menor que 1MB.");
     return;
@@ -1027,15 +1105,15 @@ function salvarFicha(){
 
   const dados={
     imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome:nome.value,
-    idade:idade.value,
-    antecedencia:antecedencia.value,
-    descricao:descricao.value,
-    historia:historia.value,
-    nivel:nivel.value,
-    vida:vida.value,
-    sanidade:sanidade.value,
-    aura:aura.value,
+    nome:document.getElementById("nome").value,
+    idade:document.getElementById("idade").value,
+    antecedencia:document.getElementById("antecedencia").value,
+    descricao:document.getElementById("descricao").value,
+    historia:document.getElementById("historia").value,
+    nivel:document.getElementById("nivel").value,
+    vida:document.getElementById("vida").value,
+    sanidade:document.getElementById("sanidade").value,
+    aura:document.getElementById("aura").value,
     habilidades:habilidades,
     atributos:{},
     pericias:{},
@@ -1104,86 +1182,83 @@ function limparFicha(){
   document.getElementById("rdFisica").value = 0;
   document.getElementById("rdMental").value = 0;
   
-  // resetar nível
   document.getElementById("nivel").value = 1;
 
-  // reset atributos
   atributos.forEach(a=>{
     const el = document.getElementById("atr_"+a.sigla);
     if(el) el.value = 0;
   });
 
-  // reset perícias
   pericias.forEach((p,i)=>{
     const el = document.getElementById("per_"+i);
     if(el) el.value = 1;
   });
 
-  // reset habilidades
   habilidades = [];
   renderHabilidades();
 
-  // reset imagem
   const img = document.getElementById("previewImg");
   img.style.display="none";
   img.dataset.base64="";
   img.src="";
 
   recalcularVidaSanidade();
+  atualizarBloqueio();
+  atualizarDT();
 }
   
-/* ================= CARREGAR ================= */
+/* =============== CARREGAR =============== */
 function carregarFicha(){
   const slot=document.getElementById("slot").value;
   const chave="fichaRPG_"+slot;
   const salvo=localStorage.getItem(chave);
 
-if(!salvo){
-  limparFicha();
-  return;
-}
+  if(!salvo){
+    limparFicha();
+    return;
+  }
 
   const d=JSON.parse(salvo);
 
-  nome.value=d.nome||"";
-  idade.value=d.idade||"";
-  antecedencia.value=d.antecedencia||"";
-  descricao.value=d.descricao||"";
-  historia.value=d.historia||"";
-  nivel.value=d.nivel||1;
-  vida.value = d.vida || 0;
-  sanidade.value = d.sanidade || 0;
-  aura.value = d.aura || 0;
+  document.getElementById("nome").value=d.nome||"";
+  document.getElementById("idade").value=d.idade||"";
+  document.getElementById("antecedencia").value=d.antecedencia||"";
+  document.getElementById("descricao").value=d.descricao||"";
+  document.getElementById("historia").value=d.historia||"";
+  document.getElementById("nivel").value=d.nivel||1;
+  document.getElementById("vida").value = d.vida || 0;
+  document.getElementById("sanidade").value = d.sanidade || 0;
+  document.getElementById("aura").value = d.aura || 0;
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
   document.getElementById("dtBonus").value = d.dtBonus || 0;
+  
   const img = document.getElementById("previewImg");
-if(d.imagem){
-  img.src = d.imagem;
-  img.style.display = "block";
-  img.dataset.base64 = d.imagem;
-}else{
-  img.style.display = "none";
-  img.dataset.base64 = "";
-}
+  if(d.imagem){
+    img.src = d.imagem;
+    img.style.display = "block";
+    img.dataset.base64 = d.imagem;
+  }else{
+    img.style.display = "none";
+    img.dataset.base64 = "";
+  }
 
   for(const s in d.atributos){
     const el=document.getElementById("atr_"+s);
     if(el) el.value=d.atributos[s];
   }
 
-for(const p in d.pericias){
-  const data = d.pericias[p];
+  for(const p in d.pericias){
+    const data = d.pericias[p];
 
-  if(typeof data === "object"){
-    document.getElementById(p).value = data.valor || 1;
-    document.getElementById("bonus_"+p).value = data.bonus || 0;
-    document.getElementById("atrKey_"+p).value = data.atributo || "FOR";
-  } else {
-    // compatibilidade com saves antigos
-    document.getElementById(p).value = data;
+    if(typeof data === "object"){
+      document.getElementById(p).value = data.valor || 1;
+      document.getElementById("bonus_"+p).value = data.bonus || 0;
+      document.getElementById("atrKey_"+p).value = data.atributo || "FOR";
+    } else {
+      document.getElementById(p).value = data;
+    }
   }
-}
   habilidades=d.habilidades||[];
   renderHabilidades();
 
@@ -1208,22 +1283,32 @@ document.getElementById("slot").addEventListener("change", function(){
   carregarFicha();
 });
 
-  
-/* ================= START ================= */
+
+/* ======== ABA DE NAVEGAÇÃO ======== */
+const abas = document.querySelectorAll(".tab-button");
+const conteudos = document.querySelectorAll(".tab-content");
+
+abas.forEach(btn => {
+  btn.addEventListener("click", () => {
+    // Remove ativo das abas
+    abas.forEach(b => b.classList.remove("active"));
+    // Oculta todos os conteúdos
+    conteudos.forEach(c => c.classList.remove("active"));
+
+    // Ativa aba clicada
+    btn.classList.add("active");
+    // Mostra conteúdo correspondente
+    const tab = btn.dataset.tab;
+    document.getElementById(tab).classList.add("active");
+  });
+});
+
+
+/* =============== INICIALIZAÇÃO =============== */
 criarInterface();
 carregarFicha();
+
 </script>
 
-  <div class="dice-popup-header">
-    <span id="popupTitulo">Teste</span>
-    <span class="popup-close" onclick="fecharPopup()">✖</span>
-  </div>
-
-  <div class="dice-popup-body">
-    <span id="popupDetalhe"></span>
-    <span id="popupTotal"></span>
-  </div>
-</div>
-  
 </body>
 </html>
