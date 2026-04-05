@@ -622,19 +622,23 @@ function carregarFicha(){
   atualizarBloqueio();
 }
 
-let slotAtual = document.getElementById("slot").value;
+document.addEventListener("DOMContentLoaded", () => {
 
-document.getElementById("slot").addEventListener("change", function(){
+  let slotAtual = document.getElementById("slot").value;
 
-  // salva no slot antigo
-  const chaveAntiga = "fichaRPG_" + slotAtual;
-  salvarFichaManual(chaveAntiga);
+  document.getElementById("slot").addEventListener("change", function(){
 
-  // atualiza slot atual
-  slotAtual = this.value;
+    const chaveAntiga = "fichaRPG_" + slotAtual;
+    salvarFichaManual(chaveAntiga);
 
-  // carrega o novo
+    slotAtual = this.value;
+
+    carregarFicha();
+  });
+
+  criarPericias();
   carregarFicha();
+
 });
 
   const rolagensRef = database.ref('rolagens');
