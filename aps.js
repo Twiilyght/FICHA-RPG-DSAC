@@ -637,6 +637,16 @@ document.getElementById("slot").addEventListener("change", function(){
   carregarFicha();
 });
 
+  const rolagensRef = database.ref('rolagens');
+  rolagensRef.on('child_added', (snapshot) => {
+    const novaRolagem = snapshot.val();
+    logRolagens.push(novaRolagem);
+    if(logRolagens.length > 20) {
+      logRolagens.shift();
+    }
+    atualizarLog();
+  });
+
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
 carregarFicha();
