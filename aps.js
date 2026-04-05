@@ -1,4 +1,5 @@
 let logRolagens = [];
+let habilidades = [];
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
@@ -89,7 +90,6 @@ const pericias = [
 ["INT","Adestramento"],["POD","Charme"],["POD","Vontade"],["POD","Energia"]
 ];
 
-let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* =============== INTERFACE =============== */
