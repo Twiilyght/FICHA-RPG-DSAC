@@ -313,7 +313,7 @@ input:focus, textarea:focus, select:focus{
 }
 
 .tab-content.active {
-  display: block;
+  display: block !important;
 }
 
 /* Adjustments for general inputs and layout */
