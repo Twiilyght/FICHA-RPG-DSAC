@@ -49,20 +49,23 @@ function renderHabilidades(){
   });
 }
 
-const abas = document.querySelectorAll(".tab-button");
-const conteudos = document.querySelectorAll(".tab-content");
+document.addEventListener("DOMContentLoaded", () => {
 
-abas.forEach(btn => {
-  btn.addEventListener("click", () => {
-    // Remove ativo das abas
-    abas.forEach(b => b.classList.remove("active"));
-    // Oculta todos os conteúdos
-    conteudos.forEach(c => c.classList.remove("active"));
+  const abas = document.querySelectorAll(".tab-button");
+  const conteudos = document.querySelectorAll(".tab-content");
 
-    // Ativa aba clicada
-    btn.classList.add("active");
-    // Mostra conteúdo correspondente
-    const tab = btn.dataset.tab;
-    document.getElementById(tab).classList.add("active");
+  abas.forEach(btn => {
+    btn.addEventListener("click", () => {
+
+      abas.forEach(b => b.classList.remove("active"));
+      conteudos.forEach(c => c.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      const tab = btn.dataset.tab;
+      document.getElementById(tab).classList.add("active");
+
+    });
   });
+
 });
