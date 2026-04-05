@@ -93,7 +93,7 @@ let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* =============== INTERFACE =============== */
-function criarInterface(){
+function criarPericias(){
   const pBox = document.getElementById("pericias");
   pBox.innerHTML = "";
   
@@ -648,5 +648,5 @@ document.getElementById("slot").addEventListener("change", function(){
   });
 
 /* =============== INICIALIZAÇÃO =============== */
-criarInterface();
+criarPericias();
 carregarFicha();
