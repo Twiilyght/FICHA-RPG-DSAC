@@ -44,6 +44,7 @@ function criarInterface(){
       <span id="resAtr_${a.sigla}" class="resultado"></span>
     </div>`;
   });
+}
 
 function renderHabilidades(){
   const box=document.getElementById("habilidades");
