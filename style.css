@@ -337,3 +337,50 @@ input:focus, textarea:focus, select:focus{
   background-color: #4f46e5;
   border-radius: 10px;
 }
+
+#atributos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.atributo {
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  padding: 10px;
+  text-align: center;
+  transition: 0.2s;
+}
+
+.atributo:hover {
+  transform: scale(1.05);
+  border-color: #6366f1;
+}
+
+.atributo .nome {
+  display: block;
+  font-weight: bold;
+  color: #a5b4fc;
+  margin-bottom: 5px;
+}
+
+.atributo input {
+  width: 60px;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.atributo button {
+  background: #6366f1;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: white;
+}
+
+.atributo button:hover {
+  background: #818cf8;
+}
