@@ -65,7 +65,6 @@
   </div>
 </div>
 
-
 <!-- Atributos e Perícias Tab -->
 <div id="atributos-pericias" class="tab-content">
   <div class="bloco">
@@ -87,7 +86,9 @@
       </select>
     </div>
 
-  <div class="atributos">
+<div id="atributos">
+
+  <div class="atributo">
     <span class="nome">FOR</span>
     <small>Força</small>
     <input type="number" id="atr_FOR" value="0">
@@ -95,22 +96,23 @@
     <span id="resAtr_FOR" class="resultado"></span>
   </div>
 
-  <div class="atributos">
+  <div class="atributo">
     <span class="nome">CON</span>
+    <small>Constituição</small>
     <input type="number" id="atr_CON" value="0">
     <button onclick="rolarAtributo('CON')">🎲</button>
     <span id="resAtr_CON" class="resultado"></span>
   </div>
 
-  <div class="atributos">
+  <div class="atributo">
     <span class="nome">AGI</span>
-        <small>Agilidade</small>
+    <small>Agilidade</small>
     <input type="number" id="atr_AGI" value="0">
     <button onclick="rolarAtributo('AGI')">🎲</button>
     <span id="resAtr_AGI" class="resultado"></span>
   </div>
 
-  <div class="atributos">
+  <div class="atributo">
     <span class="nome">INT</span>
     <small>Intelecto</small>
     <input type="number" id="atr_INT" value="0">
@@ -118,13 +120,14 @@
     <span id="resAtr_INT" class="resultado"></span>
   </div>
 
-  <div class="atributos">
+  <div class="atributo">
     <span class="nome">POD</span>
     <small>Poder</small>
     <input type="number" id="atr_POD" value="0">
     <button onclick="rolarAtributo('POD')">🎲</button>
     <span id="resAtr_POD" class="resultado"></span>
   </div>
+
 </div>
 
 <!-- Estatísticas Tab -->
