@@ -2,7 +2,6 @@ let logRolagens = [];
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
-  const database = firebase.database ();
 
   const log = {
     nome,
@@ -68,7 +67,7 @@ function importarFicha(){
   }
 }
   
-const somDado = new Audio("dado.mp3")
+const somDado = new Audio("dado.mp3");
   
 const atributos = [
 {sigla:"FOR", nome:"Força"},
@@ -94,6 +93,7 @@ let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* =============== INTERFACE =============== */
+function criarInterface(){
   const pBox = document.getElementById("pericias");
   pBox.innerHTML = "";
   
