@@ -359,6 +359,19 @@ input:focus, textarea:focus, select:focus{
   <div class="tab-button" data-tab="estatisticas">Estatísticas</div>
 </div>
 
+    <div id="dicePopup" class="dice-popup" style="display:none">
+      <div class="dice-popup-header">
+        <span id="popupTitulo"></span>
+        <span class="popup-close" onclick="fecharPopup()">✖</span>
+      </div>
+      <div class="dice-popup-body">
+        <span id="popupDetalhe"></span>
+        <span id="popupTotal"></span>
+      </div>
+    </div>
+  </div>
+</div>
+  
 <!-- Geral Tab -->
 <div id="geral" class="tab-content active">
   <div class="bloco">
@@ -531,19 +544,6 @@ input:focus, textarea:focus, select:focus{
 
     <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
     <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
-
-    <div id="dicePopup" class="dice-popup" style="display:none">
-      <div class="dice-popup-header">
-        <span id="popupTitulo"></span>
-        <span class="popup-close" onclick="fecharPopup()">✖</span>
-      </div>
-      <div class="dice-popup-body">
-        <span id="popupDetalhe"></span>
-        <span id="popupTotal"></span>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
