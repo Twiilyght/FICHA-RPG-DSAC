@@ -614,6 +614,7 @@ function carregarFicha(){
     }
   }
   habilidades=d.habilidades||[];
+  console.log("Conteúdo de habilidades antes de renderizar:", habilidades);
   renderHabilidades();
 
   atualizarDT();
