@@ -346,6 +346,33 @@ input:focus, textarea:focus, select:focus{
   border-radius: 10px;
 }
 
+.item-inventario {
+  display: grid;
+  grid-template-columns: 1fr 80px 40px; /* Nome, Qtd/Peso, Lixo */
+  gap: 10px;
+  background: #020617;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #374151;
+  margin-bottom: 8px;
+}
+
+.item-inventario textarea {
+  grid-column: span 3; /* A descrição ocupa a linha toda abaixo */
+  margin-top: 5px;
+  height: 45px;
+  font-size: 13px;
+}
+
+.btn-remover-item {
+  background: #7f1d1d;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+  
 </style>
 </head>
 
@@ -418,6 +445,14 @@ input:focus, textarea:focus, select:focus{
     <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
     <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
     <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
+    
+  <div class="bloco">
+    <h2>🎒 Inventário</h2>
+    <div id="lista-itens">
+      </div>
+    <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
+</div>
+    
   </div>
 </div>
 
@@ -578,6 +613,8 @@ input:focus, textarea:focus, select:focus{
   
 <script>
 
+let inventario = [];
+  
 let logRolagens = [];
 
 function registrarLog(tipo, detalhe, total){
@@ -631,6 +668,32 @@ function fecharPopup(){
   document.getElementById("dicePopup").style.display = "none";
 }
 
+function adicionarItem() {
+  inventario.push({ nome: "", peso: "", desc: "" });
+  renderInventario();
+}
+
+function removerItem(i) {
+  inventario.splice(i, 1);
+  renderInventario();
+}
+
+function renderInventario() {
+  const box = document.getElementById("lista-itens");
+  box.innerHTML = "";
+
+  inventario.forEach((item, i) => {
+    box.innerHTML += `
+      <div class="item-inventario">
+        <input placeholder="Item" value="${item.nome}" oninput="inventario[${i}].nome=this.value">
+        <input placeholder="Peso/Qtd" value="${item.peso}" oninput="inventario[${i}].peso=this.value">
+        <button class="btn-remover-item" onclick="removerItem(${i})">✕</button>
+        <textarea placeholder="Descrição do item..." oninput="inventario[${i}].desc=this.value">${item.desc}</textarea>
+      </div>
+    `;
+  });
+}
+  
 function exportarFicha(){
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
@@ -1110,6 +1173,7 @@ function salvarFicha(){
     antecedencia:document.getElementById("antecedencia").value,
     descricao:document.getElementById("descricao").value,
     historia:document.getElementById("historia").value,
+    inventario: inventario,
     nivel:document.getElementById("nivel").value,
     vida:document.getElementById("vida").value,
     sanidade:document.getElementById("sanidade").value,
@@ -1197,6 +1261,8 @@ function limparFicha(){
   habilidades = [];
   renderHabilidades();
 
+  inventario = []; renderInventario();
+
   const img = document.getElementById("previewImg");
   img.style.display="none";
   img.dataset.base64="";
@@ -1261,6 +1327,9 @@ function carregarFicha(){
   }
   habilidades=d.habilidades||[];
   renderHabilidades();
+
+  inventario = d.inventario || [];
+  renderInventario();
 
   atualizarDT();
 
