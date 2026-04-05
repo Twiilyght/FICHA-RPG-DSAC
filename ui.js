@@ -29,23 +29,6 @@ function fecharPopup(){
   document.getElementById("dicePopup").style.display = "none";
 }
 
-function criarInterface(){
-  const aBox = document.getElementById("atributos");
-  aBox.innerHTML = "";
-
-  atributos.forEach(a=>{
-    aBox.innerHTML += `
-    <div class="atributo">
-      <div>[${a.sigla}] ${a.nome}</div>
-      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT();">
-        ${[...Array(21).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
-      </select>
-      <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
-      <span id="resAtr_${a.sigla}" class="resultado"></span>
-    </div>`;
-  });
-}
-
 function renderHabilidades(){
   const box=document.getElementById("habilidades");
   box.innerHTML="";
