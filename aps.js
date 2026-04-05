@@ -2,6 +2,7 @@ let logRolagens = [];
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
+  const database = firebase.database ();
 
   const log = {
     nome,
@@ -636,10 +637,6 @@ document.getElementById("slot").addEventListener("change", function(){
   carregarFicha();
 });
 
-<script>
-
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
 carregarFicha();
-
-</script>
