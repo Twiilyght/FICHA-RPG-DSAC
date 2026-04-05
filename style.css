@@ -173,6 +173,7 @@ input:focus, textarea:focus, select:focus{
 
 .status-card{
   display:grid;
+  width: 100%;
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
     "vida sanidade"
