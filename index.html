@@ -55,6 +55,20 @@
   font-weight:bold;
   color:#facc15;
 }
+
+#slot {
+    color: #facc15; 
+    font-weight: bold;
+    font-size: 16px;
+    border: 2px solid #4f46e5; 
+    cursor: pointer;
+}
+
+#slot option {
+    background: #111827;
+    color: #facc15;
+    font-weight: bold;
+}
   
 body{
   background:#0f172a;
@@ -297,6 +311,19 @@ input:focus, textarea:focus, select:focus{
   cursor:pointer;
 }
 
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+label {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #9ca3af;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
 .tab-container {
   display: flex;
   justify-content: center;
@@ -308,34 +335,33 @@ input:focus, textarea:focus, select:focus{
 }
 
 .tab-button {
-  flex-grow: 1;
-  flex-basis: 28%;
-  background: #1e293b; /* Slightly lighter than .bloco background */
-  color: #facc15;
-  text-align: center;
-  font-weight: 700;
-  font-size: 20px;
-  padding: 14px 0;
-  cursor: pointer;
-  border-radius: 14px;
-  border: 3px solid #4f46e5;
-  user-select: none;
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    flex-grow: 1;
+    flex-basis: 28%;
+    background: #1e293b; 
+    color: #a5b4fc; /* Mesma cor dos seus títulos H2 */
+    text-align: center;
+    font-weight: 700;
+    font-size: 20px;
+    padding: 14px 0;
+    cursor: pointer;
+    border-radius: 14px;
+    border: 3px solid #4f46e5;
+    user-select: none;
+    transition: all 0.3s ease;
 }
 
 .tab-button:hover {
-  background-color: #4f46e5;
-  color: #e0e7ff;
-  border-color: #facc15;
-  box-shadow: 0 0 10px #facc15;
+    background-color: #312e81; /* Azul bem escuro */
+    color: #e0e7ff;
+    border-color: #facc15;
 }
 
 .tab-button.active {
-  background-color: #facc15;
-  color: #0f172a;
-  border-color: #4f46e5;
-  box-shadow: 0 0 20px #facc15;
-  font-size: 22px;
+    background-color: #312e81;
+    color: #facc15; 
+    border-color: #facc15; 
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); 
+    font-size: 22px;
 }
 
 .tab-content {
@@ -348,8 +374,6 @@ input:focus, textarea:focus, select:focus{
   display: block;
 }
 
-/* Adjustments for general inputs and layout */
-
 .linha input[type="file"] {
   padding: 6px;
   background: #020617;
@@ -358,8 +382,6 @@ input:focus, textarea:focus, select:focus{
   color: #e5e7eb;
   cursor: pointer;
 }
-  
-/* Smaller scrollbars for logRolagens */
 
 #logRolagens::-webkit-scrollbar {
   width: 6px;
@@ -426,7 +448,7 @@ input:focus, textarea:focus, select:focus{
 <!-- Geral Tab -->
 <div id="geral" class="tab-content active">
   <div class="bloco">
-    <h2>Seleção de Ficha</h2>
+    <h2>₊˚๑📂꒱ Seleção de Ficha</h2>
     <div class="linha">
       <label>Escolha o slot</label>
       <select id="slot">
@@ -445,14 +467,14 @@ input:focus, textarea:focus, select:focus{
   </div>
 
   <div class="bloco">
-    <h2>📜 Histórico de Rolagens</h2>
+    <h2>₊˚๑📜꒱ Histórico de Rolagens</h2>
     <div id="logRolagens"></div>
   </div>
 
   <div class="bloco">
-    <h2>Informações Básicas</h2>
+    <h2>₊˚๑📝꒱ Informações Básicas</h2>
     <div class="linha">
-      <label>Imagem do Personagem</label>
+      <label>📷 Imagem do Personagem 📷</label>
       <input type="file" id="imgUpload" accept="image/*" onchange="carregarImagem(event)">
     </div>
 
@@ -461,17 +483,17 @@ input:focus, textarea:focus, select:focus{
            style="max-width:200px; max-height:200px; border-radius:12px; border:1px solid #374151; display:none;">
     </div>
     <div class="linha">
-      <label>Nome do Jogador</label>
-      <input id="jogador" placeholder="Ex: Ícaro">
+      <label>🪪 Nome do Jogador 🪪</label>
+      <input id="jogador">
     </div>
-    <div class="linha"><label>Nome</label><input id="nome"></div>
-    <div class="linha"><label>Idade</label><input id="idade" type="number"></div>
-    <div class="linha"><label>Energia Inata</label><textarea id="antecedencia"></textarea></div>
-    <div class="linha"><label>Descrição</label><textarea id="descricao"></textarea></div>
-    <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
+    <div class="linha"><label>📛 Nome do Personagem 📛</label><input id="nome"></div>
+    <div class="linha"><label>🔢 Idade 🔢</label><input id="idade" type="number"></div>
+    <div class="linha"><label>🔋 Energia Inata 🔋</label><textarea id="antecedencia" placeholder="Chi ou Mana"></textarea></div>
+    <div class="linha"><label>💭 Descrição 💭</label><textarea id="descricao" placeholder="Descreve o personagem, personalidade, etc."></textarea></div>
+    <div class="linha"><label>⌛ História ⌛</label><textarea id="historia"></textarea></div>
     
   <div class="bloco">
-    <h2>🎒 Inventário</h2>
+    <h2>₊˚๑🎒꒱ Inventário</h2>
     <div id="lista-itens">
       </div>
     <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
@@ -484,10 +506,10 @@ input:focus, textarea:focus, select:focus{
 <!-- Atributos e Perícias Tab -->
 <div id="atributos-pericias" class="tab-content">
   <div class="bloco">
-    <h2>Atributos</h2>
+    <h2>₊˚๑📊꒱ Atributos</h2>
 
     <div class="linha">
-      <label>Nível do Personagem</label>
+      <label>⭐ Nível do Personagem ⭐</label>
       <select id="nivel" onchange="recalcularVidaSanidade()">
         <option value="1">1</option>
         <option value="2">2</option>
@@ -506,7 +528,7 @@ input:focus, textarea:focus, select:focus{
   </div>
 
   <div class="bloco">
-    <h2>Perícias</h2>
+    <h2>₊˚๑📚꒱ Perícias</h2>
     <div id="pericias"></div>
   </div>
 </div>
@@ -514,7 +536,7 @@ input:focus, textarea:focus, select:focus{
 <!-- Estatísticas Tab -->
 <div id="estatisticas" class="tab-content">
   <div class="bloco">
-    <h2>Status</h2>
+    <h2>₊˚๑📊꒱ Status</h2>
     <div class="status-card">
 
       <div class="status-item vida">
@@ -536,7 +558,7 @@ input:focus, textarea:focus, select:focus{
       </div>
 
       <div class="status-item aura">
-        <div class="status-top"><div>Aura ✨</div></div>
+        <div class="status-top"><div>Aura</div><span>✨</span></div>
         <input id="aura" type="number" value="0" oninput="atualizarAura()">
         <small id="auraMaxTxt">Máx: 0</small>
         <div class="status-bar">
@@ -545,17 +567,17 @@ input:focus, textarea:focus, select:focus{
       </div>
 
       <div class="status-item deslocamento">
-        <div class="status-top"><div>Deslocamento (Quadrados)</div></div>
+        <div class="status-top"><div>Deslocamento (Quadrados)</div><span>👟</span></div>
         <input id="deslocamento" type="number" disabled>
       </div>
 
       <div class="status-item dt">
         <div class="status-top">
-          <div>DT de Habilidades</div>
+          <div>DT de Habilidades 🪄</div>
         </div>
 
         <div class="linha">
-          <label>Bônus adicional</label>
+          <label>🆙 Bônus adicional 🆙</label>
           <input type="number" id="dtBonus" value="0" oninput="atualizarDT()">
         </div>
 
@@ -565,7 +587,7 @@ input:focus, textarea:focus, select:focus{
       </div>
 
       <div class="status-item bloqueio">
-        <div class="status-top"><div>Bloqueio 🛡</div></div>
+        <div class="status-top"><div>Bloqueio 🪖</div></div>
 
         <div style="display:flex; gap:10px; margin-bottom:6px;">
           <div class="status-sub">
@@ -577,7 +599,7 @@ input:focus, textarea:focus, select:focus{
         </div>
 
         <div class="linha">
-          <label>RD Física</label>
+          <label>RD Física 💪</label>
           <input type="number" id="rdFisica" value="0" oninput="atualizarBloqueio()">
         </div>
 
@@ -590,7 +612,7 @@ input:focus, textarea:focus, select:focus{
   </div>
 
   <div class="bloco">
-    <h2>Habilidades</h2>
+    <h2>₊˚๑🔮꒱ Habilidades</h2>
     <div id="habilidades"></div>
     <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
   </div>
