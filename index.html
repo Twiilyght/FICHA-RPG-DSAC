@@ -303,6 +303,79 @@ body {
       user-select: text;
     }
 
+/* CONTAINER DE ATRIBUTOS ESTILO ABYSS */
+#atributos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 20px;
+  padding: 15px;
+  justify-items: center;
+}
+
+.atributo-card {
+  background: rgba(10, 10, 15, 0.7);
+  border: 2px solid #5a1e2c; /* Borda Vermelha DSAC */
+  border-radius: 12px;
+  width: 130px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 46, 138, 0.3); /* Brilho Azul sutil */
+  position: relative;
+}
+
+.atributo-card:hover {
+  transform: translateY(-5px);
+  border-color: #002e8a; /* Muda para Azul no hover */
+  box-shadow: 0 0 20px rgba(255, 41, 68, 0.5); /* Brilho Vermelho no hover */
+}
+
+.atr-label {
+  color: #c5a059; /* Dourado */
+  font-weight: 900;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.atr-value-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+}
+
+.atr-select {
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 1.5rem !important;
+  font-weight: bold !important;
+  text-align: center;
+  width: 100%;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.atr-dice {
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #ff2944;
+  transition: transform 0.2s;
+}
+
+.atr-dice:hover {
+  transform: scale(1.3) rotate(15deg);
+  color: #002e8a;
+}
+
     /* LOG ROLAGENS */
     #logRolagens {
       max-height: 300px;
@@ -1038,46 +1111,44 @@ let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* =============== INTERFACE =============== */
-function criarInterface(){
+function criarInterface() {
   const aBox = document.getElementById("atributos");
   aBox.innerHTML = "";
 
-  atributos.forEach(a=>{
+  atributos.forEach(a => {
     aBox.innerHTML += `
-    <div class="atributo">
-      <div>[${a.sigla}] ${a.nome}</div>
-      <select id="atr_${a.sigla}" onchange="recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT();">
-        ${[...Array(21).keys()].map(v=>`<option value="${v}">${v}</option>`).join("")}
-      </select>
-      <span class="dice" onclick="rolarAtributo('${a.sigla}')">🎲</span>
-      <span id="resAtr_${a.sigla}" class="resultado"></span>
-    </div>`;
+      <div class="atributo-card">
+        <div class="atr-label">${a.nome}</div>
+        <div class="atr-value-wrapper">
+          <select id="atr_${a.sigla}" class="atr-select" onchange="recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT();">
+            ${[...Array(21).keys()].map(v => `<option value="${v}">${v}</option>`).join("")}
+          </select>
+        </div>
+        <div class="atr-dice" onclick="rolarAtributo('${a.sigla}')">🎲</div>
+        <span id="resAtr_${a.sigla}" class="resultado" style="position:absolute; bottom:-25px; font-size:10px;"></span>
+      </div>`;
   });
 
+  // Mantém a criação das perícias original (ou ajuste conforme desejar)
   const pBox = document.getElementById("pericias");
   pBox.innerHTML = "";
-  
-  pericias.forEach((p,i)=>{
-    const id = "per_"+i;
-
+  pericias.forEach((p, i) => {
+    const id = "per_" + i;
     pBox.innerHTML += `
-    <div class="pericia">
-      <div>
-        <select id="atrKey_${id}">
-          ${atributos.map(a=>`<option value="${a.sigla}" ${a.sigla===p[0]?"selected":""}>[${a.sigla}]</option>`).join("")}
+      <div class="pericia">
+        <div style="display:flex; align-items:center; gap:5px;">
+          <select id="atrKey_${id}" style="width:65px; font-size:12px;">
+            ${atributos.map(a => `<option value="${a.sigla}" ${a.sigla === p[0] ? "selected" : ""}>[${a.sigla}]</option>`).join("")}
+          </select>
+          <span style="font-size:14px;">${p[1]}</span>
+        </div>
+        <select id="${id}">
+          ${[...Array(10).keys()].map(v => `<option value="${v + 1}">${v + 1}</option>`).join("")}
         </select>
-        ${p[1]}
-      </div>
-
-      <select id="${id}">
-        ${[...Array(10).keys()].map(v=>`<option value="${v+1}">${v+1}</option>`).join("")}
-      </select>
-
-      <input type="number" id="bonus_${id}" value="0" style="width:60px">
-
-      <span class="dice" onclick="rolarPericia('${id}')">🎲</span>
-      <span id="res_${id}" class="resultado"></span>
-    </div>`;
+        <input type="number" id="bonus_${id}" value="0" style="width:50px">
+        <span class="dice" onclick="rolarPericia('${id}')">🎲</span>
+        <span id="res_${id}" class="resultado"></span>
+      </div>`;
   });
 }
 
