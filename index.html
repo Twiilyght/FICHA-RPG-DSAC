@@ -208,35 +208,37 @@ body {
       font-family: 'Cinzel', serif, Arial, sans-serif;
     }
 
-    /* DICE BUTTONS */
-    .dice {
-      cursor: pointer;
-      font-size: 22px;
-      text-align: center;
-      line-height: 1rem;
-      transition: all 0.25s ease;
-      color: #ff2944;
-      user-select: none;
-      filter: drop-shadow(0 0 4px #ff2944c0);
-      border-radius: 4px;
-      width: 32px;
-      height: 32px;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      border: 1px solid transparent;
-      background: rgba(255, 41, 68, 0.1);
-      font-weight: 700;
-      font-family: 'Cinzel', serif;
-    }
+.dice {
+  margin-left: 20px;
+  cursor: pointer;
+  font-size: 22px;
+  text-align: center;
+  line-height: 1rem;
+  transition: all 0.4s ease; 
+  color: #ff2944;
+  user-select: none;
+  box-shadow: 0 0 10px 2px rgba(255, 41, 68, 0.2); 
+  
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid rgba(255, 41, 68, 0.3);
+  background: rgba(255, 41, 68, 0.05);
+  font-weight: 700;
+  font-family: 'Cinzel', serif;
+}
 
-    .dice:hover {
-      color: #0052cc;
-      filter: drop-shadow(0 0 12px #002e8a);
-      border-color: #002e8a;
-      background: rgba(0, 46, 138, 0.15);
-      transform: scale(1.3) rotate(20deg) translateX(5px);
-    }
+/* Efeito ao passar o mouse */
+.dice:hover {
+  color: #c5a059; /* Muda para o dourado no hover para destacar */
+  border-color: #c5a059;
+  background: rgba(197, 160, 89, 0.1);
+  transform: scale(1.2) rotate(15deg);
+  box-shadow: 0 0 25px 5px rgba(255, 41, 68, 0.6); 
+}
 
     /* POPUP */
     .dice-popup {
@@ -712,7 +714,6 @@ body {
 
     /* AUXILIARES */
     .atributo,
-    .pericia,
     .habilidade {
       display: grid;
       grid-template-columns: 1fr 90px 40px 160px;
@@ -721,6 +722,15 @@ body {
       margin: 9px 0;
       user-select: text;
     }
+    
+    .pericia {
+     display: grid;
+      grid-template-columns: 1.5fr 70px 60px 40px 160px; /* Ajustei as colunas */
+     align-items: center;
+     gap: 20px; /* Aumentei o espaço entre os itens de 14px para 20px */
+     margin: 12px 0; /* Mais espaço entre uma perícia e outra */
+     user-select: text;
+}
   </style>
 </head>
 
@@ -1048,74 +1058,50 @@ function renderInventario() {
   });
 }
   
-function exportarFicha() {
+async function exportarFicha() {
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
   const bruto = localStorage.getItem(chave);
-
   if (!bruto) return alert("Nenhuma ficha salva!");
 
-  const d = JSON.parse(bruto);
-
-  // Criamos uma array compacta com a ordem fixa dos dados
-  // Isso remove as repetições de "nome:", "idade:", etc.
-  const compacto = [
-    d.nome, d.idade, d.nivel, d.vida, d.sanidade, d.aura,
-    d.antecedencia, d.descricao, d.historia,
-    d.rdFisica, d.rdMental, d.dtBonus,
-    // Atributos (apenas os números)
-    Object.values(d.atributos),
-    // Perícias (apenas os valores essenciais)
-    Object.values(d.pericias).map(p => [p.valor, p.bonus, p.atributo]),
-    // Habilidades
-    d.habilidades.map(h => [h.nome, h.dado, h.desc]),
-    // Inventário
-    d.inventario.map(i => [i.nome, i.peso, i.desc])
-  ];
-
-  // O btoa transforma em string curta. 
-  // O JSON.stringify em uma array compacta ocupa quase nada de espaço.
-  const codigo = btoa(unescape(encodeURIComponent(JSON.stringify(compacto))));
+  // 1. Transforma o texto em bytes
+  const stream = new Blob([bruto]).stream();
+  
+  // 2. Aplica compressão GZIP (a mesma que sites usam para carregar rápido)
+  const compressedStream = stream.pipeThrough(new CompressionStream("gzip"));
+  const response = new Response(compressedStream);
+  const buffer = await response.arrayBuffer();
+  
+  // 3. Transforma os bytes comprimidos em Base64
+  const codigo = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 
   document.getElementById("codigoFicha").value = codigo;
-  alert("Código ultra-compacto gerado!");
+  alert("Código ultra-comprimido gerado!");
 }
-  
-function importarFicha() {
+
+async function importarFicha() {
   const codigo = document.getElementById("codigoFicha").value;
   if (!codigo) return;
 
   try {
-    const lista = JSON.parse(decodeURIComponent(escape(atob(codigo))));
+    // 1. Transforma Base64 de volta em bytes
+    const str = atob(codigo);
+    const buffer = Uint8Array.from(str, c => c.charCodeAt(0));
     
-    // Mapeamos de volta para o formato que o seu sistema entende
-    const novoD = {
-      nome: lista[0], idade: lista[1], nivel: lista[2],
-      vida: lista[3], sanidade: lista[4], aura: lista[5],
-      antecedencia: lista[6], descricao: lista[7], historia: lista[8],
-      rdFisica: lista[9], rdMental: lista[10], dtBonus: lista[11],
-      atributos: {}, pericias: {}, habilidades: [], inventario: []
-    };
-
-    // Reconstrói Atributos
-    const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
-    lista[12].forEach((val, i) => { novoD.atributos[siglas[i]] = val; });
-
-    // Reconstrói Perícias
-    lista[13].forEach((p, i) => {
-      novoD.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
-    });
-
-    // Reconstrói Habilidades e Itens
-    novoD.habilidades = lista[14].map(h => ({ nome: h[0], dado: h[1], desc: h[2] }));
-    novoD.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
-
+    // 2. Descomprime os bytes
+    const stream = new Blob([buffer]).stream();
+    const decompressedStream = stream.pipeThrough(new DecompressionStream("gzip"));
+    const response = new Response(decompressedStream);
+    const jsonS = await response.text();
+    
+    // 3. Salva e carrega
     const slot = document.getElementById("slot").value;
-    localStorage.setItem("fichaRPG_" + slot, JSON.stringify(novoD));
+    localStorage.setItem("fichaRPG_" + slot, jsonS);
     carregarFicha();
     alert("Ficha importada com sucesso!");
   } catch (e) {
-    alert("Erro: Código incompatível.");
+    console.error(e);
+    alert("Erro: Este código está corrompido ou foi gerado pelo método antigo.");
   }
 }
   
