@@ -208,6 +208,7 @@ body {
       font-family: 'Cinzel', serif, Arial, sans-serif;
     }
 
+    /* DICE BUTTONS */
 .dice {
   margin-left: 20px;
   cursor: pointer;
@@ -712,7 +713,6 @@ body {
       scrollbar-color: #ff2944 #0a0a0c;
     }
 
-    /* AUXILIARES */
     .atributo,
     .habilidade {
       display: grid;
@@ -1106,6 +1106,28 @@ function importarFicha() {
       rdFisica: lista[9], rdMental: lista[10], dtBonus: lista[11],
       atributos: {}, pericias: {}, habilidades: [], inventario: []
     };
+
+    // Reconstrói Atributos
+    const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
+    lista[12].forEach((val, i) => { novoD.atributos[siglas[i]] = val; });
+
+    // Reconstrói Perícias
+    lista[13].forEach((p, i) => {
+      novoD.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
+    });
+
+    // Reconstrói Habilidades e Itens
+    novoD.habilidades = lista[14].map(h => ({ nome: h[0], dado: h[1], desc: h[2] }));
+    novoD.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
+
+    const slot = document.getElementById("slot").value;
+    localStorage.setItem("fichaRPG_" + slot, JSON.stringify(novoD));
+    carregarFicha();
+    alert("Ficha importada com sucesso!");
+  } catch (e) {
+    alert("Erro: Código incompatível.");
+  }
+}
   
 const somDado = new Audio("dado.mp3")
   
