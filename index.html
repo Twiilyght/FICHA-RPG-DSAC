@@ -690,6 +690,7 @@ body {
 
     /* ALERTA SALVO */
     .alerta {
+      display: none;
       margin-top: 10px;
       padding: 10px 14px;
       border-radius: 8px;
@@ -1047,50 +1048,74 @@ function renderInventario() {
   });
 }
   
-function exportarFicha(){
+function exportarFicha() {
   const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
-
   const bruto = localStorage.getItem(chave);
 
-  if(!bruto){
-    alert("Nenhuma ficha salva nesse slot!");
-    return;
-  }
+  if (!bruto) return alert("Nenhuma ficha salva!");
 
-  const dados = JSON.parse(bruto);
+  const d = JSON.parse(bruto);
 
-  dados.imagem = "";
+  // Criamos uma array compacta com a ordem fixa dos dados
+  // Isso remove as repetições de "nome:", "idade:", etc.
+  const compacto = [
+    d.nome, d.idade, d.nivel, d.vida, d.sanidade, d.aura,
+    d.antecedencia, d.descricao, d.historia,
+    d.rdFisica, d.rdMental, d.dtBonus,
+    // Atributos (apenas os números)
+    Object.values(d.atributos),
+    // Perícias (apenas os valores essenciais)
+    Object.values(d.pericias).map(p => [p.valor, p.bonus, p.atributo]),
+    // Habilidades
+    d.habilidades.map(h => [h.nome, h.dado, h.desc]),
+    // Inventário
+    d.inventario.map(i => [i.nome, i.peso, i.desc])
+  ];
 
-  const codigo = btoa(JSON.stringify(dados));
+  // O btoa transforma em string curta. 
+  // O JSON.stringify em uma array compacta ocupa quase nada de espaço.
+  const codigo = btoa(unescape(encodeURIComponent(JSON.stringify(compacto))));
 
   document.getElementById("codigoFicha").value = codigo;
-
-  alert("Ficha exportada!");
+  alert("Código ultra-compacto gerado!");
 }
-
-function importarFicha(){
+  
+function importarFicha() {
   const codigo = document.getElementById("codigoFicha").value;
+  if (!codigo) return;
 
-  if(!codigo){
-    alert("Cole um código válido!");
-    return;
-  }
+  try {
+    const lista = JSON.parse(decodeURIComponent(escape(atob(codigo))));
+    
+    // Mapeamos de volta para o formato que o seu sistema entende
+    const novoD = {
+      nome: lista[0], idade: lista[1], nivel: lista[2],
+      vida: lista[3], sanidade: lista[4], aura: lista[5],
+      antecedencia: lista[6], descricao: lista[7], historia: lista[8],
+      rdFisica: lista[9], rdMental: lista[10], dtBonus: lista[11],
+      atributos: {}, pericias: {}, habilidades: [], inventario: []
+    };
 
-  try{
-    const dados = JSON.parse(atob(codigo));
+    // Reconstrói Atributos
+    const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
+    lista[12].forEach((val, i) => { novoD.atributos[siglas[i]] = val; });
+
+    // Reconstrói Perícias
+    lista[13].forEach((p, i) => {
+      novoD.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
+    });
+
+    // Reconstrói Habilidades e Itens
+    novoD.habilidades = lista[14].map(h => ({ nome: h[0], dado: h[1], desc: h[2] }));
+    novoD.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
 
     const slot = document.getElementById("slot").value;
-    const chave = "fichaRPG_" + slot;
-
-    localStorage.setItem(chave, JSON.stringify(dados));
-
+    localStorage.setItem("fichaRPG_" + slot, JSON.stringify(novoD));
     carregarFicha();
-
     alert("Ficha importada com sucesso!");
-  }catch(e){
-    console.error(e);
-    alert("Código inválido!");
+  } catch (e) {
+    alert("Erro: Código incompatível.");
   }
 }
   
@@ -1556,35 +1581,47 @@ function salvarFicha(){
   setTimeout(()=>alerta.style.display="none",2500);
 }
 
-function salvarFichaManual(chave){
-
-  const dados={
-    imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome:document.getElementById("nome").value,
-    idade:document.getElementById("idade").value,
-    antecedencia:document.getElementById("antecedencia").value,
-    descricao:document.getElementById("descricao").value,
-    historia:document.getElementById("historia").value,
-    nivel:document.getElementById("nivel").value,
-    vida:document.getElementById("vida").value,
-    sanidade:document.getElementById("sanidade").value,
-    aura:document.getElementById("aura").value,
-    habilidades:habilidades,
-    atributos:{},
-    pericias:{},
+function salvarFichaManual(chave) {
+  const dados = {
+    nome: document.getElementById("nome").value,
+    idade: document.getElementById("idade").value,
+    antecedencia: document.getElementById("antecedencia").value,
+    descricao: document.getElementById("descricao").value,
+    historia: document.getElementById("historia").value,
+    nivel: document.getElementById("nivel").value,
+    vida: document.getElementById("vida").value,
+    sanidade: document.getElementById("sanidade").value,
+    aura: document.getElementById("aura").value,
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
+    dtBonus: document.getElementById("dtBonus").value,
+    habilidades: habilidades,
+    inventario: inventario, // ADICIONADO: Agora salva o inventário
+    atributos: {},
+    pericias: {}
   };
 
-  atributos.forEach(a=>{
-    dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
+  // Salva Atributos
+  atributos.forEach(a => {
+    const el = document.getElementById("atr_" + a.sigla);
+    if (el) dados.atributos[a.sigla] = el.value;
   });
 
-  pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i]=document.getElementById("per_"+i).value;
+  // Salva Perícias (com estrutura completa)
+  pericias.forEach((p, i) => {
+    const id = "per_" + i;
+    dados.pericias[id] = {
+      valor: document.getElementById(id).value,
+      bonus: document.getElementById("bonus_" + id).value,
+      atributo: document.getElementById("atrKey_" + id).value
+    };
   });
 
-  localStorage.setItem(chave,JSON.stringify(dados));
+  // A imagem base64 é pesada, salvamos apenas se houver
+  const imgData = document.getElementById("previewImg").dataset.base64;
+  if (imgData) dados.imagem = imgData;
+
+  localStorage.setItem(chave, JSON.stringify(dados));
 }
   
 function limparFicha(){
