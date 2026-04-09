@@ -584,6 +584,26 @@
       font-family: 'Cinzel', serif, Arial, sans-serif;
     }
 
+.hab-actions button {
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid var(--cor-dourado-transp);
+    background: rgba(0,0,0,0.3);
+    color: var(--cor-dourado);
+    padding: 4px 8px;
+    transition: 0.3s;
+}
+
+.hab-actions .btn-usar:hover {
+    background: var(--cor-dourado);
+    color: black;
+    box-shadow: 0 0 10px var(--cor-dourado);
+}
+
+.hab-actions .btn-config:hover {
+    background: rgba(197, 160, 89, 0.2);
+}
+
     /* DICE BUTTONS */
     .dice {
       margin-left: 20px;
@@ -607,6 +627,37 @@
       font-weight: 700;
       font-family: 'Cinzel', serif;
     }
+    
+    .btn-delete-hab {
+     background: rgba(255, 41, 68, 0.1); /* Fundo avermelhado bem sutil */
+      color: #ff2944; /* Vermelho vibrante para o X */
+      border: 1px solid rgba(255, 41, 68, 0.3);
+      border-radius: 4px;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      transition: 0.3s all;
+      padding: 0;
+    }
+
+    .btn-delete-hab:hover {
+      background: #ff2944;
+      color: #fff;
+      box-shadow: 0 0 8px #ff2944;
+      transform: scale(1.1);
+    }
+    
+    /* Ajuste para o botão dentro da linha de rolagem */
+    .rolagem-item .btn-delete-hab {
+      font-size: 10px;
+      width: 20px;
+      height: 20px;
+    }
 
     /* Efeito ao passar o mouse */
     .dice:hover {
@@ -616,7 +667,7 @@
       transform: scale(1.2) rotate(15deg);
       box-shadow: 0 0 25px 5px var(--cor-dice-hover-shadow);
     }
-
+    
     /* POPUP */
     .dice-popup {
       position: fixed;
@@ -1145,22 +1196,16 @@
     }
 
     .hab-rolagens-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.2);
-      padding: 10px;
-      border-radius: 6px;
+     display: flex;
+     flex-direction: column; /* Garante que uma rolagem fique embaixo da outra */
+      width: 100%;
+      margin-top: 10px;
     }
 
     .rolagem-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(90, 30, 44, 0.2);
-      border: 1px solid rgba(197, 160, 89, 0.2);
-      padding: 5px;
-      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px;
+      border-radius: 5px;
     }
 
     .rolagem-item input {
@@ -1217,6 +1262,67 @@
       color: var(--cor-tab-hover-color);
       box-shadow: 0 0 10px var(--cor-tab-hover-shadow);
     }
+    
+    #modalConfigHab {
+  display: none; /* Começa escondido */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85); /* Fundo escuro atrás do modal */
+  z-index: 10000; /* Garante que fica na frente de tudo */
+  justify-content: center;
+  align-items: center;
+}
+
+#modalConfigHab .modal-content {
+  max-width: 450px;
+  width: 90%;
+  padding: 25px;
+  border: 1px solid var(--cor-dourado);
+  background: var(--cor-fundo-bloco); /* Usa o fundo que você já definiu pros blocos */
+}
+
+/* Organiza os campos de Margem lado a lado */
+.flex-row {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+.flex-row > div {
+  flex: 1;
+}
+
+.config-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-bottom: 12px;
+}
+
+.config-group label {
+  font-size: 0.85rem;
+  margin-bottom: 5px;
+  color: var(--cor-dourado);
+}
+
+.btn-cancelar {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.btn-cancelar:hover {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: #ff2944;
+}
+
   </style>
 </head>
 
@@ -1303,6 +1409,57 @@
         <div id="habilidades"></div>
         <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
       </div>
+      
+      <div id="modalConfigHab" class="modal">
+  <div class="modal-content bloco">
+    <h3 style="color: var(--cor-dourado); margin-bottom: 15px;">⚙️ Configurações de Ataque</h3>
+    
+    <div class="config-group">
+      <label>DT de Energia (Vazio = Pular):</label>
+      <input type="number" id="cfgEnergiaDT" placeholder="Ex: 15">
+    </div>
+
+    <div class="config-group">
+      <label>Tipo de Ataque:</label>
+      <select id="cfgAtaqueTipo">
+          <option value="Luta">Luta</option>
+          <option value="Pontaria">Pontaria</option>
+      </select>
+    </div>
+
+    <div class="config-group">
+      <label>Atributo base do Ataque:</label>
+      <select id="cfgAtaqueAtr">
+          <option value="FOR">Força</option>
+          <option value="AGI">Agilidade</option>
+          <option value="INT">Intelecto</option>
+          <option value="POD">Poder</option>
+          <option value="CON">Constituição</option>
+      </select>
+    </div>
+
+    <div class="flex-row" style="flex-direction: column; gap: 10px;">
+      <div class="config-group">
+        <label>Margem Ataque (Crítico):</label>
+        <input type="number" id="cfgMargemAtk" value="20">
+      </div>
+      <div class="config-group">
+        <label>Margem Dano (Crítico):</label>
+        <input type="number" id="cfgMargemDano" value="20">
+      </div>
+    </div>
+
+    <div class="config-group">
+      <label>Dados Extra de Crítico (Soma ao total):</label>
+      <input type="text" id="cfgDadosCrit" placeholder="Ex: 2d6">
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+      <button onclick="salvarConfiguracao()" class="salvar-btn" style="flex: 1;">Salvar</button>
+      <button onclick="fecharModalConfig()" class="btn-cancelar" style="flex: 1;">Cancelar</button>
+    </div>
+  </div>
+</div>
 
       <div class="bloco">
         <h2>₊˚๑🎒꒱ Inventário</h2>
@@ -1476,6 +1633,66 @@
 let inventario = [];
   
 let logRolagens = [];
+
+// Variável global para sabermos qual habilidade está sendo editada no momento
+let indiceHabConfig = null;
+
+function abrirModalConfig(index) {
+  indiceHabConfig = index;
+  const h = habilidades[index];
+
+  // Garante que o objeto config exista para não dar erro ao preencher os campos
+  if (!h.config) {
+    h.config = { 
+        energiaDT: "", 
+        ataqueTipo: "Luta", 
+        ataqueAtr: "FOR", 
+        margemAtaque: 20, 
+        margemDano: 20, 
+        dadosCritico: "" 
+    };
+  }
+
+  // Preenche o HTML do modal com os dados que já estão salvos na habilidade
+  document.getElementById("cfgEnergiaDT").value = h.config.energiaDT || "";
+  document.getElementById("cfgAtaqueTipo").value = h.config.ataqueTipo || "Luta";
+  document.getElementById("cfgAtaqueAtr").value = h.config.ataqueAtr || "FOR";
+  document.getElementById("cfgMargemAtk").value = h.config.margemAtaque || 20;
+  document.getElementById("cfgMargemDano").value = h.config.margemDano || 20;
+  document.getElementById("cfgDadosCrit").value = h.config.dadosCritico || "";
+
+  // Abre o modal (muda o display para flex ou block conforme seu CSS)
+  document.getElementById("modalConfigHab").style.display = "flex";
+}
+
+function fecharModalConfig() {
+  document.getElementById("modalConfigHab").style.display = "none";
+  indiceHabConfig = null;
+}
+
+function salvarConfiguracao() {
+  if (indiceHabConfig === null) return;
+
+  const h = habilidades[indiceHabConfig];
+
+  // Coleta os valores dos inputs do seu HTML e salva no objeto
+  h.config = {
+    energiaDT: document.getElementById("cfgEnergiaDT").value ? Number(document.getElementById("cfgEnergiaDT").value) : null,
+    ataqueTipo: document.getElementById("cfgAtaqueTipo").value,
+    ataqueAtr: document.getElementById("cfgAtaqueAtr").value,
+    margemAtaque: Number(document.getElementById("cfgMargemAtk").value) || 20,
+    margemDano: Number(document.getElementById("cfgMargemDano").value) || 20,
+    dadosCritico: document.getElementById("cfgDadosCrit").value
+  };
+
+  fecharModalConfig();
+  renderHabilidades(); // Recarrega a lista para mostrar os botões se necessário
+  
+  // Se você tiver uma função salvarFicha() ou salvarNoLocalStorage(), chame-a aqui:
+  if (typeof salvarFicha === "function") {
+    salvarFicha();
+  }
+}
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
@@ -1929,11 +2146,19 @@ function adicionarHabilidade() {
   habilidades.push({
     nome: "Nova Habilidade",
     desc: "",
-    rolagens: [{ nome: "Dano", dado: "1d20" }] // Inicia com uma rolagem padrão
+    rolagens: [{ nome: "Dano", dado: "1d20" }], // Mantém sua estrutura original
+    // Adicione esta parte para permitir as novas configurações:
+    config: {
+      energiaDT: "",
+      ataqueTipo: "Luta",
+      ataqueAtr: "FOR",
+      margemAtaque: 20,
+      margemDano: 20,
+      dadosCritico: ""
+    }
   });
   renderHabilidades();
 }
-
 function adicionarRolagem(idxHab) {
   habilidades[idxHab].rolagens.push({ nome: "Extra", dado: "1d6" });
   renderHabilidades();
@@ -1957,21 +2182,18 @@ function renderHabilidades() {
   box.innerHTML = "";
 
   habilidades.forEach((h, i) => {
-    if (!h.rolagens) h.rolagens = [{ nome: "Dano", dado: h.dado || "1d6", margem: 20 }];
+    if (!h.rolagens) h.rolagens = [{ nome: "Dano", dado: "1d6" }];
+    if (!h.config) h.config = { energiaDT: "", ataqueTipo: "Luta", ataqueAtr: "FOR", margemAtaque: 20, margemDano: 20, dadosCritico: "" };
 
+    // Mapeia as rolagens garantindo que fiquem em blocos individuais
     let rolagensHTML = h.rolagens.map((r, ri) => `
-      <div class="rolagem-item" style="flex-wrap: wrap;">
-        <input placeholder="Tipo" value="${r.nome}" oninput="habilidades[${i}].rolagens[${ri}].nome=this.value" style="width: 70px;">
-        <input placeholder="Dado" value="${r.dado}" oninput="habilidades[${i}].rolagens[${ri}].dado=this.value" style="width: 80px;">
+      <div class="rolagem-item" style="display: flex; width: 100%; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
+        <input placeholder="Nome" value="${r.nome}" oninput="habilidades[${i}].rolagens[${ri}].nome=this.value" style="flex: 1; min-width: 80px;">
+        <input placeholder="Dado" value="${r.dado}" oninput="habilidades[${i}].rolagens[${ri}].dado=this.value" style="flex: 1; min-width: 80px;">
         
-        <div style="display:flex; flex-direction:column; align-items:center;">
-          <span class="hab-margem-label">Margem</span>
-          <input class="hab-margem-input" type="number" value="${r.margem || 20}" 
-                 oninput="habilidades[${i}].rolagens[${ri}].margem=Number(this.value)">
-        </div>
-
-        <span class="dice" onclick="rolarHabilidadeNova(${i}, ${ri})">🎲</span>
-        <button class="btn-delete-hab" style="font-size: 0.8rem;" onclick="removerRolagem(${i}, ${ri})">✕</button>
+        <span class="dice" onclick="executarHabilidadeCompleta(${i}, ${ri})" title="Girar Ataque Completo" style="font-size: 1.5rem; cursor: pointer; filter: drop-shadow(0 0 5px var(--cor-dourado));">🎲</span>
+        
+        <button class="btn-delete-hab" onclick="removerRolagem(${i}, ${ri})">✕</button>
       </div>
     `).join("");
 
@@ -1979,12 +2201,21 @@ function renderHabilidades() {
     <div class="habilidade-card">
       <div class="hab-header">
         <input value="${h.nome}" oninput="habilidades[${i}].nome=this.value" class="hab-nome-input">
-        <button class="btn-delete-hab" onclick="removerHabilidade(${i})">🗑️</button>
+        
+        <div class="hab-actions" style="display: flex; gap: 10px;">
+          <button class="btn-config" onclick="abrirModalConfig(${i})" title="Configurar Testes">⚙️</button>
+          <button class="btn-delete-hab" onclick="removerHabilidade(${i})">🗑️</button>
+        </div>
       </div>
-      <textarea placeholder="Descrição..." oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-      <div class="hab-rolagens-grid">${rolagensHTML}</div>
-      <button class="btn-hab-add" onclick="adicionarRolagem(${i})">+ Rolagem</button>
-      <div id="resHab_${i}" class="resultado"></div>
+      
+      <textarea placeholder="Descrição..." oninput="habilidades[${i}].desc=this.value">${h.desc || ""}</textarea>
+      
+      <div class="hab-rolagens-grid" style="display: flex; flex-direction: column; width: 100%;">
+        ${rolagensHTML}
+      </div>
+      
+      <button class="btn-hab-add" onclick="adicionarRolagem(${i})">+ Outra Rolagem</button>
+      <div id="resHab_${i}" class="resultado" style="margin-top:10px; font-weight:bold; color:var(--cor-dourado);"></div>
     </div>`;
   });
 }
@@ -2178,6 +2409,159 @@ function executarLogicaCritica(dadoStr, nomeExibicao, resId, margemAmeaca) {
   document.getElementById(resId).innerHTML = mensagemFinal;
   mostrarPopup(nomeExibicao, `${dadoStr} [${detalhes.join("+")}]`, critou ? "CRÍTICO: " + total : total);
   registrarLog(nomeExibicao, `${dadoStr} [${detalhes.join("+")}]`, total);
+}
+
+async function executarHabilidadeCompleta(idxHab, idxRoll) {
+  const h = habilidades[idxHab];
+  const r = h.rolagens[idxRoll];
+  const cfg = h.config || { energiaDT: null, ataqueTipo: "Luta", ataqueAtr: "FOR", margemAtaque: 20, margemDano: 20, dadosCritico: "" };
+  
+  let linhasPopup = []; // Array para organizar as linhas no Pop-up
+  let partesLog = [];   // Array para o Log (separado por |)
+  let critouNoAtaque = false;
+
+  // --- 1. ENERGIA ---
+  if (cfg.energiaDT) {
+    const bonusEnergia = (parseInt(document.getElementById("bonus_Energia")?.value) || 0) + (parseInt(document.getElementById("INT")?.value) || 0);
+    const rollEnergia = Math.floor(Math.random() * 20) + 1;
+    const totalEnergia = rollEnergia + bonusEnergia;
+
+    if (totalEnergia < cfg.energiaDT) {
+      const msgFalha = `❌ Falha na Energia: ${totalEnergia} (DT ${cfg.energiaDT})`;
+      mostrarPopup(h.nome, msgFalha, "FALHA");
+      registrarLog(h.nome, msgFalha, "---"); // Agora registra a falha no Log!
+      return;
+    }
+    linhasPopup.push(`✨ Energia: Sucesso (${totalEnergia})`);
+    partesLog.push(`✨ Energia: ${totalEnergia}`);
+  }
+
+  // --- 2. ATAQUE ---
+  const bonusAtk = (parseInt(document.getElementById("bonus_" + cfg.ataqueTipo)?.value) || 0) + 
+                  (parseInt(document.getElementById(cfg.ataqueAtr)?.value) || 0);
+  const dadoAtk = Math.floor(Math.random() * 20) + 1;
+  const totalAtk = dadoAtk + bonusAtk;
+  
+  if (dadoAtk >= (cfg.margemAtaque || 20)) {
+    critouNoAtaque = true;
+    somCritico.play();
+  } else {
+    somDado.play();
+  }
+  
+  const txtAtk = `⚔️ Ataque: ${totalAtk}${critouNoAtaque ? " (CRÍTICO)" : ""}`;
+  linhasPopup.push(txtAtk);
+  partesLog.push(txtAtk);
+
+  // --- 3. DANO ---
+  const resultadoDano = calcularDanoComplexo(r.dado, cfg.margemDano || 20);
+  let danoFinal = resultadoDano.total;
+
+  // --- 4. CRÍTICO EXTRA ---
+  if (critouNoAtaque || resultadoDano.critouNoDano) {
+    if (cfg.dadosCritico) {
+      const extraCrit = calcularDanoComplexo(cfg.dadosCritico, 999).total;
+      danoFinal += extraCrit;
+      linhasPopup.push(`💥 Crítico Extra: +${extraCrit}`);
+      partesLog.push(`💥 Crítico Extra: +${extraCrit}`);
+    }
+  }
+
+  const txtDano = `🩸 Dano Total: ${danoFinal}`;
+  linhasPopup.push(txtDano);
+  partesLog.push(txtDano);
+
+  // EXIBIÇÃO NO POP-UP (Usando \n para quebras de linha se for innerText, ou join para HTML)
+  // Se o seu mostrarPopup usa .innerHTML, mantenha o <br>. Se usa .innerText, use \n.
+  // Vou usar \n que é mais seguro para pop-ups de sistema:
+  mostrarPopup(`${h.nome} [${r.nome}]`, linhasPopup.join("\n"), danoFinal);
+  
+  // REGISTRAR NO LOG (Separado por barras)
+  registrarLog(`${h.nome} [${r.nome}]`, partesLog.join(" | "), danoFinal);
+  
+  document.getElementById("resHab_" + idxHab).innerHTML = `Resultado: ${danoFinal}`;
+}
+
+// Função auxiliar para processar qualquer string de dado com sua lógica original
+function calcularDanoComplexo(dadoStr, margem) {
+  const regex = /(\d+d\d+!\d+|\d+d\d+!|\d+d\d+|\+|\-|\d+)/gi;
+  const tokens = dadoStr.match(regex);
+  let total = 0;
+  let critouNoDano = false;
+
+  if (!tokens) return { total: 0, critouNoDano: false };
+
+  let operador = "+";
+  tokens.forEach(tok => {
+    if (tok === "+" || tok === "-") { operador = tok; }
+    else if (tok.toLowerCase().includes("d")) {
+      let [qtd, resto] = tok.toLowerCase().split("d");
+      let faces, explosao = null;
+      if (resto.includes("!")) {
+        let partes = resto.split("!");
+        faces = parseInt(partes[0]);
+        explosao = partes[1] ? parseInt(partes[1]) : faces;
+      } else {
+        faces = parseInt(resto);
+      }
+
+      for (let i = 0; i < parseInt(qtd); i++) {
+        let r = Math.floor(Math.random() * faces) + 1;
+        if (r >= margem) critouNoDano = true;
+        total = operador === "+" ? total + r : total - r;
+
+        if (explosao) {
+          let cont = 0;
+          while (r >= explosao && cont < 50) {
+            r = Math.floor(Math.random() * faces) + 1;
+            total = operador === "+" ? total + r : total - r;
+            cont++;
+          }
+        }
+      }
+    } else {
+      let n = parseInt(tok);
+      total = operador === "+" ? total + n : total - n;
+    }
+  });
+  return { total, critouNoDano };
+}
+
+// Função para pegar bônus de perícia + atributo escolhido na config
+function obterBonusDinamico(periciaNome, atrNome) {
+    // Busca o valor do atributo (ex: FOR) no seu HTML
+    const valorAtr = parseInt(document.getElementById(atrNome)?.value) || 0;
+    // Busca o bônus da perícia (ex: bonus_Luta) no seu HTML
+    const bonusPericia = parseInt(document.getElementById("bonus_" + periciaNome)?.value) || 0;
+    
+    return valorAtr + bonusPericia;
+}
+
+// Uma versão simplificada da sua lógica de rolagem que retorna um OBJETO em vez de printar na tela
+function rolarMecanicaInterna(dadoStr) {
+    const regex = /(\d+d\d+|\+|\-|\d+)/gi;
+    const tokens = dadoStr.match(regex);
+    let total = 0;
+    let maiorDado = 0;
+    let operador = "+";
+
+    if (!tokens) return { total: 0, maiorDado: 0 };
+
+    tokens.forEach(tok => {
+        if (tok === "+" || tok === "-") { operador = tok; }
+        else if (tok.includes("d")) {
+            const [qtd, faces] = tok.split("d").map(Number);
+            for (let i = 0; i < qtd; i++) {
+                let r = Math.floor(Math.random() * faces) + 1;
+                if (r > maiorDado) maiorDado = r;
+                total = operador === "+" ? total + r : total - r;
+            }
+        } else {
+            const n = Number(tok);
+            total = operador === "+" ? total + n : total - n;
+        }
+    });
+    return { total, maiorDado };
 }
 
 /* =============== SALVAR =============== */
