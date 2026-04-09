@@ -2477,19 +2477,25 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
   // --- 3. DANO ---
   const resultadoDano = calcularDanoComplexo(r.dado, cfg.margemDano || 20);
   let danoFinal = resultadoDano.total;
-    if (!critouNoAtaque) {
-          somCritico.currentTime = 0;
-          somCritico.play();
-      }
-  // --- 4. CRÍTICO EXTRA ---
-  if (critouNoAtaque || resultadoDano.critouNoDano) {
-    if (cfg.dadosCritico) {
-      const extraCrit = calcularDanoComplexo(cfg.dadosCritico, 999).total;
-      danoFinal += extraCrit;
-      linhasPopup.push(`💥 Crítico Extra: +${extraCrit}`);
-      partesLog.push(`💥 Crítico Extra: +${extraCrit}`);
+    const houveCriticoGeral = critouNoAtaque || resultadoDano.critouNoDano;
+    
+    if (houveCriticoGeral) {
+        // Toca o som de CRÍTICO
+        somCritico.currentTime = 0;
+        somCritico.play();
+        
+        // Se houve crítico, verifica se tem dados extras para somar
+        if (cfg.dadosCritico) {
+          const extraCrit = calcularDanoComplexo(cfg.dadosCritico, 999, null).total;
+          danoFinal += extraCrit;
+          textoPopup += `💥 Crítico Extra: +${extraCrit}\n`;
+          partesLog.push(`💥 Crítico Extra: +${extraCrit}`);
+        }
+    } else {
+        // Se NÃO houve crítico em nada, toca o som de DADO NORMAL
+        somDado.currentTime = 0;
+        somDado.play();
     }
-  }
 
   const txtDano = `🩸 Dano Total: ${danoFinal}`;
   linhasPopup.push(txtDano);
@@ -2517,10 +2523,12 @@ function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
 
   let operador = "+";
   tokens.forEach(tok => {
-    if (tok === "+" || tok === "-") { operador = tok; }
-    else if (tok.toLowerCase().includes("d")) {
+    if (tok === "+" || tok === "-") { 
+      operador = tok; 
+    } else if (tok.toLowerCase().includes("d")) {
       let [qtd, resto] = tok.toLowerCase().split("d");
       let faces, explosao = null;
+      
       if (resto.includes("!")) {
         let partes = resto.split("!");
         faces = parseInt(partes[0]);
@@ -2531,7 +2539,9 @@ function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
 
       for (let i = 0; i < parseInt(qtd); i++) {
         let r = Math.floor(Math.random() * faces) + 1;
+        // Armazena o maior dado individual para a margem individual
         if (r > maiorDadoIndividual) maiorDadoIndividual = r;
+        
         total = operador === "+" ? total + r : total - r;
 
         if (explosao) {
@@ -2549,12 +2559,17 @@ function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
     }
   });
 
-  // VERIFICAÇÃO DE CRÍTICO NO DANO:
-  // 1. Pelo dado individual (ex: tirou 12 no d12)
-  if (maiorDadoIndividual >= margemIndividual && margemIndividual < 100) critouNoDano = true;
+  // GATILHO DE CRÍTICO NO DANO
+  // 1. Checa se algum dado individual bateu a margem (ex: tirar 20 no d20)
+  if (margemIndividual && maiorDadoIndividual >= margemIndividual && margemIndividual < 100) {
+    critouNoDano = true;
+  }
   
-  // 2. Pela soma total (ex: somou 10 no 2d6)
-  if (margemTotal && total >= margemTotal) critouNoDano = true;
+  // 2. Checa se a SOMA TOTAL bateu a margem total (ex: tirar 10+ no 2d6)
+  // IMPORTANTE: margemTotal deve ser um número válido e maior que 0
+  if (margemTotal && total >= margemTotal) {
+    critouNoDano = true;
+  }
 
   return { total, critouNoDano };
 }
