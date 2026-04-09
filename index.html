@@ -1323,6 +1323,19 @@
   border-color: #ff2944;
 }
 
+#cfgMargemDano, 
+#cfgMargemDanoTotal {
+  width: 50px !important;  /* Ajuste este valor (50px, 60px) conforme seu gosto */
+  flex: none !important;   /* Impede que o flexbox force eles a esticarem */
+  text-align: center;      /* Centraliza o número dentro do quadradinho */
+  padding: 5px;
+}
+
+.config-group div[style*="display: flex"] {
+  justify-content: flex-start; /* Alinha os quadradinhos à esquerda */
+  gap: 8px; /* Espaço entre os campos e o "OU" */
+}
+
   </style>
 </head>
 
@@ -1443,10 +1456,14 @@
         <label>Margem Ataque (Crítico):</label>
         <input type="number" id="cfgMargemAtk" value="20">
       </div>
-      <div class="config-group">
-        <label>Margem Dano (Crítico):</label>
-        <input type="number" id="cfgMargemDano" value="20">
+    <div class="config-group">
+      <label>Margem Dano (Crítico):</label>
+      <div style="display: flex; gap: 5px; align-items: center;">
+        <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por dado individual">
+        <span style="font-size: 0.7rem; color: var(--cor-dourado-transp);">OU</span>
+        <input type="number" id="cfgMargemDanoTotal" placeholder="Total" style="flex: 1;" title="Crítico se a SOMA atingir este valor">
       </div>
+      <small style="font-size: 0.6rem; color: #888; margin-top: 4px;">Use o campo da direita para críticos baseados na soma (ex: 10+ no 2d6).</small>
     </div>
 
     <div class="config-group">
@@ -1461,12 +1478,15 @@
   </div>
 </div>
 
+  </div>
       <div class="bloco">
         <h2>₊˚๑🎒꒱ Inventário</h2>
         <div id="lista-itens"></div>
         <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
       </div>
-
+    
+          </div>
+       </div>
     </div>
   </div>
 
@@ -1682,6 +1702,7 @@ function salvarConfiguracao() {
     ataqueAtr: document.getElementById("cfgAtaqueAtr").value,
     margemAtaque: Number(document.getElementById("cfgMargemAtk").value) || 20,
     margemDano: Number(document.getElementById("cfgMargemDano").value) || 20,
+    margemDanoTotal: document.getElementById("cfgMargemDanoTotal").value ? Number(document.getElementById("cfgMargemDanoTotal").value) : null, // Novo campo
     dadosCritico: document.getElementById("cfgDadosCrit").value
   };
 
@@ -2456,7 +2477,10 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
   // --- 3. DANO ---
   const resultadoDano = calcularDanoComplexo(r.dado, cfg.margemDano || 20);
   let danoFinal = resultadoDano.total;
-
+    if (!critouNoAtaque) {
+          somCritico.currentTime = 0;
+          somCritico.play();
+      }
   // --- 4. CRÍTICO EXTRA ---
   if (critouNoAtaque || resultadoDano.critouNoDano) {
     if (cfg.dadosCritico) {
@@ -2482,12 +2506,12 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
   document.getElementById("resHab_" + idxHab).innerHTML = `Resultado: ${danoFinal}`;
 }
 
-// Função auxiliar para processar qualquer string de dado com sua lógica original
-function calcularDanoComplexo(dadoStr, margem) {
+function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
   const regex = /(\d+d\d+!\d+|\d+d\d+!|\d+d\d+|\+|\-|\d+)/gi;
   const tokens = dadoStr.match(regex);
   let total = 0;
   let critouNoDano = false;
+  let maiorDadoIndividual = 0;
 
   if (!tokens) return { total: 0, critouNoDano: false };
 
@@ -2507,7 +2531,7 @@ function calcularDanoComplexo(dadoStr, margem) {
 
       for (let i = 0; i < parseInt(qtd); i++) {
         let r = Math.floor(Math.random() * faces) + 1;
-        if (r >= margem) critouNoDano = true;
+        if (r > maiorDadoIndividual) maiorDadoIndividual = r;
         total = operador === "+" ? total + r : total - r;
 
         if (explosao) {
@@ -2524,6 +2548,14 @@ function calcularDanoComplexo(dadoStr, margem) {
       total = operador === "+" ? total + n : total - n;
     }
   });
+
+  // VERIFICAÇÃO DE CRÍTICO NO DANO:
+  // 1. Pelo dado individual (ex: tirou 12 no d12)
+  if (maiorDadoIndividual >= margemIndividual && margemIndividual < 100) critouNoDano = true;
+  
+  // 2. Pela soma total (ex: somou 10 no 2d6)
+  if (margemTotal && total >= margemTotal) critouNoDano = true;
+
   return { total, critouNoDano };
 }
 
