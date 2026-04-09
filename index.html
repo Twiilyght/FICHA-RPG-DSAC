@@ -159,6 +159,21 @@ body {
       width: 100%;
     }
 
+    .hab-margem-input {
+      width: 35px !important;
+      background: rgba(255, 41, 68, 0.1) !important;
+      border: 1px solid #ff2944 !important;
+      color: #ff2944 !important;
+      font-weight: bold;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .hab-margem-label {
+      font-size: 10px;
+      color: #ff2944;
+      text-transform: uppercase;
+    }
+
     input,
     select,
     textarea {
@@ -805,6 +820,8 @@ body {
 
 <body>
 
+<audio id="somCritico" src="https://www.myinstants.com/media/sounds/critical-strike.mp3"></audio>
+
   <h1>Ficha RPG</h1>
 
   <div class="tab-container">
@@ -1303,47 +1320,61 @@ function rolarAtributo(sigla){
   limparDepois(resId);
 }
 
-function rolarPericia(id){
+function rolarPericia(p) {
   
-  const qtdDados = parseInt(document.getElementById(id).value);
-  const sigla = document.getElementById("atrKey_"+id).value;
-  const bonus = parseInt(document.getElementById("bonus_"+id).value) || 0;
+  const idx = parseInt(p.split('_')[1], 10);
+  const nomePericia = pericias[idx][1] || p.toUpperCase();
+  
+  const inputPericia = document.getElementById(p); 
+  const bonusInput = document.getElementById("bonus_" + p); 
+  const atrKey = document.getElementById("atrKey_" + p).value; 
 
-  const atributoValor = parseInt(
-    document.getElementById("atr_"+sigla).value
-  ) || 0;
+  const qtdDados = parseInt(inputPericia.value) || 1; 
+
+  const valorAtributo = atributos[atrKey] || 0; 
+  const bonusExtra = parseInt(bonusInput.value) || 0;
+  const modificadorTotal = valorAtributo + bonusExtra;
+
+  const margemPadrao = 20; 
+
+  somDado.currentTime = 0;
+  somDado.play();
 
   let resultados = [];
-  let maior = 0;
+  let critou = false;
 
-  for(let i = 0; i < qtdDados; i++){
-    const roll = d20();
-    resultados.push(roll);
-    if(roll > maior) maior = roll;
-  }
-
-  const total = maior + atributoValor + bonus;
-
-  const indice = parseInt(id.split("_")[1]);
-
-  mostrarPopup(
-    pericias[indice][1],
-    `${qtdDados}d20 [${resultados.join(", ")}]`,
-    total
-  );
-
-  registrarLog(pericias[indice][1], `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} + ${bonus}`, total);
-
-  const resId = "res_" + id;
-
-  document.getElementById(resId).innerText =
-  `🎲 ${qtdDados}d20 [${resultados.join(", ")}] → maior: ${maior} + ${atributoValor} + ${bonus} = ${total}`;
-  if(pericias[indice][1] === "Fortitude"){
-    ultimoTesteFortitude = total;
-    atualizarBloqueio();
+  for (let i = 0; i < qtdDados; i++) {
+    let r = Math.floor(Math.random() * 20) + 1;
+    if (r >= margemPadrao) critou = true; 
+    resultados.push(r);
   }
   
-  limparDepois(resId);
+  if (critou) {
+    const somCrit = document.getElementById("somCritico");
+    somCrit.currentTime = 0;
+    somCrit.play();
+  } else {
+    somDado.currentTime = 0;
+    somDado.play();
+  }
+
+  const maiorD20 = Math.max(...resultados);
+  const totalFinal = maiorD20 + modificadorTotal;
+  
+  const resId = "resPericia";
+  let msg = critou ? `<span style="color:#ff2944; font-weight:bold;">🔥 CRÍTICO! 🔥</span><br>` : "";
+  msg += `Dados (${qtdDados}d20): [${resultados.join(", ")}] <br> 
+          Modificador: +${modificadorTotal} (${atrKey}: ${valorAtributo} + Extra: ${bonusExtra}) <br>
+          <strong>Total: ${totalFinal}</strong>`;
+
+  const output = document.getElementById(resId);
+  if(output) {
+    output.innerHTML = msg;
+    limparDepois(resId);
+  }
+
+  mostrarPopup(nomePericia.toUpperCase(), `Dados: [${resultados.join(", ")}] | Bônus: ${modificadorTotal}`, critou ? "CRÍTICO: " + totalFinal : totalFinal);
+  registrarLog(nomePericia.toUpperCase(), `Dados: [${resultados.join(", ")}] + ${modificadorTotal}`, totalFinal);
 }
 
 /* =============== VIDA, SANIDADE & AURA =============== */
@@ -1486,37 +1517,38 @@ function removerHabilidade(index) {
 
 function renderHabilidades() {
   const box = document.getElementById("habilidades");
+  if (!box) return;
   box.innerHTML = "";
 
   habilidades.forEach((h, i) => {
-    // Garantia de compatibilidade com fichas antigas
-    if (!h.rolagens) {
-      h.rolagens = [{ nome: "Dano", dado: h.dado || "1d6" }];
-    }
+    if (!h.rolagens) h.rolagens = [{ nome: "Dano", dado: h.dado || "1d6", margem: 20 }];
 
     let rolagensHTML = h.rolagens.map((r, ri) => `
-      <div class="rolagem-item">
-        <input placeholder="Tipo" value="${r.nome}" oninput="habilidades[${i}].rolagens[${ri}].nome=this.value">
-        <input placeholder="Dado" value="${r.dado}" oninput="habilidades[${i}].rolagens[${ri}].dado=this.value">
-        <span class="dice" style="margin:0; width:28px; height:28px; font-size:14px;" onclick="rolarHabilidadeIndividual(${i}, ${ri})">🎲</span>
-        <button class="btn-remover-item" style="padding:2px 8px; font-size:12px;" onclick="removerRolagem(${i}, ${ri})">✕</button>
+      <div class="rolagem-item" style="flex-wrap: wrap;">
+        <input placeholder="Tipo" value="${r.nome}" oninput="habilidades[${i}].rolagens[${ri}].nome=this.value" style="width: 70px;">
+        <input placeholder="Dado" value="${r.dado}" oninput="habilidades[${i}].rolagens[${ri}].dado=this.value" style="width: 80px;">
+        
+        <div style="display:flex; flex-direction:column; align-items:center;">
+          <span class="hab-margem-label">Margem</span>
+          <input class="hab-margem-input" type="number" value="${r.margem || 20}" 
+                 oninput="habilidades[${i}].rolagens[${ri}].margem=Number(this.value)">
+        </div>
+
+        <span class="dice" onclick="rolarHabilidadeNova(${i}, ${ri})">🎲</span>
+        <button class="btn-delete-hab" style="font-size: 0.8rem;" onclick="removerRolagem(${i}, ${ri})">✕</button>
       </div>
     `).join("");
 
     box.innerHTML += `
     <div class="habilidade-card">
       <div class="hab-header">
-        <input class="hab-nome-input" value="${h.nome}" oninput="habilidades[${i}].nome=this.value">
-        <button class="btn-remover-item" onclick="removerHabilidade(${i})">🗑️</button>
+        <input value="${h.nome}" oninput="habilidades[${i}].nome=this.value" class="hab-nome-input">
+        <button class="btn-delete-hab" onclick="removerHabilidade(${i})">🗑️</button>
       </div>
-      
-      <textarea placeholder="Descrição do efeito..." style="height:60px" oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
-      
-      <div class="hab-rolagens-grid">
-        ${rolagensHTML}
-        <button class="btn-hab-add" onclick="adicionarRolagem(${i})">+ Rolagem</button>
-      </div>
-      <div id="resHab_${i}" class="resultado" style="margin-top:5px; color:#ff2944; font-weight:bold;"></div>
+      <textarea placeholder="Descrição..." oninput="habilidades[${i}].desc=this.value">${h.desc}</textarea>
+      <div class="hab-rolagens-grid">${rolagensHTML}</div>
+      <button class="btn-hab-add" onclick="adicionarRolagem(${i})">+ Rolagem</button>
+      <div id="resHab_${i}" class="resultado"></div>
     </div>`;
   });
 }
@@ -1648,6 +1680,69 @@ function rolarHabilidade(i){
     `${h.dado} → [${detalhes.join(" + ")}] = ${total}`;
 
   limparDepois(resId);
+}
+
+function rolarHabilidadeNova(idxHab, idxRoll) {
+  const h = habilidades[idxHab];
+  const r = h.rolagens[idxRoll];
+  const margem = r.margem || 20; // Padrão 20 se estiver vazio
+  
+  executarLogicaCritica(r.dado, `${h.nome} (${r.nome})`, "resHab_" + idxHab, margem);
+}
+
+function executarLogicaCritica(dadoStr, nomeExibicao, resId, margemAmeaca) {
+
+  const regex = /(\d+d\d+!\d+|\d+d\d+!|\d+d\d+|\+|\-|\d+)/gi;
+  const tokens = dadoStr.match(regex);
+  if (!tokens) return;
+
+  let total = 0;
+  let detalhes = [];
+  let operador = "+";
+  let critou = false;
+  let maiorDadoNatural = 0;
+
+  tokens.forEach(tok => {
+    tok = tok.trim();
+    if (tok === "+" || tok === "-") { operador = tok; }
+    else if (tok.toLowerCase().includes("d")) {
+      let [qtd, facesComp] = tok.toLowerCase().split("d");
+      let faces = parseInt(facesComp);
+      
+      for (let j = 0; j < parseInt(qtd); j++) {
+        let r = Math.floor(Math.random() * faces) + 1;
+        
+        // Regra do d20: Crítico por dado natural
+        if (faces === 20 && r >= margemAmeaca) critou = true;
+        
+        detalhes.push(r);
+        total = operador === "+" ? total + r : total - r;
+      }
+    } else {
+      const n = Number(tok);
+      total = operador === "+" ? total + n : total - n;
+      detalhes.push(tok);
+    }
+  });
+
+  if (!dadoStr.toLowerCase().includes("d20") && total >= margemAmeaca) {
+    critou = true;
+  }
+  
+  if (critou) {
+    const sCrit = document.getElementById("somCritico");
+    sCrit.currentTime = 0;
+    sCrit.play();
+  } else {
+    somDado.currentTime = 0;
+    somDado.play();
+  }
+
+  let mensagemFinal = critou ? `<span style="color:#ff2944; font-weight:bold;">🔥 CRÍTICO! 🔥</span><br>Total: ${total}` : `Total: ${total}`;
+  
+  document.getElementById(resId).innerHTML = mensagemFinal;
+  mostrarPopup(nomeExibicao, `${dadoStr} [${detalhes.join("+")}]`, critou ? "CRÍTICO: " + total : total);
+  registrarLog(nomeExibicao, `${dadoStr} [${detalhes.join("+")}]`, total);
 }
 
 /* =============== SALVAR =============== */
