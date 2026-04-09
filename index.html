@@ -294,54 +294,71 @@
     }
 
     /* Tema 6: Preto e Branco*/
-    .tema-preto-branco {
-      --cor-fundo-gradiente: linear-gradient(135deg, #222222 0%, #ffffff 100%);
+.tema-preto-branco {
+      --cor-fundo-gradiente: linear-gradient(135deg, #000000 0%, #333333 100%); /* Fundo levemente mais escuro para contraste */
       --cor-texto: #f0f0f0;
-      --cor-borda-bloco: linear-gradient(90deg, #444444, #000000);
-      --cor-sombra-principal: rgba(0, 0, 0, 0.6);
-      --cor-atr-card-border: #444444;
-      --cor-tab-bg: rgba(240, 240, 240, 0.7);
-      --cor-tab-hover-bg: rgba(0, 0, 0, 0.1);
-      --cor-tab-active-bg: rgba(0, 0, 0, 0.2);
-      --cor-tab-hover-border: #222222;
-      --cor-tab-hover-color: #000000;
-      --cor-tab-hover-shadow: #000000;
-      --cor-tab-active-color: #000000;
-      --cor-tab-active-border: #222222;
-      --cor-input-bg: rgba(240, 240, 240, 0.9);
-      --cor-input-border: rgba(160, 160, 160, 0.7);
-      --cor-input-text: #222222;
-      --cor-dice-color: #000000;
-      --cor-dice-hover-color: #444444;
-      --cor-dice-hover-shadow: rgba(0, 0, 0, 0.6);
-      --cor-popup-bg: rgba(250, 250, 250, 0.95);
-      --cor-popup-border: #222222;
-      --cor-popup-shadow: #000000aa;
-      --cor-popup-shadow-inset: #44444488;
-      --cor-atr-card-bg: rgba(245, 245, 245, 0.8);
-      --cor-atr-card-shadow: rgba(160, 160, 160, 0.5);
-      --cor-atr-card-hover-border: #222222;
-      --cor-atr-card-hover-shadow: rgba(80, 80, 80, 0.4);
-      --cor-status-bg: rgba(240, 240, 240, 0.6);
-      --cor-status-border: rgba(200, 200, 200, 0.5);
-      --cor-status-shadow: #bbbbbb88 inset;
-      --cor-status-item-hover-shadow: #444444cc inset;
-      --cor-status-item-hover-glow: #222222ff;
-      --cor-btn-bg: linear-gradient(90deg, #444444, #000000);
-      --cor-btn-hover-bg: #222222;
+      --cor-borda-bloco: linear-gradient(90deg, #666666, #111111);
+      --cor-sombra-principal: rgba(0, 0, 0, 0.8);
+      --cor-atr-card-border: #555555;
+      
+      /* ABAS - Melhorando contraste para saber qual está clicada */
+      --cor-tab-bg: rgba(20, 20, 20, 0.8); /* Fundo escuro nas abas */
+      --cor-tab-hover-bg: rgba(255, 255, 255, 0.1);
+      --cor-tab-active-bg: rgba(255, 255, 255, 0.2);
+      --cor-tab-hover-border: #ffffff;
+      --cor-tab-hover-color: #ffffff;
+      --cor-tab-hover-shadow: #ffffff;
+      --cor-tab-active-color: #ffffff;
+      --cor-tab-active-border: #ffffff;
+      
+      /* INPUTS */
+      --cor-input-bg: rgba(0, 0, 0, 0.5); /* Inputs escuros com letra clara */
+      --cor-input-border: rgba(255, 255, 255, 0.3);
+      --cor-input-text: #ffffff;
+      
+      --cor-dice-color: #ffffff;
+      --cor-dice-hover-color: #c5a059;
+      --cor-dice-hover-shadow: rgba(255, 255, 255, 0.4);
+      
+      /* POPUPS */
+      --cor-popup-bg: rgba(15, 15, 15, 0.98);
+      --cor-popup-border: #c5a059;
+      --cor-popup-shadow: #000000;
+      --cor-popup-shadow-inset: #222222;
+      
+      /* ATRIBUTOS (FOR, CON, etc) - Agora mais escuro para ler letras claras */
+      --cor-atr-card-bg: rgba(10, 10, 10, 0.85); 
+      --cor-atr-card-shadow: rgba(0, 0, 0, 0.7);
+      --cor-atr-card-hover-border: #c5a059;
+      --cor-atr-card-hover-shadow: rgba(255, 255, 255, 0.1);
+      
+      /* STATUS (Vida, Sanidade, etc) - Fundo escuro para destacar as barras e textos */
+      --cor-status-bg: rgba(15, 15, 15, 0.8);
+      --cor-status-border: rgba(255, 255, 255, 0.1);
+      --cor-status-shadow: #000000aa inset;
+      --cor-status-item-hover-shadow: #111111cc inset;
+      --cor-status-item-hover-glow: #ffffffff;
+      
+      --cor-btn-bg: linear-gradient(90deg, #333333, #000000);
+      --cor-btn-hover-bg: #111111;
       --cor-btn-shadow: #000000cc;
-      --cor-btn-shadow-inset: #44444499;
-      --cor-inv-bg: rgba(245, 245, 245, 0.6);
-      --cor-inv-border: rgba(160, 160, 160, 0.5);
-      --cor-inv-shadow: #ccccccbb;
-      --cor-btn-remover-bg: #441111;
-      --cor-btn-remover-hover-bg: #660000;
-      --cor-btn-remover-shadow: #660000cc;
-      --cor-btn-remover-hover-shadow: #aa000099;
-      --cor-log-bg: rgba(240, 240, 240, 0.7);
-      --cor-log-border: #22222288;
-      --cor-log-nome: var(--cor-dourado);
-      --cor-log-valor: #222222;
+      --cor-btn-shadow-inset: #00000099;
+      
+      /* INVENTÁRIO */
+      --cor-inv-bg: rgba(10, 10, 10, 0.7);
+      --cor-inv-border: rgba(255, 255, 255, 0.1);
+      --cor-inv-shadow: #000000bb;
+      
+      --cor-btn-remover-bg: #660000;
+      --cor-btn-remover-hover-bg: #990000;
+      --cor-btn-remover-shadow: #000000cc;
+      --cor-btn-remover-hover-shadow: #ff000066;
+      
+      /* HISTÓRICO DE ROLAGENS - Escurecido para as letras brancas e douradas funcionarem */
+      --cor-log-bg: rgba(5, 5, 5, 0.9); 
+      --cor-log-border: #c5a05955;
+      --cor-log-nome: var(--cor-dourado); /* Dourado no nome para destaque */
+      --cor-log-valor: #ffffff; /* Resultado dos dados em branco puro */
     }
 
 
