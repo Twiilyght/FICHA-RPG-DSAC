@@ -1459,12 +1459,9 @@
     <div class="config-group">
       <label>Margem Dano (Crítico):</label>
       <div style="display: flex; gap: 5px; align-items: center;">
-        <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por dado individual">
-        <span style="font-size: 0.7rem; color: var(--cor-dourado-transp);">OU</span>
-        <input type="number" id="cfgMargemDanoTotal" placeholder="Total" style="flex: 1;" title="Crítico se a SOMA atingir este valor">
-      </div>
-      <small style="font-size: 0.6rem; color: #888; margin-top: 4px;">Use o campo da direita para críticos baseados na soma (ex: 10+ no 2d6).</small>
+        <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por soma no dano">
     </div>
+        </div>
 
     <div class="config-group">
       <label>Dados Extra de Crítico (Soma ao total):</label>
@@ -2450,7 +2447,7 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
     if (totalEnergia < cfg.energiaDT) {
       const msgFalha = `❌ Falha na Energia: ${totalEnergia} (DT ${cfg.energiaDT})`;
       mostrarPopup(h.nome, msgFalha, "FALHA");
-      registrarLog(h.nome, msgFalha, "---"); // Agora registra a falha no Log!
+      registrarLog(h.nome, msgFalha, "---"); 
       return;
     }
     linhasPopup.push(`✨ Energia: Sucesso (${totalEnergia})`);
@@ -2488,7 +2485,7 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
         if (cfg.dadosCritico) {
           const extraCrit = calcularDanoComplexo(cfg.dadosCritico, 999, null).total;
           danoFinal += extraCrit;
-          textoPopup += `💥 Crítico Extra: +${extraCrit}\n`;
+          linhasPopup.push(`💥 Crítico Extra: +${extraCrit}`);
           partesLog.push(`💥 Crítico Extra: +${extraCrit}`);
         }
     } else {
