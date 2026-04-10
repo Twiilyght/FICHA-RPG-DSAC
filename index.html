@@ -2470,20 +2470,46 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
 
   // --- 1. ENERGIA (Mantido original) ---
   if (cfg.energiaDT) {
-    const bonusExtraEnergia = (parseInt(document.getElementById("bonus_Energia")?.value) || 0);
-    const valorInt = (parseInt(document.getElementById("atr_presenca")?.value) || 0); 
-    const rollEnergia = Math.floor(Math.random() * 20) + 1;
-    const totalEnergia = rollEnergia + bonusExtraEnergia + valorInt;
-
-    if (totalEnergia < cfg.energiaDT) {
-      const msgFalha = `❌ Falha na Energia: ${totalEnergia} (DT ${cfg.energiaDT})`;
-      mostrarPopup(h.nome, msgFalha, "FALHA");
-      registrarLog(h.nome, msgFalha, "---"); 
-      return;
-    }
-    linhasPopup.push(`✨ Energia: Sucesso (${totalEnergia})`);
-    partesLog.push(`✨ Energia: ${totalEnergia}`);
+  
+  // Busca o índice da perícia Energia
+  const idxEnergia = pericias.findIndex(p => p[1].toLowerCase() === "energia");
+  if (idxEnergia === -1) {
+    alert("Perícia Energia não encontrada.");
+    return;
   }
+  
+  const perId = "per_" + idxEnergia;
+  
+  // Nível da perícia Energia = quantidade de dados
+  const qtdDadosEnergia = Number(document.getElementById(perId)?.value) || 1;
+  
+  // Bônus total: POD + bônus da perícia Energia
+  const pod = Number(document.getElementById("atr_POD")?.value) || 0;
+  const bonusEnergia = Number(document.getElementById("bonus_" + perId)?.value) || 0;
+  const bonusTotalEnergia = pod + bonusEnergia;
+  
+  // Rola qtdDadosEnergia d20 e soma
+  const resultadosEnergia = [];
+let maiorDadoEnergia = 0;
+
+for(let i = 0; i < qtdDadosEnergia; i++) {
+  const roll = Math.floor(Math.random() * 20) + 1;
+  resultadosEnergia.push(roll);
+  if (roll > maiorDadoEnergia) maiorDadoEnergia = roll;
+}
+
+const totalEnergia = maiorDadoEnergia + bonusTotalEnergia;
+
+if (totalEnergia < cfg.energiaDT) {
+  const msgFalha = `❌ Falha na Energia: ${totalEnergia} (DT ${cfg.energiaDT})\nDados: [${resultadosEnergia.join(", ")}] + Bônus: ${bonusTotalEnergia}`;
+  mostrarPopup(h.nome, msgFalha, "FALHA");
+  registrarLog(h.nome, msgFalha, "---");
+  return;
+}
+
+linhasPopup.push(`✨ Energia: Sucesso (${totalEnergia}) [Dados: ${resultadosEnergia.join(", ")} + Bônus: ${bonusTotalEnergia}]`);
+partesLog.push(`✨ Energia: ${totalEnergia}`);
+}
 
   // --- 2. ATAQUE (Substituído: Agora usa qtdD20 e bonusAtk do modal) ---
   const qtdD20 = parseInt(cfg.qtdD20) || 1;
