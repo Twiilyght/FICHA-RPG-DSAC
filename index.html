@@ -1998,60 +1998,79 @@ function rolarAtributo(sigla){
   limparDepois(resId);
 }
 
-function rolarPericia(p) {
-  
-  const idx = parseInt(p.split('_')[1], 10);
-  const nomePericia = pericias[idx][1] || p.toUpperCase();
-  
-  const inputPericia = document.getElementById(p); 
-  const bonusInput = document.getElementById("bonus_" + p); 
-  const atrKey = document.getElementById("atrKey_" + p).value; 
+function rolarPericia(id) {
+  // 1. Definições Iniciais e Captura de Dados
+  const inputPericia = document.getElementById(id);
+  const qtdDados = parseInt(inputPericia.value) || 1;
+  const sigla = document.getElementById("atrKey_" + id).value;
+  const bonusExtra = parseInt(document.getElementById("bonus_" + id).value) || 0;
+  const indice = parseInt(id.split("_")[1]);
+  const nomePericia = pericias[indice] ? pericias[indice][1] : "Perícia";
 
-  const qtdDados = parseInt(inputPericia.value) || 1; 
+  // 2. Busca Dinâmica do Atributo (Correção da Etapa 1)
+  const atributoValor = parseInt(document.getElementById("atr_" + sigla).value) || 0;
+  const modificadorTotal = atributoValor + bonusExtra;
 
-  const valorAtributo = atributos[atrKey] || 0; 
-  const bonusExtra = parseInt(bonusInput.value) || 0;
-  const modificadorTotal = valorAtributo + bonusExtra;
+  // 3. Lógica de Rolagem e Sons
+  let resultados = [];
+  let maior = 0;
+  let critou = false;
+  const margemPadrao = 20;
 
-  const margemPadrao = 20; 
-
+  // Toca o som inicial
   somDado.currentTime = 0;
   somDado.play();
 
-  let resultados = [];
-  let critou = false;
-
   for (let i = 0; i < qtdDados; i++) {
-    let r = Math.floor(Math.random() * 20) + 1;
-    if (r >= margemPadrao) critou = true; 
-    resultados.push(r);
+    // Usando sua função d20() da segunda versão
+    const roll = typeof d20 === "function" ? d20() : Math.floor(Math.random() * 20) + 1;
+    resultados.push(roll);
+    if (roll >= margemPadrao) critou = true;
+    if (roll > maior) maior = roll;
   }
-  
+
+  // Som de crítico se houver 20 natural
   if (critou) {
     somCritico.currentTime = 0;
     somCritico.play();
-  } else {
-    somDado.currentTime = 0;
-    somDado.play();
   }
 
-  const maiorD20 = Math.max(...resultados);
-  const totalFinal = maiorD20 + modificadorTotal;
-  
-  const resId = "resPericia";
-  let msg = critou ? `<span style="color:#ff2944; font-weight:bold;">🔥 CRÍTICO! 🔥</span><br>` : "";
-  msg += `Dados (${qtdDados}d20): [${resultados.join(", ")}] <br> 
-          Modificador: +${modificadorTotal} (${atrKey}: ${valorAtributo} + Extra: ${bonusExtra}) <br>
-          <strong>Total: ${totalFinal}</strong>`;
+  const total = maior + modificadorTotal;
 
+  // 4. Exibição de Resultados (Log e Popup)
+  const labelCritico = critou ? "🔥 CRÍTICO: " : "";
+  
+  mostrarPopup(
+    nomePericia.toUpperCase(), 
+    `Dados: [${resultados.join(", ")}] | Bônus: ${modificadorTotal}`, 
+    labelCritico + total
+  );
+
+  registrarLog(
+    nomePericia.toUpperCase(), 
+    `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} (Atrib) + ${bonusExtra} (Extra)`, 
+    total
+  );
+
+  // 5. Atualização da Interface (HTML)
+  const resId = "res_" + id;
   const output = document.getElementById(resId);
-  if(output) {
+  
+  if (output) {
+    let msg = critou ? `<span style="color:#ff2944; font-weight:bold;">🔥 CRÍTICO! 🔥</span><br>` : "";
+    msg += `🎲 ${qtdDados}d20 [${resultados.join(", ")}]<br>
+            Maior: ${maior} + ${atributoValor} (${sigla.toUpperCase()}) + ${bonusExtra} (Extra)<br>
+            <strong>Total: ${total}</strong>`;
+    
     output.innerHTML = msg;
     limparDepois(resId);
   }
 
-  mostrarPopup(nomePericia.toUpperCase(), `Dados: [${resultados.join(", ")}] | Bônus: ${modificadorTotal}`, critou ? "CRÍTICO: " + totalFinal : totalFinal);
-  registrarLog(nomePericia.toUpperCase(), `Dados: [${resultados.join(", ")}] + ${modificadorTotal}`, totalFinal);
+  // 6. Lógica Específica (Fortitude/Bloqueio)
+  if (nomePericia === "Fortitude") {
+    ultimoTesteFortitude = total;
+    if (typeof atualizarBloqueio === "function") atualizarBloqueio();
+  }
 }
 
 /* =============== VIDA, SANIDADE & AURA =============== */
