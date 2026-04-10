@@ -1835,7 +1835,7 @@ function exportarFicha() {
     // Perícias (apenas os valores essenciais)
     Object.values(d.pericias).map(p => [p.valor, p.bonus, p.atributo]),
     // Habilidades
-    d.habilidades.map(h => [h.nome, h.dado, h.desc]),
+    d.habilidades.map(h => [h.nome, h.dado, h.desc, h.config, h.rolagens]),
     // Inventário
     d.inventario.map(i => [i.nome, i.peso, i.desc])
   ];
@@ -1874,7 +1874,13 @@ function importarFicha() {
     });
 
     // Reconstrói Habilidades e Itens
-    novoD.habilidades = lista[14].map(h => ({ nome: h[0], dado: h[1], desc: h[2] }));
+    novoD.habilidades = lista[14].map(h => ({
+        nome: h[0],
+        dado: h[1],
+        desc: h[2],
+        config: h[3] || {}, // Restaura as configurações
+        rolagens: h[4] || []
+      }));
     novoD.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
 
     const slot = document.getElementById("slot").value;
