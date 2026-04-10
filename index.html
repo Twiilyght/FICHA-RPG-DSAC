@@ -1423,32 +1423,23 @@
         <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
       </div>
       
-      <div id="modalConfigHab" class="modal">
+<div id="modalConfigHab" class="modal">
   <div class="modal-content bloco">
     <h3 style="color: var(--cor-dourado); margin-bottom: 15px;">⚙️ Configurações de Ataque</h3>
     
     <div class="config-group">
       <label>DT de Energia (Vazio = Pular):</label>
-      <input type="number" id="cfgEnergiaDT" placeholder="Ex: 15">
+      <input type="number" id="cfgEnergiaDT" placeholder="Ex: 15" />
     </div>
 
     <div class="config-group">
-      <label>Tipo de Ataque:</label>
-      <select id="cfgAtaqueTipo">
-          <option value="Luta">Luta</option>
-          <option value="Pontaria">Pontaria</option>
-      </select>
+      <label>Quantidade de d20:</label>
+      <input type="number" id="cfgQtdD20" value="1" min="1" />
     </div>
 
     <div class="config-group">
-      <label>Atributo base do Ataque:</label>
-      <select id="cfgAtaqueAtr">
-          <option value="FOR">Força</option>
-          <option value="AGI">Agilidade</option>
-          <option value="INT">Intelecto</option>
-          <option value="POD">Poder</option>
-          <option value="CON">Constituição</option>
-      </select>
+      <label>Bônus no Ataque:</label>
+      <input type="number" id="cfgBonusAtk" value="0" />
     </div>
 
     <div class="flex-row" style="flex-direction: column; gap: 10px;">
@@ -1459,9 +1450,11 @@
     <div class="config-group">
       <label>Margem Dano (Crítico):</label>
       <div style="display: flex; gap: 5px; align-items: center;">
-        <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por soma no dano">
+        <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por dado individual (Ex: 20)">
+        <span style="color: var(--cor-dourado); font-size: 0.75rem; white-space: nowrap;">OU SOMA ≥</span>
+        <input type="number" id="cfgMargemDanoTotal" placeholder="Soma" style="flex: 1;" title="Crítico por soma total dos dados (Ex: 10)">
+      </div>
     </div>
-        </div>
 
     <div class="config-group">
       <label>Dados Extra de Crítico (Soma ao total):</label>
@@ -1662,24 +1655,24 @@ function abrirModalConfig(index) {
   if (!h.config) {
     h.config = { 
         energiaDT: "", 
-        ataqueTipo: "Luta", 
-        ataqueAtr: "FOR", 
+        qtdD20: 1, 
+        bonusAtk: 0,
         margemAtaque: 20, 
         margemDano: 20, 
         dadosCritico: "" 
     };
   }
 
-  // Preenche o HTML do modal com os dados que já estão salvos na habilidade
   document.getElementById("cfgEnergiaDT").value = h.config.energiaDT || "";
-  document.getElementById("cfgAtaqueTipo").value = h.config.ataqueTipo || "Luta";
-  document.getElementById("cfgAtaqueAtr").value = h.config.ataqueAtr || "FOR";
+  document.getElementById("cfgQtdD20").value = h.config.qtdD20 || 1;
+  document.getElementById("cfgBonusAtk").value = h.config.bonusAtk || 0;
   document.getElementById("cfgMargemAtk").value = h.config.margemAtaque || 20;
   document.getElementById("cfgMargemDano").value = h.config.margemDano || 20;
+  document.getElementById("cfgMargemDanoTotal").value = h.config.margemDanoSoma || "";
+  
   document.getElementById("cfgDadosCrit").value = h.config.dadosCritico || "";
 
-  // Abre o modal (muda o display para flex ou block conforme seu CSS)
-  document.getElementById("modalConfigHab").style.display = "flex";
+document.getElementById("modalConfigHab").style.display = "flex";
 }
 
 function fecharModalConfig() {
@@ -1688,25 +1681,27 @@ function fecharModalConfig() {
 }
 
 function salvarConfiguracao() {
-  if (indiceHabConfig === null) return;
-
+  // 1. Localiza o índice da habilidade que estamos editando
   const h = habilidades[indiceHabConfig];
+  
+  // 2. Captura os elementos HTML DIRETAMENTE aqui dentro para evitar o erro de "não declarado"
+  const mDanoEl = document.getElementById("cfgMargemDanoTotal");
 
-  const margemDanoTotalEl = document.getElementById("cfgMargemDanoTotal");
-
+  // 3. Salva as configurações
   h.config = {
     energiaDT: document.getElementById("cfgEnergiaDT").value ? Number(document.getElementById("cfgEnergiaDT").value) : null,
-    ataqueTipo: document.getElementById("cfgAtaqueTipo").value,
-    ataqueAtr: document.getElementById("cfgAtaqueAtr").value,
+    qtdD20: Number(document.getElementById("cfgQtdD20").value) || 1,
+    bonusAtk: Number(document.getElementById("cfgBonusAtk").value) || 0,
     margemAtaque: Number(document.getElementById("cfgMargemAtk").value) || 20,
     margemDano: Number(document.getElementById("cfgMargemDano").value) || 20,
-    margemDanoTotal: margemDanoTotalEl && margemDanoTotalEl.value ? Number(margemDanoTotalEl.value) : null,
+    // Aqui usamos a variável que acabamos de capturar acima
+    margemDanoSoma: mDanoEl && mDanoEl.value ? Number(mDanoEl.value) : null,
     dadosCritico: document.getElementById("cfgDadosCrit").value
   };
 
   fecharModalConfig();
-  renderHabilidades();
-
+  renderHabilidades(); // Isso fará elas aparecerem de novo
+  
   if (typeof salvarFicha === "function") {
     salvarFicha();
   }
@@ -2457,17 +2452,28 @@ function executarLogicaCritica(dadoStr, nomeExibicao, resId, margemAmeaca) {
 async function executarHabilidadeCompleta(idxHab, idxRoll) {
   const h = habilidades[idxHab];
   const r = h.rolagens[idxRoll];
-  const cfg = h.config || { energiaDT: null, ataqueTipo: "Luta", ataqueAtr: "FOR", margemAtaque: 20, margemDano: 20, dadosCritico: "" };
   
-  let linhasPopup = []; // Array para organizar as linhas no Pop-up
-  let partesLog = [];   // Array para o Log (separado por |)
+  // 1. Definição do CFG: Agora inclui qtdD20 e bonusAtk como prioridade
+  const cfg = h.config || { 
+    energiaDT: null, 
+    qtdD20: 1, 
+    bonusAtk: 0, 
+    margemAtaque: 20, 
+    margemDano: 20, 
+    margemDanoSoma: 20, 
+    dadosCritico: "" 
+  };
+  
+  let linhasPopup = []; 
+  let partesLog = [];   
   let critouNoAtaque = false;
 
-  // --- 1. ENERGIA ---
+  // --- 1. ENERGIA (Mantido original) ---
   if (cfg.energiaDT) {
-    const bonusEnergia = (parseInt(document.getElementById("bonus_Energia")?.value) || 0) + (parseInt(document.getElementById("INT")?.value) || 0);
+    const bonusExtraEnergia = (parseInt(document.getElementById("bonus_Energia")?.value) || 0);
+    const valorInt = (parseInt(document.getElementById("atr_presenca")?.value) || 0); 
     const rollEnergia = Math.floor(Math.random() * 20) + 1;
-    const totalEnergia = rollEnergia + bonusEnergia;
+    const totalEnergia = rollEnergia + bonusExtraEnergia + valorInt;
 
     if (totalEnergia < cfg.energiaDT) {
       const msgFalha = `❌ Falha na Energia: ${totalEnergia} (DT ${cfg.energiaDT})`;
@@ -2479,62 +2485,71 @@ async function executarHabilidadeCompleta(idxHab, idxRoll) {
     partesLog.push(`✨ Energia: ${totalEnergia}`);
   }
 
-  // --- 2. ATAQUE ---
-  const bonusAtk = (parseInt(document.getElementById("bonus_" + cfg.ataqueTipo)?.value) || 0) + 
-                  (parseInt(document.getElementById(cfg.ataqueAtr)?.value) || 0);
-  const dadoAtk = Math.floor(Math.random() * 20) + 1;
-  const totalAtk = dadoAtk + bonusAtk;
-  
-  if (dadoAtk >= (cfg.margemAtaque || 20)) {
-    critouNoAtaque = true;
-    somCritico.play();
-  } else {
-    somDado.play();
+  // --- 2. ATAQUE (Substituído: Agora usa qtdD20 e bonusAtk do modal) ---
+  const qtdD20 = parseInt(cfg.qtdD20) || 1;
+  const bonusFixoAtk = parseInt(cfg.bonusAtk) || 0;
+  const margemAtk = parseInt(cfg.margemAtaque) || 20;
+
+  let resultadosAtk = [];
+  let maiorDadoAtk = 0;
+
+  // Gira a quantidade de dados definida no modal
+  for (let i = 0; i < qtdD20; i++) {
+    let d = Math.floor(Math.random() * 20) + 1;
+    resultadosAtk.push(d);
+    if (d > maiorDadoAtk) maiorDadoAtk = d;
   }
+
+  // Verifica crítico apenas pelo dado natural (maior dado do conjunto)
+  if (maiorDadoAtk >= margemAtk) {
+    critouNoAtaque = true;
+  }
+
+  const totalAtk = maiorDadoAtk + bonusFixoAtk;
   
-  const txtAtk = `⚔️ Ataque: ${totalAtk}${critouNoAtaque ? " (CRÍTICO)" : ""}`;
+  // Formatação da mensagem de ataque
+  const txtAtk = `⚔️ Ataque: ${totalAtk}${critouNoAtaque ? " (CRÍTICO)" : ""} [Dados: ${resultadosAtk.join(',')}]`;
   linhasPopup.push(txtAtk);
   partesLog.push(txtAtk);
 
-  // --- 3. DANO ---
-  const resultadoDano = calcularDanoComplexo(r.dado, cfg.margemDano || 20);
+  // --- 3. DANO (Mantido original com suporte à nova margem de soma) ---
+  const resultadoDano = calcularDanoComplexo(r.dado, cfg.margemDano, cfg.margemDanoSoma);
   let danoFinal = resultadoDano.total;
-    const houveCriticoGeral = critouNoAtaque || resultadoDano.critouNoDano;
-    
-    if (houveCriticoGeral) {
-        // Toca o som de CRÍTICO
+  const houveCriticoGeral = critouNoAtaque || resultadoDano.critouNoDano;
+  
+  if (houveCriticoGeral) {
+    // Toca som de crítico se o ataque OU o dano critarem
+    if (typeof somCritico !== 'undefined') {
         somCritico.currentTime = 0;
         somCritico.play();
-        
-        // Se houve crítico, verifica se tem dados extras para somar
-        if (cfg.dadosCritico) {
-          const extraCrit = calcularDanoComplexo(cfg.dadosCritico, 999, null).total;
-          danoFinal += extraCrit;
-          linhasPopup.push(`💥 Crítico Extra: +${extraCrit}`);
-          partesLog.push(`💥 Crítico Extra: +${extraCrit}`);
-        }
-    } else {
-        // Se NÃO houve crítico em nada, toca o som de DADO NORMAL
+    }
+    
+    // Soma dados extras de crítico se houver
+    if (cfg.dadosCritico) {
+      const extraCrit = calcularDanoComplexo(cfg.dadosCritico, 999, 999).total;
+      danoFinal += extraCrit;
+      linhasPopup.push(`💥 Crítico Extra: +${extraCrit}`);
+      partesLog.push(`💥 Crítico Extra: +${extraCrit}`);
+    }
+  } else {
+    // Som normal
+    if (typeof somDado !== 'undefined') {
         somDado.currentTime = 0;
         somDado.play();
     }
+  }
 
-  const txtDano = `🩸 Dano Total: ${danoFinal}`;
-  linhasPopup.push(txtDano);
-  partesLog.push(txtDano);
-
-  // EXIBIÇÃO NO POP-UP (Usando \n para quebras de linha se for innerText, ou join para HTML)
-  // Se o seu mostrarPopup usa .innerHTML, mantenha o <br>. Se usa .innerText, use \n.
-  // Vou usar \n que é mais seguro para pop-ups de sistema:
-  mostrarPopup(`${h.nome} [${r.nome}]`, linhasPopup.join("\n"), danoFinal);
-  
-  // REGISTRAR NO LOG (Separado por barras)
+  // --- 4. SAÍDA E LOGS (Mantido original) ---
+  mostrarPopup(`${h.nome} [${r.nome}]`, linhasPopup.join("\n"), (houveCriticoGeral ? "🔥 " : "") + danoFinal);
   registrarLog(`${h.nome} [${r.nome}]`, partesLog.join(" | "), danoFinal);
   
-  document.getElementById("resHab_" + idxHab).innerHTML = `Resultado: ${danoFinal}`;
+  const resElem = document.getElementById("resHab_" + idxHab);
+  if(resElem) {
+    resElem.innerHTML = `Resultado: <strong>${danoFinal}</strong>`;
+  }
 }
 
-function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
+function calcularDanoComplexo(dadoStr, margemIndividual, margemSomaTotal) {
   const regex = /(\d+d\d+!\d+|\d+d\d+!|\d+d\d+|\+|\-|\d+)/gi;
   const tokens = dadoStr.match(regex);
   let total = 0;
@@ -2561,9 +2576,7 @@ function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
 
       for (let i = 0; i < parseInt(qtd); i++) {
         let r = Math.floor(Math.random() * faces) + 1;
-        // Armazena o maior dado individual para a margem individual
         if (r > maiorDadoIndividual) maiorDadoIndividual = r;
-        
         total = operador === "+" ? total + r : total - r;
 
         if (explosao) {
@@ -2581,15 +2594,14 @@ function calcularDanoComplexo(dadoStr, margemIndividual, margemTotal) {
     }
   });
 
-  // GATILHO DE CRÍTICO NO DANO
-  // 1. Checa se algum dado individual bateu a margem (ex: tirar 20 no d20)
-  if (margemIndividual && maiorDadoIndividual >= margemIndividual && margemIndividual < 100) {
+  // GATILHO 1: Crítico por dado individual (ex: d20 >= 20)
+  if (margemIndividual && maiorDadoIndividual >= parseInt(margemIndividual)) {
     critouNoDano = true;
   }
   
-  // 2. Checa se a SOMA TOTAL bateu a margem total (ex: tirar 10+ no 2d6)
-  // IMPORTANTE: margemTotal deve ser um número válido e maior que 0
-  if (margemTotal && total >= margemTotal) {
+  // GATILHO 2: Crítico por SOMA TOTAL (O que você pediu no item 3)
+  // Ex: Se a soma de 2d6 for >= 10
+  if (margemSomaTotal && total >= parseInt(margemSomaTotal)) {
     critouNoDano = true;
   }
 
