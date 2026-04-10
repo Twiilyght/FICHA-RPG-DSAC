@@ -1692,21 +1692,21 @@ function salvarConfiguracao() {
 
   const h = habilidades[indiceHabConfig];
 
-  // Coleta os valores dos inputs do seu HTML e salva no objeto
+  const margemDanoTotalEl = document.getElementById("cfgMargemDanoTotal");
+
   h.config = {
     energiaDT: document.getElementById("cfgEnergiaDT").value ? Number(document.getElementById("cfgEnergiaDT").value) : null,
     ataqueTipo: document.getElementById("cfgAtaqueTipo").value,
     ataqueAtr: document.getElementById("cfgAtaqueAtr").value,
     margemAtaque: Number(document.getElementById("cfgMargemAtk").value) || 20,
     margemDano: Number(document.getElementById("cfgMargemDano").value) || 20,
-    margemDanoTotal: document.getElementById("cfgMargemDanoTotal").value ? Number(document.getElementById("cfgMargemDanoTotal").value) : null, // Novo campo
+    margemDanoTotal: margemDanoTotalEl && margemDanoTotalEl.value ? Number(margemDanoTotalEl.value) : null,
     dadosCritico: document.getElementById("cfgDadosCrit").value
   };
 
   fecharModalConfig();
-  renderHabilidades(); // Recarrega a lista para mostrar os botões se necessário
-  
-  // Se você tiver uma função salvarFicha() ou salvarNoLocalStorage(), chame-a aqui:
+  renderHabilidades();
+
   if (typeof salvarFicha === "function") {
     salvarFicha();
   }
