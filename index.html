@@ -1473,7 +1473,7 @@
     
     <div class="config-group">
       <label>DT de Energia (Vazio = Pular):</label>
-      <input type="number" id="cfgEnergiaDT" placeholder="Ex: 15" />
+      <input type="number" id="cfgEnergiaDT" placeholder="Ex: 12" />
     </div>
 
     <div class="config-group">
@@ -2280,16 +2280,16 @@ function atualizarBloqueio(){
 }
 
 function atualizarDT(){
+  const poder = parseInt(document.getElementById("atr_POD").value) || 0;
   const selAttr = document.getElementById("dtAtributoBase").value;
   let attrValue = 0;
   
   if (selAttr !== "Nenhum") {
-      // Pega dinamicamente o atributo que o usuário escolheu
       attrValue = parseInt(document.getElementById("atr_" + selAttr).value) || 0;
   }
   
   const bonus = parseInt(document.getElementById("dtBonus").value) || 0;
-  const dt = 15 + attrValue + bonus; // 15 + Atributo Escolhido + Bônus Extra
+  const dt = 12 + poder + Math.floor(attrValue / 2) + bonus; // 12 + Poder + (Atributo Escolhido/2) + Bônus Extra
 
   document.getElementById("dtTotal").innerText = dt;
 }
