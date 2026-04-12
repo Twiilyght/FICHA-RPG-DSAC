@@ -500,6 +500,34 @@
     .tab-content.active {
       display: block;
     }
+    
+    /* --- NOVAS CLASSES: Status Temporários, Quick Adjust e Minimizar --- */
+    .status-fill.temp-vida { background: linear-gradient(90deg, #9b59b6, #4a235a) !important; box-shadow: 0 0 10px #9b59b6cc !important; }
+    .status-fill.temp-sanidade { background: linear-gradient(90deg, #2ecc71, #145a32) !important; box-shadow: 0 0 10px #2ecc71cc !important; }
+    .status-fill.temp-aura { background: linear-gradient(90deg, #e67e22, #873600) !important; box-shadow: 0 0 10px #e67e22cc !important; }
+    
+    .quick-adjust {
+      display: flex; gap: 6px; margin-top: 6px; margin-bottom: 4px;
+    }
+    .quick-adjust input {
+      width: 60px; padding: 4px; font-size: 13px; text-align: center;
+    }
+    .quick-adjust button {
+      background: var(--cor-btn-bg); color: #fff; border: none; border-radius: 4px; 
+      cursor: pointer; padding: 0 12px; font-weight: bold; font-family: 'Cinzel', serif;
+    }
+    .quick-adjust button:hover { filter: brightness(1.2); }
+    
+    .temp-txt { font-size: 11px; font-weight: bold; display: block; margin-top: 2px; }
+    .temp-txt.vida { color: #d7bde2; text-shadow: 0 0 4px #9b59b6; }
+    .temp-txt.sanidade { color: #abebc6; text-shadow: 0 0 4px #2ecc71; }
+    .temp-txt.aura { color: #f8c471; text-shadow: 0 0 4px #e67e22; }
+    
+    .toggle-icon { 
+      font-size: 0.8em; cursor: pointer; color: var(--cor-dourado); 
+      margin-left: 10px; transition: transform 0.3s; display: inline-block;
+    }
+    .toggle-icon.minimized { transform: rotate(-90deg); }
 
     /* FORM & INPUTS */
     label {
@@ -1416,11 +1444,14 @@
       <div class="linha"><label>🔋 Energia Inata 🔋</label><textarea id="antecedencia" placeholder="Chi ou Mana"></textarea></div>
       <div class="linha"><label>💭 Descrição 💭</label><textarea id="descricao" placeholder="Descreve o personagem, personalidade, etc."></textarea></div>
       <div class="linha"><label>⌛ História ⌛</label><textarea id="historia"></textarea></div>
-
-      <div class="bloco">
-        <h2>₊˚๑🔮꒱ Habilidades</h2>
-        <div id="habilidades"></div>
-        <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
+ </div>
+<div class="bloco">
+  <h2 onclick="toggleSecao('habilidadesContent', 'iconHab')" style="cursor:pointer; user-select:none;">
+    ₊˚๑🔮꒱ Habilidades <span id="iconHab" class="toggle-icon">▼</span>
+  </h2>
+  <div id="habilidadesContent">
+    <div id="habilidades"></div>
+    <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
       </div>
       
 <div id="modalConfigHab" class="modal">
@@ -1467,12 +1498,16 @@
     </div>
   </div>
 </div>
-
   </div>
-      <div class="bloco">
-        <h2>₊˚๑🎒꒱ Inventário</h2>
-        <div id="lista-itens"></div>
-        <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
+    </div>
+  
+<div class="bloco">
+  <h2 onclick="toggleSecao('inventarioContent', 'iconInv')" style="cursor:pointer; user-select:none;">
+    ₊˚๑🎒꒱ Inventário <span id="iconInv" class="toggle-icon">▼</span>
+  </h2>
+  <div id="inventarioContent">
+    <div id="lista-itens"></div>
+    <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
       </div>
     
           </div>
@@ -1510,92 +1545,99 @@
     </div>
   </div>
   <!-- Estatísticas Tab -->
-  <div id="estatisticas" class="tab-content">
-    <div class="bloco">
-      <h2>₊˚๑📊꒱ Status</h2>
-      <div class="status-card">
-
-        <div class="status-item vida">
-          <div class="status-top">
-            <div>Vida</div><span>❤️</span>
-          </div>
-          <input id="vida" type="number" oninput="atualizarVida()" />
-          <small id="vidaMaxTxt"></small>
-          <div class="status-bar">
-            <div id="vida-bar" class="status-fill"></div>
-          </div>
-        </div>
-
-        <div class="status-item sanidade">
-          <div class="status-top">
-            <div>Sanidade</div><span>🧠</span>
-          </div>
-          <input id="sanidade" type="number" oninput="atualizarSanidade()" />
-          <small id="sanidadeMaxTxt"></small>
-          <div class="status-bar">
-            <div id="sanidade-bar" class="status-fill sanity"></div>
+<div id="estatisticas" class="tab-content">
+  <div class="bloco">
+    <h2>₊˚๑📊꒱ Status</h2>
+    <div class="status-card">
+      
+      <div class="status-item vida">
+        <div class="status-top"><div>Vida</div><span>❤️</span></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px;">
+          <input id="vida" type="number" oninput="atualizarVida()" style="width: 60px !important;" />
+          <small id="vidaMaxTxt" style="white-space: nowrap; flex-grow: 1;"></small>
+          <div style="display: flex; border: 1px solid rgba(197, 160, 89, 0.35); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2);">
+            <input type="number" id="vidaQuick" placeholder="+/-" style="width: 40px !important; border: none !important; background: transparent !important; color: #fff; text-align: center; font-size: 12px;" />
+            <button onclick="ajustarStatus('vida')" style="background: rgba(197, 160, 89, 0.35); border: none; color: white; padding: 0 8px; cursor: pointer; font-size: 10px;">OK</button>
           </div>
         </div>
+        <span id="vidaTempTxt" class="temp-txt vida" style="display:none;"></span>
+        <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
+      </div>
 
-        <div class="status-item aura">
-          <div class="status-top">
-            <div>Aura</div><span>✨</span>
-          </div>
-          <input id="aura" type="number" value="0" oninput="atualizarAura()" />
-          <small id="auraMaxTxt">Máx: 0</small>
-          <div class="status-bar">
-            <div id="aura-bar" class="status-fill aura"></div>
+      <div class="status-item sanidade">
+        <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px;">
+          <input id="sanidade" type="number" oninput="atualizarSanidade()" style="width: 60px !important;" />
+          <small id="sanidadeMaxTxt" style="white-space: nowrap; flex-grow: 1;"></small>
+          <div style="display: flex; border: 1px solid rgba(197, 160, 89, 0.35); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2);">
+            <input type="number" id="sanidadeQuick" placeholder="+/-" style="width: 40px !important; border: none !important; background: transparent !important; color: #fff; text-align: center; font-size: 12px;" />
+            <button onclick="ajustarStatus('sanidade')" style="background: rgba(197, 160, 89, 0.35); border: none; color: white; padding: 0 8px; cursor: pointer; font-size: 10px;">OK</button>
           </div>
         </div>
+        <span id="sanidadeTempTxt" class="temp-txt sanidade" style="display:none;"></span>
+        <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
+      </div>
 
-        <div class="status-item deslocamento">
-          <div class="status-top">
-            <div>Deslocamento (Quadrados)</div><span>👟</span>
-          </div>
-          <input id="deslocamento" type="number" disabled />
-        </div>
-
-        <div class="status-item dt">
-          <div class="status-top">
-            <div>DT de Habilidades 🪄</div>
-          </div>
-
-          <div class="linha">
-            <label>🆙 Bônus adicional 🆙</label>
-            <input type="number" id="dtBonus" value="0" oninput="atualizarDT()" />
-          </div>
-
-          <div class="status-sub">
-            🎯 <strong>DT:</strong> <span id="dtTotal">15</span>
+      <div class="status-item aura">
+        <div class="status-top"><div>Aura</div><span>✨</span></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px;">
+          <input id="aura" type="number" oninput="atualizarAura()" style="width: 60px !important;" />
+          <small id="auraMaxTxt" style="white-space: nowrap; flex-grow: 1;">Máx: 0</small>
+          <div style="display: flex; border: 1px solid rgba(197, 160, 89, 0.35); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2);">
+            <input type="number" id="auraQuick" placeholder="+/-" style="width: 40px !important; border: none !important; background: transparent !important; color: #fff; text-align: center; font-size: 12px;" />
+            <button onclick="ajustarStatus('aura')" style="background: rgba(197, 160, 89, 0.35); border: none; color: white; padding: 0 8px; cursor: pointer; font-size: 10px;">OK</button>
           </div>
         </div>
+        <span id="auraTempTxt" class="temp-txt aura" style="display:none;"></span>
+        <div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
+      </div>
 
-        <div class="status-item bloqueio">
-          <div class="status-top">
-            <div>Bloqueio 🪖</div>
-          </div>
+      <div class="status-item deslocamento">
+        <div class="status-top">
+          <div>Deslocamento (Quadrados)</div><span>👟</span>
+        </div>
+        <input id="deslocamento" type="number" disabled />
+      </div>
 
-          <div style="display:flex; gap:10px; margin-bottom:6px;">
-            <div class="status-sub">
-              🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span>
-            </div>
-            <div class="status-sub">
-              🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span>
-            </div>
-          </div>
+      <div class="status-item dt">
+        <div class="status-top"><div>DT de Habilidades 🪄</div></div>
+        <div class="linha">
+          <label>Atributo Base</label>
+          <select id="dtAtributoBase" onchange="atualizarDT()" style="margin-bottom:8px;">
+            <option value="Nenhum">Nenhum</option>
+            <option value="FOR">Força</option>
+            <option value="CON">Constituição</option>
+            <option value="AGI">Agilidade</option>
+            <option value="INT">Intelecto</option>
+            <option value="POD" selected>Poder</option>
+          </select>
+        </div>
+        <div class="linha">
+          <label>🆙 Bônus adicional 🆙</label>
+          <input type="number" id="dtBonus" value="0" oninput="atualizarDT()" />
+        </div>
+        <div class="status-sub">🎯 <strong>DT:</strong> <span id="dtTotal">15</span></div>
+      </div>
 
-          <div class="linha">
-            <label>RD Física 💪</label>
-            <input type="number" id="rdFisica" value="0" oninput="atualizarBloqueio()" />
-          </div>
-
-          <div class="linha">
-            <label>RD Mental 🧠</label>
-            <input type="number" id="rdMental" value="0" />
-          </div>
+      <div class="status-item bloqueio">
+        <div class="status-top"><div>Bloqueio 🪖</div></div>
+        <div style="display:flex; gap:10px; margin-bottom:6px;">
+          <div class="status-sub">🔹 <strong>Menor:</strong> <span id="bloqueioMenor">0</span></div>
+          <div class="status-sub">🔸 <strong>Maior:</strong> <span id="bloqueioMaior">0</span></div>
+        </div>
+        <div class="linha">
+          <label>RD Física 💪</label>
+          <input type="number" id="rdFisica" value="0" oninput="atualizarBloqueio()" />
+        </div>
+        <div class="linha">
+          <label>RD Mental 🧠</label>
+          <input type="number" id="rdMental" value="0" />
         </div>
       </div>
+
     </div>
+  </div>
+</div>
 
     <div class="bloco">
       <button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
@@ -1706,6 +1748,47 @@ function salvarConfiguracao() {
     salvarFicha();
   }
 }
+
+function toggleSecao(idContent, idIcon) {
+  const content = document.getElementById(idContent);
+  const icon = document.getElementById(idIcon);
+  if (content.style.display === "none") {
+    content.style.display = "block";
+    icon.classList.remove("minimized");
+  } else {
+    content.style.display = "none";
+    icon.classList.add("minimized");
+  }
+}
+
+function ajustarStatus(tipo) {
+  const inputQuick = document.getElementById(tipo + "Quick");
+  const val = parseInt(inputQuick.value);
+  
+  if (!isNaN(val)) {
+    const mainInput = document.getElementById(tipo);
+    let current = parseInt(mainInput.value) || 0;
+    mainInput.value = current + val;
+    
+    // Roda a atualização específica para tratar cores e limites
+    if (tipo === 'vida') atualizarVida();
+    if (tipo === 'sanidade') atualizarSanidade();
+    if (tipo === 'aura') atualizarAura();
+  }
+  inputQuick.value = ""; // Limpa a caixinha depois de aplicar
+}
+
+// Faz o campo de ajuste rápido aceitar a tecla "Enter"
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const activeEl = document.activeElement;
+    
+    // Verifica se o usuário está com o cursor em um dos campos de ajuste rápido
+    if (activeEl.id === 'vidaQuick') ajustarStatus('vida');
+    if (activeEl.id === 'sanidadeQuick') ajustarStatus('sanidade');
+    if (activeEl.id === 'auraQuick') ajustarStatus('aura');
+  }
+});
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
@@ -2123,38 +2206,68 @@ function atualizarBarra(inputId,barId,max){
 function atualizarAura(){
   const auraEl = document.getElementById("aura");
   const max = Number(auraEl.getAttribute("max")) || 0;
-
   let v = Number(auraEl.value) || 0;
 
-  if(v > max) v = max;
   if(v < 0) v = 0;
-
   auraEl.value = v;
 
-  document.getElementById("aura-bar").style.width =
-    max > 0 ? ((v / max) * 100) + "%" : "0%";
+  const tempTxt = document.getElementById("auraTempTxt");
+  const bar = document.getElementById("aura-bar");
+
+  if(v > max && max > 0) {
+    tempTxt.innerText = (v - max) + " de aura temporária";
+    tempTxt.style.display = "block";
+    bar.classList.add("temp-aura");
+    bar.style.width = "100%";
+  } else {
+    tempTxt.style.display = "none";
+    bar.classList.remove("temp-aura");
+    bar.style.width = max > 0 ? ((v / max) * 100) + "%" : "0%";
+  }
 }
 
 function atualizarVida(){
   const max = Number(document.getElementById("vida").max) || 0;
   let v = Number(document.getElementById("vida").value) || 0;
 
-  if(v > max) v = max;
-  if(v < 0) v = 0;
-
+  if(v < 0) v = 0; // Vida não pode ser negativa, mas PODE passar do max.
   document.getElementById("vida").value = v;
-  atualizarBarra("vida","vida-bar",max);
+
+  const tempTxt = document.getElementById("vidaTempTxt");
+  const bar = document.getElementById("vida-bar");
+
+  if(v > max && max > 0) {
+    tempTxt.innerText = (v - max) + " de vida temporária";
+    tempTxt.style.display = "block";
+    bar.classList.add("temp-vida");
+    bar.style.width = "100%";
+  } else {
+    tempTxt.style.display = "none";
+    bar.classList.remove("temp-vida");
+    atualizarBarra("vida","vida-bar",max);
+  }
 }
 
 function atualizarSanidade(){
   const max = Number(document.getElementById("sanidade").max) || 0;
   let v = Number(document.getElementById("sanidade").value) || 0;
 
-  if(v > max) v = max;
   if(v < 0) v = 0;
-
   document.getElementById("sanidade").value = v;
-  atualizarBarra("sanidade","sanidade-bar",max);
+
+  const tempTxt = document.getElementById("sanidadeTempTxt");
+  const bar = document.getElementById("sanidade-bar");
+
+  if(v > max && max > 0) {
+    tempTxt.innerText = (v - max) + " de sanidade temporária";
+    tempTxt.style.display = "block";
+    bar.classList.add("temp-sanidade");
+    bar.style.width = "100%";
+  } else {
+    tempTxt.style.display = "none";
+    bar.classList.remove("temp-sanidade");
+    atualizarBarra("sanidade","sanidade-bar",max);
+  }
 }
 
 function atualizarBloqueio(){
@@ -2171,10 +2284,16 @@ function atualizarBloqueio(){
 }
 
 function atualizarDT(){
-  const poder = parseInt(document.getElementById("atr_POD").value) || 0;
+  const selAttr = document.getElementById("dtAtributoBase").value;
+  let attrValue = 0;
+  
+  if (selAttr !== "Nenhum") {
+      // Pega dinamicamente o atributo que o usuário escolheu
+      attrValue = parseInt(document.getElementById("atr_" + selAttr).value) || 0;
+  }
+  
   const bonus = parseInt(document.getElementById("dtBonus").value) || 0;
-
-  const dt = 15 + poder + bonus;
+  const dt = 15 + attrValue + bonus; // 15 + Atributo Escolhido + Bônus Extra
 
   document.getElementById("dtTotal").innerText = dt;
 }
@@ -2709,6 +2828,8 @@ function salvarFicha(){
     sanidade:document.getElementById("sanidade").value,
     aura:document.getElementById("aura").value,
     habilidades:habilidades,
+    dtBonus: document.getElementById("dtBonus").value,
+    dtAtributoBase: document.getElementById("dtAtributoBase").value,
     atributos:{},
     pericias:{},
     rdFisica: document.getElementById("rdFisica").value,
@@ -2840,6 +2961,7 @@ function carregarFicha(){
   document.getElementById("rdFisica").value = d.rdFisica || 0;
   document.getElementById("rdMental").value = d.rdMental || 0;
   document.getElementById("dtBonus").value = d.dtBonus || 0;
+  document.getElementById("dtAtributoBase").value = d.dtAtributoBase || "POD";
   
   const img = document.getElementById("previewImg");
   if(d.imagem){
