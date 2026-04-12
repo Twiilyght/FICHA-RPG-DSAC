@@ -1444,7 +1444,7 @@
       <div class="linha"><label>🔋 Energia Inata 🔋</label><textarea id="antecedencia" placeholder="Chi ou Mana"></textarea></div>
       <div class="linha"><label>💭 Descrição 💭</label><textarea id="descricao" placeholder="Descreve o personagem, personalidade, etc."></textarea></div>
       <div class="linha"><label>⌛ História ⌛</label><textarea id="historia"></textarea></div>
- </div>
+</div>
 <div class="bloco">
   <h2 onclick="toggleSecao('habilidadesContent', 'iconHab')" style="cursor:pointer; user-select:none;">
     ₊˚๑🔮꒱ Habilidades <span id="iconHab" class="toggle-icon">▼</span>
@@ -1453,8 +1453,21 @@
     <div id="habilidades"></div>
     <button class="salvar-btn" onclick="adicionarHabilidade()">+ Adicionar Habilidade</button>
       </div>
-      
-<div id="modalConfigHab" class="modal">
+   </div>
+<div class="bloco">
+  <h2 onclick="toggleSecao('inventarioContent', 'iconInv')" style="cursor:pointer; user-select:none;">
+    ₊˚๑🎒꒱ Inventário <span id="iconInv" class="toggle-icon">▼</span>
+  </h2>
+  <div id="inventarioContent">
+    <div id="lista-itens"></div>
+    <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
+  </div>
+</div>
+       </div>
+    </div>
+  </div>
+  
+  <div id="modalConfigHab" class="modal">
   <div class="modal-content bloco">
     <h3 style="color: var(--cor-dourado); margin-bottom: 15px;">⚙️ Configurações de Ataque</h3>
     
@@ -1478,42 +1491,28 @@
         <label>Margem Ataque (Crítico):</label>
         <input type="number" id="cfgMargemAtk" value="20">
       </div>
-    <div class="config-group">
-      <label>Margem Dano (Crítico):</label>
-      <div style="display: flex; gap: 5px; align-items: center;">
-        <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por dado individual (Ex: 20)">
-        <span style="color: var(--cor-dourado); font-size: 0.75rem; white-space: nowrap;">OU SOMA ≥</span>
-        <input type="number" id="cfgMargemDanoTotal" placeholder="Soma" style="flex: 1;" title="Crítico por soma total dos dados (Ex: 10)">
+      
+      <div class="config-group">
+        <label>Margem Dano (Crítico):</label>
+        <div style="display: flex; gap: 5px; align-items: center;">
+          <input type="number" id="cfgMargemDano" value="20" style="flex: 1;" title="Crítico por dado individual (Ex: 20)">
+          <span style="color: var(--cor-dourado); font-size: 0.75rem; white-space: nowrap;">OU SOMA ≥</span>
+          <input type="number" id="cfgMargemDanoTotal" placeholder="Soma" style="flex: 1;" title="Crítico por soma total dos dados (Ex: 10)">
+        </div>
+      </div>
+
+      <div class="config-group">
+        <label>Dados Extra de Crítico (Soma ao total):</label>
+        <input type="text" id="cfgDadosCrit" placeholder="Ex: 2d6">
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button onclick="salvarConfiguracao()" class="salvar-btn" style="flex: 1;">Salvar</button>
+        <button onclick="fecharModalConfig()" class="btn-cancelar" style="flex: 1;">Cancelar</button>
       </div>
     </div>
-
-    <div class="config-group">
-      <label>Dados Extra de Crítico (Soma ao total):</label>
-      <input type="text" id="cfgDadosCrit" placeholder="Ex: 2d6">
-    </div>
-
-    <div style="display: flex; gap: 10px; margin-top: 20px;">
-      <button onclick="salvarConfiguracao()" class="salvar-btn" style="flex: 1;">Salvar</button>
-      <button onclick="fecharModalConfig()" class="btn-cancelar" style="flex: 1;">Cancelar</button>
-    </div>
-  </div>
-</div>
-  </div>
-    </div>
-  
-<div class="bloco">
-  <h2 onclick="toggleSecao('inventarioContent', 'iconInv')" style="cursor:pointer; user-select:none;">
-    ₊˚๑🎒꒱ Inventário <span id="iconInv" class="toggle-icon">▼</span>
-  </h2>
-  <div id="inventarioContent">
-    <div id="lista-itens"></div>
-    <button class="salvar-btn" onclick="adicionarItem()">+ Novo Item</button>
-      </div>
-    
           </div>
-       </div>
     </div>
-  </div>
 
   <!-- Atributos e Perícias Tab -->
   <div id="atributos-pericias" class="tab-content">
@@ -1634,16 +1633,13 @@
           <input type="number" id="rdMental" value="0" />
         </div>
       </div>
-
     </div>
   </div>
-</div>
-
     <div class="bloco">
       <button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
       <button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
 
-      <textarea id="codigoFicha" placeholder="Código da ficha..." style="width:100%; margin-top:10px; height:120px;"></textarea>
+      <textarea id="codigoFicha" placeholder="Código da ficha..." rows="5" style="width:100%; max-width: 100%; box-sizing: border-box; border-radius:4px; padding:5px; margin-top:10px; font-family:monospace;"></textarea>
 
       <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
       <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
@@ -1714,7 +1710,7 @@ function abrirModalConfig(index) {
   
   document.getElementById("cfgDadosCrit").value = h.config.dadosCritico || "";
 
-document.getElementById("modalConfigHab").style.display = "flex";
+  document.getElementById("modalConfigHab").style.display = "flex";
 }
 
 function fecharModalConfig() {
@@ -2358,7 +2354,6 @@ function renderHabilidades() {
     <div class="habilidade-card">
       <div class="hab-header">
         <input value="${h.nome}" oninput="habilidades[${i}].nome=this.value" class="hab-nome-input">
-        
         <div class="hab-actions" style="display: flex; gap: 10px;">
           <button class="btn-config" onclick="abrirModalConfig(${i})" title="Configurar Testes">⚙️</button>
           <button class="btn-delete-hab" onclick="removerHabilidade(${i})">🗑️</button>
