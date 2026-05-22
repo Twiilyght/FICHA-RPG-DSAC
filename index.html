@@ -1909,7 +1909,7 @@ function exportarFicha() {
     // Perícias (apenas os valores essenciais)
     Object.values(d.pericias).map(p => [p.valor, p.bonus, p.atributo]),
     // Habilidades
-    d.habilidades.map(h => [h.nome, h.dado, h.desc, h.config, h.rolagens]),
+    d.habilidades.map(h => [h.nome, h.dado, h.desc, h.config, h.rolagens, h.img]),
     // Inventário
     d.inventario.map(i => [i.nome, i.peso, i.desc])
   ];
@@ -1953,7 +1953,8 @@ function importarFicha() {
         dado: h[1],
         desc: h[2],
         config: h[3] || {}, // Restaura as configurações
-        rolagens: h[4] || []
+        rolagens: h[4] || [],
+        img: h[5] || ""
       }));
     novoD.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
 
@@ -2299,6 +2300,7 @@ function adicionarHabilidade() {
   habilidades.push({
     nome: "Nova Habilidade",
     desc: "",
+    img: "",
     rolagens: [{ nome: "Dano", dado: "1d20" }], // Mantém sua estrutura original
     // Adicione esta parte para permitir as novas configurações:
     config: {
@@ -2361,6 +2363,8 @@ function renderHabilidades() {
       </div>
       
       <textarea placeholder="Descrição..." oninput="habilidades[${i}].desc=this.value">${h.desc || ""}</textarea>
+      <input type="text" placeholder="🔗 Cole o Link da Imagem ou GIF aqui..." value="${h.img || ""}" oninput="habilidades[${i}].img=this.value; document.getElementById('preview_hab_${i}').src=this.value; document.getElementById('preview_hab_${i}').style.display = this.value ? 'block' : 'none';" style="font-size: 0.8rem; padding: 6px; margin-top: -6px; background: rgba(0,0,0,0.3); border-style: dashed;">
+      <img id="preview_hab_${i}" src="${h.img || ""}" style="max-width: 100%; border-radius: 6px; display: ${h.img ? 'block' : 'none'}; border: 1px solid var(--cor-dourado-transp); margin-top: 5px;">
       
       <div class="hab-rolagens-grid" style="display: flex; flex-direction: column; width: 100%;">
         ${rolagensHTML}
