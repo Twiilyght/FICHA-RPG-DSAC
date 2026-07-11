@@ -1636,8 +1636,8 @@
     </div>
   </div>
     <div class="bloco">
-      <button class="salvar-btn" onclick="exportarFicha()">Exportar ficha</button>
-      <button class="salvar-btn" onclick="importarFicha()">Importar ficha</button>
+      <button class="salvar-btn" onclick="baixarFichaJSON()">Exportar ficha</button>
+      <button class="salvar-btn" onclick="carregarFichaJSON(event)">Importar ficha</button>
 
       <textarea id="codigoFicha" placeholder="Código da ficha..." rows="5" style="width:100%; max-width: 100%; box-sizing: border-box; border-radius:4px; padding:5px; margin-top:10px; font-family:monospace;"></textarea>
 
@@ -1889,128 +1889,94 @@ function renderInventario() {
   });
 }
   
-function exportarFicha() {
-  const dados = {
-    nome: document.getElementById("nome")?.value || "",
-    idade: document.getElementById("idade")?.value || "",
-    nivel: document.getElementById("nivel")?.value || 1,
-    vida: document.getElementById("vida")?.value || 0,
-    sanidade: document.getElementById("sanidade")?.value || 0,
-    aura: document.getElementById("aura")?.value || 0,
-    antecedencia: document.getElementById("antecedencia")?.value || "",
-    descricao: document.getElementById("descricao")?.value || "",
-    historia: document.getElementById("historia")?.value || "",
-    rdFisica: document.getElementById("rdFisica")?.value || 0,
-    rdMental: document.getElementById("rdMental")?.value || 0,
-    dtBonus: document.getElementById("dtBonus")?.value || 0,
-    atributos: {},
-    pericias: {},
-    // É vital incluir as arrays abaixo para salvar as configurações complexas:
-    habilidades: [], 
-    inventario: []
-  };
+function baixarFichaJSON() {
+  // Pega qual slot de ficha está sendo usado (ajuste o ID se o seu select for diferente)
+  const slot = document.getElementById("slot")?.value || "1";
+  const chave = "fichaRPG_" + slot;
+  
+  // Puxa a ficha diretamente da memória salva do navegador (não da tela)
+  const dadosSalvos = localStorage.getItem(chave);
 
-  // Coleta atributos (mantendo sua lógica)
-  if (typeof atributos !== 'undefined') {
-    atributos.forEach(a => {
-      dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla)?.value || 0;
-    });
+  if (!dadosSalvos) {
+    return alert("Nenhum dado encontrado! Salve a ficha (Salvar na Nuvem) antes de exportar.");
   }
 
-  // Coleta perícias (você precisará adaptar conforme o HTML do seu novo sistema)
-  // Exemplo: dados.pericias = ...
-
-  // ==========================================
-  // ATENÇÃO: INSERÇÃO DE HABILIDADES E ITENS
-  // ==========================================
-  // Como as Habilidades e o Inventário geralmente são listas dinâmicas, 
-  // você precisa igualá-las às variáveis globais (arrays) que guardam 
-  // esses dados no seu script atual enquanto o jogador usa a ficha.
-  //
-  // Exemplo (descomente e ajuste para o nome das suas variáveis):
-  // dados.habilidades = variavelGlobalDeHabilidades; 
-  // dados.inventario = variavelGlobalDeInventario;
+  // Cria o arquivo .json
+  const blob = new Blob([dadosSalvos], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
   
-  // Converte o objeto para uma string (JSON) e depois para Base64
-  const fichaString = JSON.stringify(dados);
-  const codigoExportado = btoa(unescape(encodeURIComponent(fichaString)));
-
-  // Exibe no campo de texto para o jogador copiar
-  const campoCodigo = document.getElementById("codigoFicha");
-  if (campoCodigo) {
-    campoCodigo.value = codigoExportado;
-    alert("Ficha exportada! Copie o código abaixo.");
-  }
-}
+  // Força o download do arquivo
+  const link = document.createElement("a");
+  link.href = url;
   
-function importarFicha() {
-  const codigo = document.getElementById("codigoFicha").value;
-  if (!codigo) return alert("Cole um código válido!");
-
+  // Tenta usar o nome do personagem para o nome do arquivo, se existir
+  let nomePersonagem = "Personagem";
   try {
-    // Decodifica o Base64 de volta para string
-    const jsonString = decodeURIComponent(escape(atob(codigo)));
-    let dados = JSON.parse(jsonString);
+    const obj = JSON.parse(dadosSalvos);
+    // Verifica se é o formato antigo (array) ou novo (objeto) para achar o nome
+    if (Array.isArray(obj) && obj[0]) nomePersonagem = obj[0];
+    else if (obj.nome) nomePersonagem = obj.nome;
+  } catch(e) {}
 
-    // VERIFICAÇÃO DE RETROCOMPATIBILIDADE:
-    // Se 'dados' for uma Array, significa que é um código do sistema antigo.
-    // Vamos convertê-lo para o formato de Objeto do sistema novo.
-    if (Array.isArray(dados)) {
-      const lista = dados;
+  link.download = `Ficha_${nomePersonagem}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function carregarFichaJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      let dados = JSON.parse(e.target.result);
+
+      // VERIFICAÇÃO DE RETROCOMPATIBILIDADE:
+      // Se o jogador carregar um .json de uma ficha antiga (Lista), converte para Objeto
+      if (Array.isArray(dados)) {
+        const lista = dados;
+        dados = {
+          nome: lista[0], idade: lista[1], nivel: lista[2],
+          vida: lista[3], sanidade: lista[4], aura: lista[5],
+          antecedencia: lista[6], descricao: lista[7], historia: lista[8],
+          rdFisica: lista[9], rdMental: lista[10], dtBonus: lista[11],
+          atributos: {}, pericias: {}, habilidades: [], inventario: []
+        };
+
+        const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
+        if(lista[12]) lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
+
+        if(lista[13]) lista[13].forEach((p, i) => {
+          dados.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
+        });
+
+        if(lista[14]) dados.habilidades = lista[14].map(h => ({
+          nome: h[0], dado: h[1], desc: h[2], config: h[3] || {}, rolagens: h[4] || [], img: h[5] || ""
+        }));
+
+        if(lista[15]) dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
+      }
+
+      // Salva os dados processados direto na memória do navegador
+      const slot = document.getElementById("slot")?.value || "1";
+      localStorage.setItem("fichaRPG_" + slot, JSON.stringify(dados));
       
-      dados = {
-        nome: lista[0], 
-        idade: lista[1], 
-        nivel: lista[2],
-        vida: lista[3], 
-        sanidade: lista[4], 
-        aura: lista[5],
-        antecedencia: lista[6], 
-        descricao: lista[7], 
-        historia: lista[8],
-        rdFisica: lista[9], 
-        rdMental: lista[10], 
-        dtBonus: lista[11],
-        atributos: {}, 
-        pericias: {}, 
-        habilidades: [], 
-        inventario: []
-      };
-
-      // Reconstrói Atributos
-      const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
-      lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
-
-      // Reconstrói Perícias
-      lista[13].forEach((p, i) => {
-        dados.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
-      });
-
-      // Reconstrói Habilidades
-      dados.habilidades = lista[14].map(h => ({
-        nome: h[0],
-        dado: h[1],
-        desc: h[2],
-        config: h[3] || {}, 
-        rolagens: h[4] || [],
-        img: h[5] || ""
-      }));
-
-      // Reconstrói Inventário
-      dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
+      alert("Ficha carregada com sucesso!");
+      
+      // Recarrega a página para que o seu sistema puxe os dados da memória e preencha a tela perfeitamente
+      location.reload(); 
+      
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao ler o arquivo. Tem certeza que é um arquivo de ficha válido?");
     }
-
-    // A partir daqui, 'dados' sempre será um Objeto, independente de onde veio.
-    // Preenche os campos na tela
-    document.getElementById("nome").value = dados.nome || "";
-    document.getElementById("nivel").value = dados.nivel || 1;
-    // ... continue preenchendo o restante dos campos do HTML ...
-
-    alert("Ficha importada com sucesso! Lembre-se de clicar em 'Salvar na Nuvem'.");
-  } catch (e) {
-    console.error(e);
-    alert("Código inválido ou incompatível!");
-  }
+  };
+  
+  // Lê o conteúdo do arquivo
+  reader.readAsText(file);
 }
   
 const somDado = new Audio("dado.mp3")
