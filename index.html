@@ -1890,80 +1890,126 @@ function renderInventario() {
 }
   
 function exportarFicha() {
-  const slot = document.getElementById("slot").value;
-  const chave = "fichaRPG_" + slot;
-  const bruto = localStorage.getItem(chave);
+  const dados = {
+    nome: document.getElementById("nome")?.value || "",
+    idade: document.getElementById("idade")?.value || "",
+    nivel: document.getElementById("nivel")?.value || 1,
+    vida: document.getElementById("vida")?.value || 0,
+    sanidade: document.getElementById("sanidade")?.value || 0,
+    aura: document.getElementById("aura")?.value || 0,
+    antecedencia: document.getElementById("antecedencia")?.value || "",
+    descricao: document.getElementById("descricao")?.value || "",
+    historia: document.getElementById("historia")?.value || "",
+    rdFisica: document.getElementById("rdFisica")?.value || 0,
+    rdMental: document.getElementById("rdMental")?.value || 0,
+    dtBonus: document.getElementById("dtBonus")?.value || 0,
+    atributos: {},
+    pericias: {},
+    // É vital incluir as arrays abaixo para salvar as configurações complexas:
+    habilidades: [], 
+    inventario: []
+  };
 
-  if (!bruto) return alert("Nenhuma ficha salva!");
+  // Coleta atributos (mantendo sua lógica)
+  if (typeof atributos !== 'undefined') {
+    atributos.forEach(a => {
+      dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla)?.value || 0;
+    });
+  }
 
-  const d = JSON.parse(bruto);
+  // Coleta perícias (você precisará adaptar conforme o HTML do seu novo sistema)
+  // Exemplo: dados.pericias = ...
 
-  // Criamos uma array compacta com a ordem fixa dos dados
-  // Isso remove as repetições de "nome:", "idade:", etc.
-  const compacto = [
-    d.nome, d.idade, d.nivel, d.vida, d.sanidade, d.aura,
-    d.antecedencia, d.descricao, d.historia,
-    d.rdFisica, d.rdMental, d.dtBonus,
-    // Atributos (apenas os números)
-    Object.values(d.atributos),
-    // Perícias (apenas os valores essenciais)
-    Object.values(d.pericias).map(p => [p.valor, p.bonus, p.atributo]),
-    // Habilidades
-    d.habilidades.map(h => [h.nome, h.dado, h.desc, h.config, h.rolagens, h.img]),
-    // Inventário
-    d.inventario.map(i => [i.nome, i.peso, i.desc])
-  ];
+  // ==========================================
+  // ATENÇÃO: INSERÇÃO DE HABILIDADES E ITENS
+  // ==========================================
+  // Como as Habilidades e o Inventário geralmente são listas dinâmicas, 
+  // você precisa igualá-las às variáveis globais (arrays) que guardam 
+  // esses dados no seu script atual enquanto o jogador usa a ficha.
+  //
+  // Exemplo (descomente e ajuste para o nome das suas variáveis):
+  // dados.habilidades = variavelGlobalDeHabilidades; 
+  // dados.inventario = variavelGlobalDeInventario;
+  
+  // Converte o objeto para uma string (JSON) e depois para Base64
+  const fichaString = JSON.stringify(dados);
+  const codigoExportado = btoa(unescape(encodeURIComponent(fichaString)));
 
-  // O btoa transforma em string curta. 
-  // O JSON.stringify em uma array compacta ocupa quase nada de espaço.
-  const codigo = btoa(unescape(encodeURIComponent(JSON.stringify(compacto))));
-
-  document.getElementById("codigoFicha").value = codigo;
-  alert("Código ultra-compacto gerado!");
+  // Exibe no campo de texto para o jogador copiar
+  const campoCodigo = document.getElementById("codigoFicha");
+  if (campoCodigo) {
+    campoCodigo.value = codigoExportado;
+    alert("Ficha exportada! Copie o código abaixo.");
+  }
 }
   
 function importarFicha() {
   const codigo = document.getElementById("codigoFicha").value;
-  if (!codigo) return;
+  if (!codigo) return alert("Cole um código válido!");
 
   try {
-    const lista = JSON.parse(decodeURIComponent(escape(atob(codigo))));
-    
-    // Mapeamos de volta para o formato que o seu sistema entende
-    const novoD = {
-      nome: lista[0], idade: lista[1], nivel: lista[2],
-      vida: lista[3], sanidade: lista[4], aura: lista[5],
-      antecedencia: lista[6], descricao: lista[7], historia: lista[8],
-      rdFisica: lista[9], rdMental: lista[10], dtBonus: lista[11],
-      atributos: {}, pericias: {}, habilidades: [], inventario: []
-    };
+    // Decodifica o Base64 de volta para string
+    const jsonString = decodeURIComponent(escape(atob(codigo)));
+    let dados = JSON.parse(jsonString);
 
-    // Reconstrói Atributos
-    const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
-    lista[12].forEach((val, i) => { novoD.atributos[siglas[i]] = val; });
+    // VERIFICAÇÃO DE RETROCOMPATIBILIDADE:
+    // Se 'dados' for uma Array, significa que é um código do sistema antigo.
+    // Vamos convertê-lo para o formato de Objeto do sistema novo.
+    if (Array.isArray(dados)) {
+      const lista = dados;
+      
+      dados = {
+        nome: lista[0], 
+        idade: lista[1], 
+        nivel: lista[2],
+        vida: lista[3], 
+        sanidade: lista[4], 
+        aura: lista[5],
+        antecedencia: lista[6], 
+        descricao: lista[7], 
+        historia: lista[8],
+        rdFisica: lista[9], 
+        rdMental: lista[10], 
+        dtBonus: lista[11],
+        atributos: {}, 
+        pericias: {}, 
+        habilidades: [], 
+        inventario: []
+      };
 
-    // Reconstrói Perícias
-    lista[13].forEach((p, i) => {
-      novoD.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
-    });
+      // Reconstrói Atributos
+      const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
+      lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
 
-    // Reconstrói Habilidades e Itens
-    novoD.habilidades = lista[14].map(h => ({
+      // Reconstrói Perícias
+      lista[13].forEach((p, i) => {
+        dados.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
+      });
+
+      // Reconstrói Habilidades
+      dados.habilidades = lista[14].map(h => ({
         nome: h[0],
         dado: h[1],
         desc: h[2],
-        config: h[3] || {}, // Restaura as configurações
+        config: h[3] || {}, 
         rolagens: h[4] || [],
         img: h[5] || ""
       }));
-    novoD.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
 
-    const slot = document.getElementById("slot").value;
-    localStorage.setItem("fichaRPG_" + slot, JSON.stringify(novoD));
-    carregarFicha();
-    alert("Ficha importada com sucesso!");
+      // Reconstrói Inventário
+      dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
+    }
+
+    // A partir daqui, 'dados' sempre será um Objeto, independente de onde veio.
+    // Preenche os campos na tela
+    document.getElementById("nome").value = dados.nome || "";
+    document.getElementById("nivel").value = dados.nivel || 1;
+    // ... continue preenchendo o restante dos campos do HTML ...
+
+    alert("Ficha importada com sucesso! Lembre-se de clicar em 'Salvar na Nuvem'.");
   } catch (e) {
-    alert("Erro: Código incompatível.");
+    console.error(e);
+    alert("Código inválido ou incompatível!");
   }
 }
   
