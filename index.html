@@ -1364,25 +1364,327 @@
   gap: 8px; /* Espaço entre os campos e o "OU" */
 }
 
+/* --- ESTILO PARA ANOTAÇÕES --- */
+#anotar {
+  min-height: 500px; /* Altura padrão bem maior */
+  width: 100%;
+  font-size: 1.1rem;
+  line-height: 1.6; /* Melhora a leitura */
+  padding: 20px;
+  background: rgba(10, 10, 12, 0.6);
+  border: 1px solid var(--cor-dourado-transp);
+  border-radius: 8px;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+  color: #e0dabe;
+  font-family: 'Cinzel', serif;
+  resize: vertical;
+}
+
+#anotar:focus {
+  background: rgba(15, 15, 20, 0.8);
+  border-color: var(--cor-dourado);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.9), 0 0 10px var(--cor-dourado-transp);
+}
+
+/* =========================================
+       NOVO MENU LATERAL (SIDEBAR) & ESCUDO DO MESTRE
+       ========================================= */
+    
+    body {
+      flex-direction: row; /* Muda o fluxo do body para horizontal */
+      align-items: flex-start;
+      overflow-x: hidden;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 320px;
+      height: 100vh;
+      background: var(--cor-fundo-bloco);
+      backdrop-filter: blur(12px);
+      border-right: 2px solid var(--cor-borda-bloco-sombra);
+      box-shadow: 10px 0 25px var(--cor-sombra-principal);
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Esconde a barra lateral puxando-a para a esquerda */
+    .sidebar.minimized {
+      transform: translateX(-100%);
+    }
+
+    /* Estilização da Scrollbar da Sidebar */
+    .sidebar::-webkit-scrollbar {
+      width: 8px;
+    }
+    .sidebar::-webkit-scrollbar-track {
+      background: rgba(10, 10, 15, 0.6);
+      border-left: 1px solid rgba(197, 160, 89, 0.1);
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background: var(--cor-dourado);
+      border-radius: 10px;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    }
+    .sidebar::-webkit-scrollbar-thumb:hover {
+      background: #ff2944;
+    }
+
+    /* O conteúdo principal se ajusta ao lado do menu */
+/* =========================================
+       AJUSTES DE LAYOUT E MENUS LATERAIS
+       ========================================= */
+    .main-content {
+      /* Remove as larguras fixas e margens antigas. Controlaremos com padding pelo JS */
+      width: 100%;
+      padding-left: 340px; 
+      padding-right: 340px;
+      padding-bottom: 40px;
+      transition: padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+    }
+
+    /* Menu Lateral Direito */
+    .sidebar-right {
+      position: fixed;
+      right: 0;
+      top: 0;
+      width: 320px;
+      height: 100vh;
+      background: var(--cor-fundo-bloco);
+      backdrop-filter: blur(12px);
+      border-left: 2px solid var(--cor-borda-bloco-sombra);
+      box-shadow: -10px 0 25px var(--cor-sombra-principal);
+      padding: 20px;
+      box-sizing: border-box;
+      overflow-y: auto;
+      z-index: 1000;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-right.minimized {
+      transform: translateX(100%);
+    }
+
+    .sidebar-right::-webkit-scrollbar { width: 8px; }
+    .sidebar-right::-webkit-scrollbar-track { background: rgba(10, 10, 15, 0.6); }
+    .sidebar-right::-webkit-scrollbar-thumb { background: var(--cor-dourado); border-radius: 10px; }
+
+/* Botão Flutuante Menu Esquerdo */
+    #btnToggleSidebar {
+      position: fixed;
+      left: 330px;
+      top: 20px;
+      z-index: 1001;
+      background: var(--cor-btn-bg);
+      color: #fff;
+      border: 1px solid var(--cor-dourado);
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      box-shadow: 0 0 10px var(--cor-btn-shadow);
+      transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+    }
+    #btnToggleSidebar:hover { transform: scale(1.05); }
+    #btnToggleSidebar.minimized { left: 20px; }
+
+    /* Botão Flutuante Menu Direito */
+    #btnToggleSidebarRight {
+      position: fixed;
+      right: 330px;
+      top: 20px;
+      z-index: 1001;
+      background: var(--cor-btn-bg);
+      color: #fff;
+      border: 1px solid var(--cor-dourado);
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      box-shadow: 0 0 10px var(--cor-btn-shadow);
+      transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease;
+    }
+    #btnToggleSidebarRight:hover { transform: scale(1.05); }
+    #btnToggleSidebarRight.minimized { right: 20px; }
+
+    /* =========================================
+       TEXTAREAS E BARRAS DE ROLAGEM
+       ========================================= */
+    textarea::-webkit-scrollbar {
+      width: 8px;
+    }
+    textarea::-webkit-scrollbar-track {
+      background: rgba(10, 10, 15, 0.6);
+      border-left: 1px solid rgba(197, 160, 89, 0.1);
+      border-radius: 0 6px 6px 0;
+    }
+    textarea::-webkit-scrollbar-thumb {
+      background: var(--cor-dourado);
+      border-radius: 10px;
+      box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+    }
+    textarea::-webkit-scrollbar-thumb:hover {
+      background: #ff2944;
+    }
+
+    /* Aumentando tamanho de descrição e história */
+    #descricao, #historia {
+      min-height: 180px;
+    }
+
+    /* =========================================
+       BOTÃO DE ROLAGEM OCULTA
+       ========================================= */
+    .btn-toggle-oculto {
+      width: 100%;
+      padding: 12px;
+      background: rgba(15, 15, 20, 0.8);
+      color: var(--cor-dourado);
+      border: 1px solid var(--cor-dourado);
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-weight: bold;
+      font-size: 0.9rem;
+      transition: 0.3s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-toggle-oculto.active {
+      background: #7f1d1d;
+      color: #fff;
+      border-color: #ff2944;
+      box-shadow: 0 0 15px #ff294488, inset 0 0 10px #000000;
+    }
+
+    /* =========================================
+       BLOCO DE NOTAS FLUTUANTE
+       ========================================= */
+    .notas-tema-dark { background: rgba(15, 15, 20, 0.95) !important; color: #e0dabe !important; }
+    .notas-tema-grey { background: #3a3a3a !important; color: #f5f5f5 !important; border-color: #888 !important; }
+    .notas-tema-white { background: #fdfdfd !important; color: #111 !important; border-color: #ccc !important; }
+
+    /* Cards do Escudo do Mestre */
+    .card-jogador {
+      background: rgba(15, 15, 20, 0.6);
+      border: 1px solid var(--cor-dourado-transp);
+      border-left: 3px solid #ff2944;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: border-color 0.3s ease;
+    }
+    .card-jogador:hover {
+      border-color: var(--cor-dourado);
+    }
+
   </style>
 </head>
 
 <body>
-  <h1>Ficha RPG</h1>
 
-  <div id="temaSelectorContainer">
-    <label for="temaSelector" style="margin-right: 12px;">🎨 Escolha o Tema:</label>
-    <select id="temaSelector" aria-label="Selecionar tema da ficha RPG">
-      <option value="tema-classico">1. Clássico</option>
-      <option value="tema-vermelho-roxo">2. Vermelho e Roxo</option>
-      <option value="tema-azul-preto">3. Azul e Preto</option>
-      <option value="tema-roxo-preto">4. Roxo e Preto</option>
-      <option value="tema-azul-ciano">5. Azul e Ciano</option>
-      <option value="tema-preto-branco">6. Preto e Branco</option>
-    </select>
-  </div>
+  <!-- Botão de controle do menu lateral -->
+  <button id="btnToggleSidebar" onclick="toggleSidebar()">🗃️ Ocultar Menu</button>
 
-  <div class="tab-container">
+  <!-- MENU LATERAL -->
+  <aside id="sidebar" class="sidebar">
+    <h2 style="font-size: 1.4rem; text-align: center; border-bottom: 1px solid var(--cor-dourado); padding-bottom: 10px; margin-bottom: 10px;">Painel de Controle</h2>
+
+    <!-- LOGIN -->
+    <div id="authContainer" style="text-align: center; margin-bottom: 15px;">
+      <button id="btnLogin" class="salvar-btn" style="width: 100%; font-size: 0.9rem;" onclick="loginGoogle()">Entrar com Google</button>
+      <div id="userInfo" style="display:none; color: var(--cor-dourado); font-weight: bold; font-size: 0.85rem; text-shadow: 0 0 5px var(--cor-dourado-transp);">
+        Jogando como:<br><span id="userName" style="color: #fff; font-size: 1rem;"></span> <br>
+        <button onclick="logoutGoogle()" style="background:transparent; border:1px solid #ff2944; color:#ff2944; cursor:pointer; padding:4px 8px; border-radius:4px; margin-top:8px; font-family: 'Cinzel', serif; width: 100%;">Sair</button>
+      </div>
+    </div>
+
+    <!-- GERENCIAMENTO DA FICHA -->
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+      <button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.9rem;" onclick="salvarFichaManual()">Salvar Ficha</button>
+      <div style="display: flex; gap: 5px;">
+        <button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.8rem; flex: 1;" onclick="baixarFichaJSON()">Exportar</button>
+<!-- O botão apenas abre o seletor de arquivos -->
+<button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.8rem; flex: 1;" 
+        onclick="document.getElementById('inputFicha').click()">Importar</button>
+
+<!-- O input escuta a alteração e chama a função -->
+<input type="file" id="inputFicha" style="display: none;" accept=".json" onchange="carregarFichaJSON(event)">      </div>
+      <textarea id="codigoFicha" placeholder="Código da ficha para importação/exportação..." rows="2" style="width:100%; box-sizing: border-box; border-radius:4px; padding:5px; font-family:monospace; font-size: 10px;"></textarea>
+      <div id="alerta" class="alerta" style="font-size: 12px; padding: 5px;">Ficha salva com sucesso!</div>
+    </div>
+
+<!-- HISTÓRICO DE ROLAGENS (NO MENU ESQUERDO) -->
+<div style="border-top: 1px dashed var(--cor-dourado-transp); padding-top: 15px; flex-grow: 1; display: flex; flex-direction: column;">
+  <h3 style="color: var(--cor-dourado); font-size: 1rem; margin-top: 0;">Histórico</h3>
+  
+  <button id="btnRolagemPrivada" class="btn-toggle-oculto" onclick="toggleRolagemOculta()" style="margin-bottom: 12px;">
+    👁️ Rolar Aberto (Público)
+  </button>
+
+  <div id="logRolagens" style="flex-grow: 1; max-height: none; height: 250px; overflow-y: auto;"></div>
+</div>
+  </aside>
+
+<!-- Botão de controle do menu lateral direito -->
+  <button id="btnToggleSidebarRight" onclick="toggleSidebarRight()">📚 Ocultar Registro</button>
+
+  <!-- MENU LATERAL DIREITO -->
+  <aside id="sidebarRight" class="sidebar-right">
+    <h2 style="font-size: 1.4rem; text-align: center; border-bottom: 1px solid var(--cor-dourado); padding-bottom: 10px; margin-bottom: 10px;">Registro de Informações</h2>
+
+    <!-- BLOCO DE NOTAS -->
+    <div style="margin-bottom: 20px;">
+      <h3 style="color: var(--cor-dourado); font-size: 1rem; margin-top: 0;">Anotações da Missão</h3>
+      <button class="salvar-btn" style="width: 100%; padding: 10px; font-size: 0.9rem;" onclick="abrirModalNotas()">Abrir Bloco de Notas 📝</button>
+    </div>
+
+    <!-- ESCUDO DO MESTRE (NOVO) -->
+    <div id="escudoMestreContainer" style="margin-bottom: 20px; border-top: 1px dashed var(--cor-dourado-transp); padding-top: 20px;">
+      <!-- O conteúdo será gerado dinamicamente pelo JavaScript (Mestre ou Jogador) -->
+    </div>
+  </aside>
+  </aside>
+
+  <!-- CONTEÚDO PRINCIPAL (FICHA) -->
+  <main id="main-content" class="main-content">
+    
+    <h1 style="margin-top: 20px;">Ficha RPG</h1>
+
+    <div id="temaSelectorContainer">
+      <label for="temaSelector" style="margin-right: 12px;">🎨 Tema:</label>
+      <select id="temaSelector" aria-label="Selecionar tema da ficha RPG">
+        <option value="tema-classico">1. Clássico</option>
+        <option value="tema-vermelho-roxo">2. Vermelho e Roxo</option>
+        <option value="tema-azul-preto">3. Azul e Preto</option>
+        <option value="tema-roxo-preto">4. Roxo e Preto</option>
+        <option value="tema-azul-ciano">5. Azul e Ciano</option>
+        <option value="tema-preto-branco">6. Preto e Branco</option>
+      </select>
+    </div>
+
+    <div class="tab-container">
     <div class="tab-button active" data-tab="geral">Geral</div>
     <div class="tab-button" data-tab="atributos-pericias">Atributos e Perícias</div>
     <div class="tab-button" data-tab="estatisticas">Estatísticas</div>
@@ -1402,7 +1704,7 @@
   <!-- Geral Tab -->
   <div id="geral" class="tab-content active">
     <div class="bloco">
-      <h2>₊˚๑📂꒱ Seleção de Ficha</h2>
+      <h2>Seleção de Ficha</h2>
       <div class="linha">
         <label>Escolha o slot</label>
         <select id="slot">
@@ -1421,14 +1723,9 @@
     </div>
 
     <div class="bloco">
-      <h2>₊˚๑📜꒱ Histórico de Rolagens</h2>
-      <div id="logRolagens"></div>
-    </div>
-
-    <div class="bloco">
-      <h2>₊˚๑📝꒱ Informações Básicas</h2>
+      <h2> Informações Básicas</h2>
       <div class="linha">
-        <label>📷 Imagem do Personagem 📷</label>
+        <label>Imagem do Personagem</label>
         <input type="file" id="imgUpload" accept="image/*" onchange="carregarImagem(event)" />
       </div>
 
@@ -1436,18 +1733,18 @@
         <img id="previewImg" style="user-select:none" />
       </div>
       <div class="linha">
-        <label>🪪 Nome do Jogador 🪪</label>
+        <label>Nome do Jogador</label>
         <input id="jogador" />
       </div>
-      <div class="linha"><label>📛 Nome do Personagem 📛</label><input id="nome" /></div>
-      <div class="linha"><label>🔢 Idade 🔢</label><input id="idade" type="number" /></div>
-      <div class="linha"><label>🔋 Energia Inata 🔋</label><textarea id="antecedencia" placeholder="Chi ou Mana"></textarea></div>
-      <div class="linha"><label>💭 Descrição 💭</label><textarea id="descricao" placeholder="Descreve o personagem, personalidade, etc."></textarea></div>
-      <div class="linha"><label>⌛ História ⌛</label><textarea id="historia"></textarea></div>
+      <div class="linha"><label>Nome do Personagem</label><input id="nome" /></div>
+      <div class="linha"><label>Idade</label><input id="idade" type="number" /></div>
+      <div class="linha"><label>Energia Inata</label><textarea id="antecedencia" placeholder="Chi ou Mana"></textarea></div>
+      <div class="linha"><label>Descrição</label><textarea id="descricao" placeholder="Descreve o personagem, personalidade, etc."></textarea></div>
+      <div class="linha"><label>História</label><textarea id="historia"></textarea></div>
 </div>
 <div class="bloco">
   <h2 onclick="toggleSecao('habilidadesContent', 'iconHab')" style="cursor:pointer; user-select:none;">
-    ₊˚๑🔮꒱ Habilidades <span id="iconHab" class="toggle-icon">▼</span>
+    Habilidades <span id="iconHab" class="toggle-icon">▼</span>
   </h2>
   <div id="habilidadesContent">
     <div id="habilidades"></div>
@@ -1456,7 +1753,7 @@
    </div>
 <div class="bloco">
   <h2 onclick="toggleSecao('inventarioContent', 'iconInv')" style="cursor:pointer; user-select:none;">
-    ₊˚๑🎒꒱ Inventário <span id="iconInv" class="toggle-icon">▼</span>
+    Inventário <span id="iconInv" class="toggle-icon">▼</span>
   </h2>
   <div id="inventarioContent">
     <div id="lista-itens"></div>
@@ -1517,10 +1814,10 @@
   <!-- Atributos e Perícias Tab -->
   <div id="atributos-pericias" class="tab-content">
     <div class="bloco">
-      <h2>₊˚๑📊꒱ Atributos</h2>
+      <h2>Atributos</h2>
 
       <div class="linha">
-        <label>⭐ Nível do Personagem ⭐</label>
+        <label>Nível do Personagem</label>
         <select id="nivel" onchange="recalcularVidaSanidade()">
           <option value="1">1</option>
           <option value="2">2</option>
@@ -1539,14 +1836,14 @@
     </div>
 
     <div class="bloco">
-      <h2>₊˚๑📚꒱ Perícias</h2>
+      <h2>Perícias</h2>
       <div id="pericias"></div>
     </div>
   </div>
   <!-- Estatísticas Tab -->
 <div id="estatisticas" class="tab-content">
   <div class="bloco">
-    <h2>₊˚๑📊꒱ Status</h2>
+    <h2>Status</h2>
     <div class="status-card">
       
       <div class="status-item vida">
@@ -1635,20 +1932,46 @@
       </div>
     </div>
   </div>
-    <div class="bloco">
-      <button class="salvar-btn" onclick="baixarFichaJSON()">Exportar ficha</button>
-      <button class="salvar-btn" onclick="carregarFichaJSON(event)">Importar ficha</button>
+  </div>
 
-      <textarea id="codigoFicha" placeholder="Código da ficha..." rows="5" style="width:100%; max-width: 100%; box-sizing: border-box; border-radius:4px; padding:5px; margin-top:10px; font-family:monospace;"></textarea>
+<!-- MODAL DO BLOCO DE NOTAS -->
+  <div id="modalNotas" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 10000; justify-content: center; align-items: center;">
+    <div class="modal-content bloco" style="max-width: 800px; width: 95%; height: 85vh; display: flex; flex-direction: column;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--cor-dourado-transp); padding-bottom: 10px; margin-bottom: 15px;">
+        <h3 style="color: var(--cor-dourado); margin: 0;">Bloco de Notas Flutuante</h3>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <span style="font-size: 0.8rem; color: #ccc;">Fundo:</span>
+          <button onclick="mudarFundoNotas('dark')" style="background: #1a1a1a; border: 1px solid #c5a059; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;" title="Escuro Padrão"></button>
+          <button onclick="mudarFundoNotas('grey')" style="background: #4a4a4a; border: 1px solid #ccc; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;" title="Cinza"></button>
+          <button onclick="mudarFundoNotas('white')" style="background: #ffffff; border: 1px solid #999; width: 24px; height: 24px; border-radius: 4px; cursor: pointer;" title="Branco"></button>
+          <span class="popup-close" onclick="fecharModalNotas()" style="margin-left: 15px; font-size: 1.2rem;">✖</span>
+        </div>
+      </div>
 
-      <button class="salvar-btn" onclick="salvarFicha()">Salvar ficha</button>
-      <div id="alerta" class="alerta">Ficha salva com sucesso!</div>
+      <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <select id="categoriaNota" style="width: 30%;">
+          <option value="geral">Geral</option>
+          <option value="missoes">Missões/Quests</option>
+          <option value="pistas">Pistas e Lore</option>
+          <option value="npcs">NPCs/Contatos</option>
+        </select>
+        <input type="text" id="tituloNota" placeholder="Título da anotação..." style="flex-grow: 1;">
+      </div>
+
+      <textarea id="textoAnotacao" class="notas-tema-dark" placeholder="Escreva suas anotações aqui..." style="flex-grow: 1; resize: none; width: 100%; box-sizing: border-box; transition: background 0.3s, color 0.3s;"></textarea>
+      
+      <button class="salvar-btn" onclick="fecharModalNotas()" style="align-self: flex-end; margin-top: 15px;">Salvar e Fechar</button>
     </div>
   </div>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</main>
 
- <script>
+ <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script> 
+
   const firebaseConfig = {
     apiKey: "AIzaSyCHCD7rOMIo848m4IE3hKdvJxOtLEpLNOA",
     authDomain: "do-submundo-aos-ceus.firebaseapp.com",
@@ -1664,26 +1987,331 @@
 
   const database = firebase.database();
 
-  const rolagensRef = database.ref('rolagens');
-  rolagensRef.on('child_added', (snapshot) => {
-    const novaRolagem = snapshot.val();
-    logRolagens.push(novaRolagem);
-    if(logRolagens.length > 20) {
-      logRolagens.shift();
-    }
-    atualizarLog();
-  });
-
 </script>
   
 <script>
 
+let fichasSlots = {};
 let inventario = [];
-  
 let logRolagens = [];
+let habilidades = [];
+
 
 // Variável global para sabermos qual habilidade está sendo editada no momento
 let indiceHabConfig = null;
+
+/* =========================================
+   SISTEMA: ESCUDO DO MESTRE (TEMPO REAL)
+   ========================================= */
+
+const EMAIL_MESTRE_OFICIAL = "icarogabrielcavalcantes@gmail.com";
+let refEscudo = database.ref('escudo_mestre');
+let isSynced = false;
+let listenerEscudoMestre = null;
+
+// Modifica o Auth State Changed para carregar o Escudo correto quando logar
+firebase.auth().onAuthStateChanged((user) => {
+  usuarioAtual = user;
+  if (user) {
+    document.getElementById('userInfo').style.display = 'block';
+    document.getElementById('userName').innerText = user.displayName;
+    document.getElementById('btnLogin').style.display = 'none';
+    
+    // Identifica papel do usuário e renderiza a UI correspondente
+    isMestre = (user.email === EMAIL_MESTRE_OFICIAL);
+    renderizarUIEscudo(user);
+    
+  } else {
+    document.getElementById('userInfo').style.display = 'none';
+    document.getElementById('btnLogin').style.display = 'block';
+    document.getElementById('escudoMestreContainer').innerHTML = ''; // Limpa se deslogar
+    if (listenerEscudoMestre) refEscudo.off('value', listenerEscudoMestre);
+  }
+});
+
+// Renderiza botões ou lista dependendo do Email
+function renderizarUIEscudo(user) {
+  const container = document.getElementById('escudoMestreContainer');
+  
+  if (isMestre) {
+    container.innerHTML = `
+      <h3 style="color: var(--cor-dourado); font-size: 1rem; margin-top: 0;">Fichas Sincronizadas (Máx 10)</h3>
+      <div id="listaFichasEscudo" style="display:flex; flex-direction:column; gap:10px;"></div>
+    `;
+    iniciarMonitoramentoMestre();
+  } else {
+    container.innerHTML = `
+      <h3 style="color: var(--cor-dourado); font-size: 1rem; margin-top: 0;">Escudo do Mestre</h3>
+      <button id="btnSyncFicha" class="salvar-btn" style="width: 100%; padding: 10px; font-size: 0.9rem;" onclick="toggleSincronizacao()">Sincronizar Ficha</button>
+      <p style="font-size: 11px; color: #888; text-align: center; margin-top: 5px;">Compartilha seus status em tempo real com o Mestre.</p>
+    `;
+    verificarStatusSincronizacaoJogador();
+  }
+}
+
+// ==========================================
+// FUNÇÕES DO JOGADOR
+// ==========================================
+
+function getSyncId() {
+  if (!usuarioAtual) return null;
+  const slotAtual = document.getElementById('slot').value;
+  return usuarioAtual.uid + "_slot_" + slotAtual;
+}
+
+function toggleSincronizacao() {
+  if (!usuarioAtual) {
+    alert("Você precisa fazer login para sincronizar a ficha.");
+    return;
+  }
+  
+  const syncId = getSyncId();
+  const btn = document.getElementById('btnSyncFicha');
+  
+  if (isSynced) {
+    // Interromper Sincronização (Remove do Escudo)
+    refEscudo.child(syncId).remove().then(() => {
+      isSynced = false;
+      btn.innerText = "Sincronizar Ficha";
+      btn.style.background = "var(--cor-btn-bg)";
+    });
+  } else {
+    // Iniciar Sincronização (Escreve no Escudo)
+    isSynced = true;
+    enviarDadosParaEscudo();
+    btn.innerText = "Interromper Sincronização";
+    btn.style.background = "var(--cor-btn-remover-bg)"; // Vermelho
+  }
+}
+
+function verificarStatusSincronizacaoJogador() {
+  const syncId = getSyncId();
+  if (!syncId) return;
+
+  refEscudo.child(syncId).once('value').then(snapshot => {
+    const btn = document.getElementById('btnSyncFicha');
+    if (!btn) return;
+    
+    if (snapshot.exists()) {
+      isSynced = true;
+      btn.innerText = "Interromper Sincronização";
+      btn.style.background = "var(--cor-btn-remover-bg)";
+    } else {
+      isSynced = false;
+      btn.innerText = "Sincronizar Ficha";
+      btn.style.background = "var(--cor-btn-bg)";
+    }
+  });
+}
+
+function enviarDadosParaEscudo() {
+  if (!isSynced || !usuarioAtual || isMestre) return;
+  
+  const syncId = getSyncId();
+  
+  // Captura os limites (removendo a palavra "Máx: " se estiver presente)
+  const formatarMax = (id) => {
+    const el = document.getElementById(id);
+    return el ? el.innerText.replace('Máx: ', '').trim() : "0";
+  };
+
+  const dadosSync = {
+    nome: document.getElementById('nome').value || "Desconhecido",
+    jogador: document.getElementById('jogador').value || usuarioAtual.displayName,
+    vida: document.getElementById('vida').value || 0,
+    vidaMax: formatarMax('vidaMaxTxt'),
+    sanidade: document.getElementById('sanidade').value || 0,
+    sanidadeMax: formatarMax('sanidadeMaxTxt'),
+    aura: document.getElementById('aura').value || 0,
+    auraMax: formatarMax('auraMaxTxt'),
+    timestamp: firebase.database.ServerValue.TIMESTAMP
+  };
+  
+  refEscudo.child(syncId).set(dadosSync);
+}
+
+// Dispara a sincronização automaticamente quando o jogador altera slot ou digita atributos chaves
+document.getElementById('slot').addEventListener('change', () => {
+  if (!isMestre) verificarStatusSincronizacaoJogador();
+});
+
+// Intercepta mudanças programáticas e de digitação
+['keyup', 'change', 'input'].forEach(ev => {
+  ['vida', 'sanidade', 'aura', 'nome', 'jogador'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(ev, enviarDadosParaEscudo);
+  });
+});
+
+// Sobrescreve o ajustarStatus para garantir que o ajuste rápido (botão +/-) sincronize
+if (typeof window.ajustarStatus === 'function') {
+  const originalAjustarStatus = window.ajustarStatus;
+  window.ajustarStatus = function(tipo) {
+    originalAjustarStatus(tipo); // Roda sua lógica original
+    enviarDadosParaEscudo(); // Manda pro firebase instantaneamente
+  };
+}
+
+// ==========================================
+// FUNÇÕES DO MESTRE
+// ==========================================
+
+function iniciarMonitoramentoMestre() {
+  if (listenerEscudoMestre) refEscudo.off('value', listenerEscudoMestre);
+  
+  // Limita a 10 personagens sincronizados, ordenados pelos mais recentes
+  listenerEscudoMestre = refEscudo.orderByChild("timestamp").limitToLast(10).on('value', snapshot => {
+    const lista = document.getElementById('listaFichasEscudo');
+    if (!lista) return;
+    lista.innerHTML = ''; 
+    
+    if (!snapshot.exists()) {
+      lista.innerHTML = '<span style="color: #888; font-size: 12px;">Nenhuma ficha sincronizada.</span>';
+      return;
+    }
+
+    snapshot.forEach(child => {
+      const dados = child.val();
+      
+      const card = document.createElement('div');
+      card.className = 'card-jogador';
+      card.innerHTML = `
+        <strong style="color: var(--cor-dourado); font-size: 1.1rem; text-shadow: 0 0 5px var(--cor-dourado-transp);">
+          ${dados.nome}
+        </strong>
+        <div style="font-size: 10px; color: #aaa; margin-bottom: 8px;">Jogador: ${dados.jogador}</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.95rem;">
+          <div style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">
+            <span style="color: #ff2944; text-shadow: 0 0 3px #ff2944;">❤️ Vida</span> 
+            <strong>${dados.vida} / ${dados.vidaMax}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">
+            <span style="color: #0099ff; text-shadow: 0 0 3px #0099ff;">🧠 Sanid</span> 
+            <strong>${dados.sanidade} / ${dados.sanidadeMax}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">
+            <span style="color: #ffca2d; text-shadow: 0 0 3px #ffca2d;">✨ Aura</span> 
+            <strong>${dados.aura} / ${dados.auraMax}</strong>
+          </div>
+        </div>
+      `;
+      lista.prepend(card); // Adiciona os mais recentes no topo
+    });
+  });
+}
+
+function abrirModalNotas() {
+  document.getElementById("modalNotas").style.display = "flex";
+}
+
+function fecharModalNotas() {
+  document.getElementById("modalNotas").style.display = "none";
+  // Opcional: Adicionar chamada de salvamento no localStorage ou Firebase aqui
+}
+
+function mudarFundoNotas(tema) {
+  const textarea = document.getElementById("textoAnotacao");
+  textarea.classList.remove("notas-tema-dark", "notas-tema-grey", "notas-tema-white");
+  textarea.classList.add("notas-tema-" + tema);
+}
+
+/* =========================================
+   LÓGICA DA SIDEBAR
+   ========================================= */
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('main-content');
+  const btnToggle = document.getElementById('btnToggleSidebar');
+
+  sidebar.classList.toggle('minimized');
+  mainContent.classList.toggle('expanded');
+  btnToggle.classList.toggle('minimized');
+
+  if (sidebar.classList.contains('minimized')) {
+    btnToggle.innerHTML = "☰ Mostrar Menu";
+  } else {
+    btnToggle.innerHTML = "🗃️ Ocultar Menu";
+  }
+}
+
+function toggleSidebarRight() {
+  const sidebar = document.getElementById('sidebarRight');
+  const btnToggle = document.getElementById('btnToggleSidebarRight');
+
+  sidebar.classList.toggle('minimized');
+  btnToggle.classList.toggle('minimized');
+
+  btnToggle.innerHTML = sidebar.classList.contains('minimized') ? "Registro 📚" : "📚 Ocultar Registro";
+  atualizarLayout();
+}
+
+let usuarioAtual = null;
+const EMAIL_MESTRE = "icarogabrielcavalcantes@gmail.com";
+let isMestre = false;
+let rolagemOcultaAtiva = false;
+let listenersAtivos = []; // Para limpar conexões antigas ao trocar de sala
+
+// ==========================================
+// 1. AUTENTICAÇÃO (Mantenha seu provedor Google)
+// ==========================================
+firebase.auth().onAuthStateChanged((user) => {
+  usuarioAtual = user;
+  if (user) {
+    document.getElementById('userInfo').style.display = 'block';
+    document.getElementById('userName').innerText = user.displayName;
+    document.getElementById('btnLogin').style.display = 'none';
+  } else {
+    document.getElementById('userInfo').style.display = 'none';
+    document.getElementById('btnLogin').style.display = 'block';
+  }
+});
+
+// ==========================================
+// 2. SISTEMA DE ROLAGEM OCULTA
+// ==========================================
+let isRolagemOculta = false;
+
+function toggleRolagemOculta() {
+  const btn = document.getElementById("btnRolagemPrivada");
+  isRolagemOculta = !isRolagemOculta; 
+  
+  if (isRolagemOculta) {
+    btn.innerHTML = "🙈 Rolagem Oculta (Mestre)";
+    btn.classList.add("active");
+  } else {
+    btn.innerHTML = "👁️ Rolar Aberto (Público)";
+    btn.classList.remove("active");
+  }
+}
+
+// ==========================================
+// 5. RENDERIZAÇÃO NA TELA
+// ==========================================
+
+// Log de Rolagens com Lógica Oculta
+function renderizarLog(snapshot) {
+  const log = snapshot.val();
+  const divLog = document.getElementById('logRolagens');
+  const item = document.createElement('div');
+  item.className = 'log-item';
+
+  let conteudoExibido = log.texto;
+
+  // Lógica da Rolagem Secreta
+  if (log.oculto) {
+    // Se quem está olhando NÃO for o dono da rolagem E NÃO for o mestre
+    if (usuarioAtual.uid !== log.uid && !isMestre) {
+      conteudoExibido = `<span style="color: #888; font-style: italic;">realizou uma rolagem oculta...</span>`;
+    } else {
+      conteudoExibido = `[SECRETO] ` + log.texto;
+      item.style.borderLeft = "3px solid #7f1d1d"; // Destaque visual
+    }
+  }
+
+  item.innerHTML = `<span class="log-nome">${log.nome}</span>: <span class="log-valor">${conteudoExibido}</span>`;
+  divLog.prepend(item); // Coloca as mais novas no topo
+}
 
 function abrirModalConfig(index) {
   indiceHabConfig = index;
@@ -1740,8 +2368,8 @@ function salvarConfiguracao() {
   fecharModalConfig();
   renderHabilidades(); // Isso fará elas aparecerem de novo
   
-  if (typeof salvarFicha === "function") {
-    salvarFicha();
+  if (typeof salvarFichaManual === "function") {
+    salvarFichaManual();
   }
 }
 
@@ -1788,14 +2416,19 @@ document.addEventListener('keydown', function(event) {
 
 function registrarLog(tipo, detalhe, total){
   const nome = document.getElementById("jogador").value || "Anônimo";
+  
+  const checkbox = document.getElementById("rolagemPrivada");
 
-  const log = {
+const log = {
+    uid: usuarioAtual ? usuarioAtual.uid : "",
+    email: usuarioAtual ? usuarioAtual.email : "",
     nome,
     tipo,
     detalhe,
     total,
-    hora: new Date().toLocaleString('pt-BR')
-  };
+    oculto: isRolagemOculta,
+    hora: new Date().toLocaleString("pt-BR")
+};
 
   database.ref('rolagens').push(log)
     .then(() => {
@@ -1805,21 +2438,98 @@ function registrarLog(tipo, detalhe, total){
       console.error("Erro ao enviar log para o Firebase: ", error);
     });
 }
-  
-function atualizarLog(){
-  const box = document.getElementById("logRolagens");
-  box.innerHTML = "";
 
-  logRolagens.slice().reverse().forEach(l => {
-    box.innerHTML += `
-      <div class="log-item">
-        <span class="log-nome">${l.nome}</span>
-        → ${l.tipo} <br>
-        ${l.detalhe} = <span class="log-valor">${l.total}</span>
-        <div style="font-size:11px; opacity:0.6">${l.hora}</div>
-      </div>
-    `;
+const auth = firebase.auth();
+
+function loginGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(error => {
+    alert("Erro ao fazer login: " + error.message);
   });
+}
+
+function logoutGoogle() {
+  auth.signOut();
+}
+
+let escutaRolagensAtiva = false; // Controle para não duplicar rolagens
+
+// Observador de estado de login
+auth.onAuthStateChanged(user => {
+  if (user) {
+    usuarioAtual = user;
+    isMestre =
+    user.email &&
+    user.email.toLowerCase() === EMAIL_MESTRE.toLowerCase();
+    document.getElementById('btnLogin').style.display = 'none';
+    document.getElementById('userInfo').style.display = 'block';
+    document.getElementById('userName').innerText = user.displayName;
+    
+    // Assim que logar, preenche automaticamente o Nome do Jogador
+    document.getElementById("jogador").value = user.displayName;
+    
+    // Tenta carregar a ficha da nuvem
+    carregarFichaDaNuvem(); 
+
+    // CARREGA O HISTÓRICO APENAS APÓS O LOGIN (CORREÇÃO AQUI)
+    if (!escutaRolagensAtiva) {
+      database.ref('rolagens').on('child_added', (snapshot) => {
+        const novaRolagem = snapshot.val();
+        logRolagens.push(novaRolagem);
+        if(logRolagens.length > 20) {
+          logRolagens.shift();
+        }
+        atualizarLog();
+      });
+      escutaRolagensAtiva = true;
+    }
+
+  } else {
+    usuarioAtual = null;
+    document.getElementById('btnLogin').style.display = 'inline-block';
+    document.getElementById('userInfo').style.display = 'none';
+    
+    // Se deslogar, limpa a ficha para ninguém ler dados locais por engano
+    limparFicha();
+  }
+});
+  
+function atualizarLog() {
+  const box = document.getElementById("logRolagens");
+  if (!box) return; // Segurança caso o elemento não exista
+  
+  let htmlString = ""; 
+
+  const meuUID = usuarioAtual ? usuarioAtual.uid : "";
+  logRolagens.slice().reverse().forEach(l => {
+    // LÓGICA DE VISIBILIDADE:
+const podeVer = !l.oculto || isMestre || l.uid === meuUID;
+    if (podeVer) {
+      // Estilo visual para as rolagens
+      const borda = l.oculto ? '3px solid #bb33cc' : '3px solid #c5a059';
+      const opacidade = l.oculto ? '0.9' : '1';
+
+      htmlString += `
+        <div class="log-item" style="border-left: ${borda}; opacity: ${opacidade}; margin-bottom: 8px; padding: 5px; background: rgba(0,0,0,0.2);">
+          <span class="log-nome" style="font-weight:bold; color:#c5a059;">${l.nome}</span> 
+          ${l.oculto ? '<span style="font-size:10px; color:#bb33cc;">(Oculto)</span>' : ''}
+          → ${l.tipo} <br>
+          <span style="font-size: 14px;">${l.detalhe} = <span class="log-valor" style="color:#fff; font-weight:bold;">${l.total}</span></span>
+          <div style="font-size:10px; opacity:0.5; margin-top:4px;">${l.hora}</div>
+        </div>
+      `;
+    } else {
+      // O que os jogadores veem quando a rolagem é privada e não é deles
+      htmlString += `
+        <div class="log-item" style="border-left: 3px solid #551a8b; opacity: 0.6; margin-bottom: 8px; padding: 5px; font-style: italic;">
+          <span class="log-nome">${l.nome}</span> realizou uma rolagem oculta... 🔮
+          <div style="font-size:10px; opacity:0.4;">${l.hora}</div>
+        </div>
+      `;
+    }
+  });
+
+  box.innerHTML = htmlString; 
 }
 
 const temaSelector = document.getElementById('temaSelector');
@@ -1832,21 +2542,23 @@ function aplicarTema(tema) {
   if (tema && tema !== 'tema-classico') {
     document.body.classList.add(tema);
   }
-  // Salva no localStorage
-  localStorage.setItem('temaFichaRPG', tema);
+  // SALVA O TEMA LOCALMENTE (CORREÇÃO AQUI)
+  localStorage.setItem('temaFichaRPG', tema); 
 }
-
-// Ao iniciar, carrega tema salvo (se existir), ou padrão 'tema-classico'
-window.addEventListener('load', () => {
-  const temaSalvo = localStorage.getItem('temaFichaRPG') || 'tema-classico';
-  temaSelector.value = temaSalvo;
-  aplicarTema(temaSalvo);
-});
 
 // Atualiza tema ao mudar seletor
 temaSelector.addEventListener('change', (e) => {
   aplicarTema(e.target.value);
 });
+
+function atualizarLayout() {
+  const leftOpen = !document.getElementById('sidebar').classList.contains('minimized');
+  const rightOpen = !document.getElementById('sidebarRight').classList.contains('minimized');
+  const main = document.getElementById('main-content');
+  
+  main.style.paddingLeft = leftOpen ? '340px' : '20px';
+  main.style.paddingRight = rightOpen ? '340px' : '20px';
+}
 
 function mostrarPopup(titulo, detalhe, total){
 
@@ -1875,10 +2587,10 @@ function removerItem(i) {
 
 function renderInventario() {
   const box = document.getElementById("lista-itens");
-  box.innerHTML = "";
+  let htmlString = "";
 
   inventario.forEach((item, i) => {
-    box.innerHTML += `
+    htmlString += `
       <div class="item-inventario">
         <input placeholder="Item" value="${item.nome}" oninput="inventario[${i}].nome=this.value">
         <input placeholder="Peso/Qtd" value="${item.peso}" oninput="inventario[${i}].peso=this.value">
@@ -1887,95 +2599,266 @@ function renderInventario() {
       </div>
     `;
   });
+  
+  box.innerHTML = htmlString;
 }
+
+function atualizarNomeSlotEspecifico(slot, nomePersonagem) {
+  const option = document.querySelector(`#slot option[value="${slot}"]`);
+  if (option) {
+    option.textContent = nomePersonagem
+      ? `${nomePersonagem} (Slot ${slot})`
+      : `Slot ${slot}`;
+  }
+}
+
+function sincronizarNomeDoSlotAtual() {
+  const slot = document.getElementById("slot").value;
+  const nome = document.getElementById("nome").value.trim();
+  atualizarNomeSlotEspecifico(slot, nome);
+}
+
+document.getElementById('inputFicha').addEventListener('change', carregarFichaJSON);
   
-function baixarFichaJSON() {
-  // Pega qual slot de ficha está sendo usado (ajuste o ID se o seu select for diferente)
-  const slot = document.getElementById("slot")?.value || "1";
+document.getElementById("slot").addEventListener("change", () => {
+  carregarFichaDoSlotAtual();
+});
+  const slot = document.getElementById("slot").value;
   const chave = "fichaRPG_" + slot;
-  
-  // Puxa a ficha diretamente da memória salva do navegador (não da tela)
+  const dadosSalvos = localStorage.getItem(chave);
+
+  if (dadosSalvos) {
+    const d = JSON.parse(dadosSalvos);
+    document.getElementById("nome").value = d.nome || "";
+    atualizarNomeSlotEspecifico(slot, d.nome || "");
+  } else {
+    limparFicha();
+    atualizarNomeSlotEspecifico(slot, "");
+  }
+
+document.getElementById("nome").addEventListener("input", () => {
+  sincronizarNomeDoSlotAtual();
+});
+
+function carregarFichaDoSlotAtual() {
+  const slot = getSlotAtual();
+  const chave = getChaveSlot(slot);
   const dadosSalvos = localStorage.getItem(chave);
 
   if (!dadosSalvos) {
-    return alert("Nenhum dado encontrado! Salve a ficha (Salvar na Nuvem) antes de exportar.");
+    limparFicha();
+    atualizarNomeSlotEspecifico(slot, "");
+    return;
   }
 
-  // Cria o arquivo .json
+  try {
+    const d = JSON.parse(dadosSalvos);
+
+    document.getElementById("jogador").value = d.jogador || "";
+    document.getElementById("nome").value = d.nome || "";
+    document.getElementById("idade").value = d.idade || "";
+    document.getElementById("antecedencia").value = d.antecedencia || "";
+    document.getElementById("descricao").value = d.descricao || "";
+    document.getElementById("historia").value = d.historia || "";
+    document.getElementById("nivel").value = d.nivel || 1;
+    document.getElementById("vida").value = d.vida || 0;
+    document.getElementById("sanidade").value = d.sanidade || 0;
+    document.getElementById("aura").value = d.aura || 0;
+    document.getElementById("rdFisica").value = d.rdFisica || 0;
+    document.getElementById("rdMental").value = d.rdMental || 0;
+    document.getElementById("dtBonus").value = d.dtBonus || 0;
+    document.getElementById("dtAtributoBase").value = d.dtAtributoBase || "POD";
+
+    const img = document.getElementById("previewImg");
+    if (d.imagem) {
+      img.src = d.imagem;
+      img.style.display = "block";
+      img.dataset.base64 = d.imagem;
+    } else {
+      img.style.display = "none";
+      img.dataset.base64 = "";
+    }
+
+    for (const s in d.atributos) {
+      const el = document.getElementById("atr_" + s);
+      if (el) el.value = d.atributos[s];
+    }
+
+    for (const p in d.pericias) {
+      const data = d.pericias[p];
+      const elValor = document.getElementById(p);
+      const elBonus = document.getElementById("bonus_" + p);
+      const elAtr = document.getElementById("atrKey_" + p);
+
+      if (typeof data === "object") {
+        if (elValor) elValor.value = data.valor || 1;
+        if (elBonus) elBonus.value = data.bonus || 0;
+        if (elAtr) elAtr.value = data.atributo || "FOR";
+      }
+    }
+
+    habilidades = d.habilidades || [];
+    inventario = d.inventario || [];
+    renderHabilidades();
+    renderInventario();
+    atualizarDT();
+    recalcularVidaSanidade();
+    atualizarBloqueio();
+
+    atualizarNomeSlotEspecifico(slot, d.nome || "");
+  } catch (e) {
+    console.error(e);
+    limparFicha();
+  }
+}
+
+function baixarFichaJSON() {
+  const slot = document.getElementById("slot")?.value || "1";
+  const chave = "fichaRPG_" + slot;
+  const dadosSalvos = localStorage.getItem(chave);
+
+  if (!dadosSalvos) {
+    return alert("Nenhum dado encontrado nesse slot!");
+  }
+
   const blob = new Blob([dadosSalvos], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  
-  // Força o download do arquivo
+
   const link = document.createElement("a");
   link.href = url;
-  
-  // Tenta usar o nome do personagem para o nome do arquivo, se existir
-  let nomePersonagem = "Personagem";
+
+  let nomePersonagem = `Slot ${slot}`;
   try {
     const obj = JSON.parse(dadosSalvos);
-    // Verifica se é o formato antigo (array) ou novo (objeto) para achar o nome
-    if (Array.isArray(obj) && obj[0]) nomePersonagem = obj[0];
-    else if (obj.nome) nomePersonagem = obj.nome;
-  } catch(e) {}
+    if (obj.nome && obj.nome.trim() !== "") {
+      nomePersonagem = obj.nome.trim();
+    }
+  } catch (e) {}
 
-  link.download = `Ficha_${nomePersonagem}.json`;
+  link.download = `Ficha_${nomePersonagem}_Slot${slot}.json`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Carrega e processa os dados de uma ficha a partir de um arquivo JSON.
+ * @param {Event} event - O evento de input file.
+ */
 function carregarFichaJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
+    console.warn("Nenhum arquivo selecionado.");
+    return;
+  }
 
+  const slot = getSlotAtual();
+  const chave = getChaveSlot(slot);
+  const file = event.target.files[0];
   const reader = new FileReader();
+
   reader.onload = function(e) {
     try {
       let dados = JSON.parse(e.target.result);
 
-      // VERIFICAÇÃO DE RETROCOMPATIBILIDADE:
-      // Se o jogador carregar um .json de uma ficha antiga (Lista), converte para Objeto
       if (Array.isArray(dados)) {
         const lista = dados;
         dados = {
-          nome: lista[0], idade: lista[1], nivel: lista[2],
-          vida: lista[3], sanidade: lista[4], aura: lista[5],
-          antecedencia: lista[6], descricao: lista[7], historia: lista[8],
-          rdFisica: lista[9], rdMental: lista[10], dtBonus: lista[11],
-          atributos: {}, pericias: {}, habilidades: [], inventario: []
+          nome: lista[0] || "",
+          idade: lista[1] || "",
+          nivel: lista[2] || "",
+          vida: lista[3] || "",
+          sanidade: lista[4] || "",
+          aura: lista[5] || "",
+          antecedencia: lista[6] || "",
+          descricao: lista[7] || "",
+          historia: lista[8] || "",
+          rdFisica: lista[9] || 0,
+          rdMental: lista[10] || 0,
+          dtBonus: lista[11] || 0,
+          atributos: {},
+          pericias: {},
+          habilidades: [],
+          inventario: []
         };
 
         const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
-        if(lista[12]) lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
+        if (lista[12]) lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
 
-        if(lista[13]) lista[13].forEach((p, i) => {
+        if (lista[13]) lista[13].forEach((p, i) => {
           dados.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
         });
 
-        if(lista[14]) dados.habilidades = lista[14].map(h => ({
+        if (lista[14]) dados.habilidades = lista[14].map(h => ({
           nome: h[0], dado: h[1], desc: h[2], config: h[3] || {}, rolagens: h[4] || [], img: h[5] || ""
         }));
 
-        if(lista[15]) dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
+        if (lista[15]) dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
       }
 
-      // Salva os dados processados direto na memória do navegador
-      const slot = document.getElementById("slot")?.value || "1";
-      localStorage.setItem("fichaRPG_" + slot, JSON.stringify(dados));
-      
-      alert("Ficha carregada com sucesso!");
-      
-      // Recarrega a página para que o seu sistema puxe os dados da memória e preencha a tela perfeitamente
-      location.reload(); 
-      
+      document.getElementById("nome").value = dados.nome || "";
+      document.getElementById("idade").value = dados.idade || "";
+      document.getElementById("antecedencia").value = dados.antecedencia || "";
+      document.getElementById("descricao").value = dados.descricao || "";
+      document.getElementById("historia").value = dados.historia || "";
+      document.getElementById("nivel").value = dados.nivel || 1;
+      document.getElementById("vida").value = dados.vida || 0;
+      document.getElementById("sanidade").value = dados.sanidade || 0;
+      document.getElementById("aura").value = dados.aura || 0;
+      document.getElementById("rdFisica").value = dados.rdFisica || 0;
+      document.getElementById("rdMental").value = dados.rdMental || 0;
+      document.getElementById("dtBonus").value = dados.dtBonus || 0;
+      document.getElementById("dtAtributoBase").value = dados.dtAtributoBase || "POD";
+
+      const img = document.getElementById("previewImg");
+      if (dados.imagem) {
+        img.src = dados.imagem;
+        img.style.display = "block";
+        img.dataset.base64 = dados.imagem;
+      } else {
+        img.style.display = "none";
+        img.dataset.base64 = "";
+      }
+
+      for (const s in dados.atributos) {
+        const el = document.getElementById("atr_" + s);
+        if (el) el.value = dados.atributos[s];
+      }
+
+      for (const p in dados.pericias) {
+        const data = dados.pericias[p];
+        if (typeof data === "object") {
+          const elValor = document.getElementById(p);
+          if (elValor) elValor.value = data.valor || 1;
+
+          const elBonus = document.getElementById("bonus_" + p);
+          if (elBonus) elBonus.value = data.bonus || 0;
+
+          const elAtr = document.getElementById("atrKey_" + p);
+          if (elAtr) elAtr.value = data.atributo || "FOR";
+        }
+      }
+
+      habilidades = dados.habilidades || [];
+      inventario = dados.inventario || [];
+
+      renderHabilidades();
+      renderInventario();
+      atualizarDT();
+      recalcularVidaSanidade();
+      atualizarBloqueio();
+
+      localStorage.setItem(chave, JSON.stringify(dados));
+      fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
+      atualizarNomeSlotEspecifico(slot, dados.nome);
+
+      alert(`Fichas dos Slots importadas com sucesso!`);
     } catch (erro) {
       console.error(erro);
-      alert("Erro ao ler o arquivo. Tem certeza que é um arquivo de ficha válido?");
+      alert("Erro ao ler o arquivo JSON. Tem certeza que é uma ficha válida?");
     }
   };
-  
-  // Lê o conteúdo do arquivo
+
   reader.readAsText(file);
 }
   
@@ -2002,7 +2885,6 @@ const pericias = [
 ["POD","Adestramento"],["POD","Charme"],["POD","Vontade"],["POD","Energia"]
 ];
 
-let habilidades = [];
 let ultimoTesteFortitude = 0;
 
 /* =============== INTERFACE =============== */
@@ -2081,8 +2963,11 @@ function rolarAtributo(sigla){
     );
 
   registrarLog(sigla, `1d20 (${d}) + ${v}`, total);
-  
   limparDepois(resId);
+    if (isRolagemOculta) {
+    document.getElementById("logRolagens").innerHTML += resultadoHTML;
+  } else {
+    }
 }
 
 function rolarPericia(id) {
@@ -2153,6 +3038,11 @@ function rolarPericia(id) {
     limparDepois(resId);
   }
 
+  if (isRolagemOculta) {
+    document.getElementById("logRolagens").innerHTML += resultadoHTML;
+  } else {
+    }
+
   // 6. Lógica Específica (Fortitude/Bloqueio)
   if (nomePericia === "Fortitude") {
     ultimoTesteFortitude = total;
@@ -2162,14 +3052,14 @@ function rolarPericia(id) {
 
 /* =============== VIDA, SANIDADE & AURA =============== */
 function recalcularVidaSanidade(){
-  const nivel = Number(document.getElementById("nivel").value) || 1;
+  // O sinal de interrogação (?.) impede que o código quebre se o elemento ainda não existir
+  const nivel = Number(document.getElementById("nivel")?.value) || 1;
 
-  const con = Number(document.getElementById("atr_CON").value) || 0;
-  const pod = Number(document.getElementById("atr_POD").value) || 0;
-  const intt = Number(document.getElementById("atr_INT").value) || 0;
+  const con = Number(document.getElementById("atr_CON")?.value) || 0;
+  const pod = Number(document.getElementById("atr_POD")?.value) || 0;
+  const intt = Number(document.getElementById("atr_INT")?.value) || 0;
 
   const vidaMax = (20 + con * 2) * nivel;
-
   const sanidadeMax = (20 + intt * 2) * nivel;
 
   const auraBase = (con + pod) * 3;
@@ -2180,26 +3070,31 @@ function recalcularVidaSanidade(){
   const sanidadeInput = document.getElementById("sanidade");
   const auraInput = document.getElementById("aura");
 
-  vidaInput.max = vidaMax;
-  sanidadeInput.max = sanidadeMax;
-  auraInput.max = auraMax;
+  if(vidaInput) vidaInput.max = vidaMax;
+  if(sanidadeInput) sanidadeInput.max = sanidadeMax;
+  if(auraInput) auraInput.max = auraMax;
 
-  if(!vidaInput.value || vidaInput.value > vidaMax){
+  if(vidaInput && (!vidaInput.value || vidaInput.value > vidaMax)){
     vidaInput.value = vidaMax;
   }
-
-  if(!sanidadeInput.value || sanidadeInput.value > sanidadeMax){
+  if(sanidadeInput && (!sanidadeInput.value || sanidadeInput.value > sanidadeMax)){
     sanidadeInput.value = sanidadeMax;
   }
-
-  if(!auraInput.value || auraInput.value > auraMax){
+  if(auraInput && (!auraInput.value || auraInput.value > auraMax)){
     auraInput.value = auraMax;
   }
 
-  document.getElementById("vidaMaxTxt").innerText = "Máx: " + vidaMax;
-  document.getElementById("sanidadeMaxTxt").innerText = "Máx: " + sanidadeMax;
-  document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
-  document.getElementById("deslocamento").value = 5 + Number(document.getElementById("atr_AGI").value || 0);
+  const elVidaMax = document.getElementById("vidaMaxTxt");
+  if(elVidaMax) elVidaMax.innerText = "Máx: " + vidaMax;
+  
+  const elSanMax = document.getElementById("sanidadeMaxTxt");
+  if(elSanMax) elSanMax.innerText = "Máx: " + sanidadeMax;
+  
+  const elAuraMax = document.getElementById("auraMaxTxt");
+  if(elAuraMax) elAuraMax.innerText = "Máx: " + auraMax;
+
+  const elDesloc = document.getElementById("deslocamento");
+  if(elDesloc) elDesloc.value = 5 + Number(document.getElementById("atr_AGI")?.value || 0);
 
   atualizarBarra("vida","vida-bar",vidaMax);
   atualizarBarra("sanidade","sanidade-bar",sanidadeMax);
@@ -2254,6 +3149,7 @@ function atualizarVida(){
     tempTxt.style.display = "none";
     bar.classList.remove("temp-vida");
     atualizarBarra("vida","vida-bar",max);
+    enviarDadosJogadorFirebase(); 
   }
 }
 
@@ -2276,35 +3172,39 @@ function atualizarSanidade(){
     tempTxt.style.display = "none";
     bar.classList.remove("temp-sanidade");
     atualizarBarra("sanidade","sanidade-bar",max);
+    enviarDadosJogadorFirebase(); 
   }
 }
 
 function atualizarBloqueio(){
-
-  const con = parseInt(document.getElementById("atr_CON").value) || 0;
-  const rd = parseInt(document.getElementById("rdFisica").value) || 0;
+  // Aplicando a mesma proteção aqui
+  const con = parseInt(document.getElementById("atr_CON")?.value) || 0;
+  const rd = parseInt(document.getElementById("rdFisica")?.value) || 0;
 
   const bloqueioMenor = (2 * con) + rd;
-
   const bloqueioMaior = ultimoTesteFortitude + (2 * con) + rd;
 
-  document.getElementById("bloqueioMenor").innerText = bloqueioMenor;
-  document.getElementById("bloqueioMaior").innerText = bloqueioMaior;
+  const elBlqMenor = document.getElementById("bloqueioMenor");
+  if(elBlqMenor) elBlqMenor.innerText = bloqueioMenor;
+  
+  const elBlqMaior = document.getElementById("bloqueioMaior");
+  if(elBlqMaior) elBlqMaior.innerText = bloqueioMaior;
 }
 
 function atualizarDT(){
-  const poder = parseInt(document.getElementById("atr_POD").value) || 0;
-  const selAttr = document.getElementById("dtAtributoBase").value;
+  const poder = parseInt(document.getElementById("atr_POD")?.value) || 0;
+  const selAttr = document.getElementById("dtAtributoBase")?.value;
   let attrValue = 0;
   
-  if (selAttr !== "Nenhum") {
-      attrValue = parseInt(document.getElementById("atr_" + selAttr).value) || 0;
+  if (selAttr && selAttr !== "Nenhum") {
+      attrValue = parseInt(document.getElementById("atr_" + selAttr)?.value) || 0;
   }
   
-  const bonus = parseInt(document.getElementById("dtBonus").value) || 0;
-  const dt = 12 + poder + Math.floor(attrValue / 2) + bonus; // 12 + Poder + (Atributo Escolhido/2) + Bônus Extra
+  const bonus = parseInt(document.getElementById("dtBonus")?.value) || 0;
+  const dt = 12 + poder + Math.floor(attrValue / 2) + bonus;
 
-  document.getElementById("dtTotal").innerText = dt;
+  const elDt = document.getElementById("dtTotal");
+  if(elDt) elDt.innerText = dt;
 }
   
 /* =============== HABILIDADES =============== */
@@ -2346,25 +3246,23 @@ function removerHabilidade(index) {
 function renderHabilidades() {
   const box = document.getElementById("habilidades");
   if (!box) return;
-  box.innerHTML = "";
+  
+  let htmlString = ""; // Inicializa a string
 
   habilidades.forEach((h, i) => {
     if (!h.rolagens) h.rolagens = [{ nome: "Dano", dado: "1d6" }];
     if (!h.config) h.config = { energiaDT: "", ataqueTipo: "Luta", ataqueAtr: "FOR", margemAtaque: 20, margemDano: 20, dadosCritico: "" };
 
-    // Mapeia as rolagens garantindo que fiquem em blocos individuais
     let rolagensHTML = h.rolagens.map((r, ri) => `
       <div class="rolagem-item" style="display: flex; width: 100%; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px;">
         <input placeholder="Nome" value="${r.nome}" oninput="habilidades[${i}].rolagens[${ri}].nome=this.value" style="flex: 1; min-width: 80px;">
         <input placeholder="Dado" value="${r.dado}" oninput="habilidades[${i}].rolagens[${ri}].dado=this.value" style="flex: 1; min-width: 80px;">
-        
         <span class="dice" onclick="executarHabilidadeCompleta(${i}, ${ri})" title="Girar Ataque Completo" style="font-size: 1.5rem; cursor: pointer; filter: drop-shadow(0 0 5px var(--cor-dourado));">🎲</span>
-        
         <button class="btn-delete-hab" onclick="removerRolagem(${i}, ${ri})">✕</button>
       </div>
     `).join("");
 
-    box.innerHTML += `
+    htmlString += `
     <div class="habilidade-card">
       <div class="hab-header">
         <input value="${h.nome}" oninput="habilidades[${i}].nome=this.value" class="hab-nome-input">
@@ -2373,19 +3271,18 @@ function renderHabilidades() {
           <button class="btn-delete-hab" onclick="removerHabilidade(${i})">🗑️</button>
         </div>
       </div>
-      
       <textarea placeholder="Descrição..." oninput="habilidades[${i}].desc=this.value">${h.desc || ""}</textarea>
-      <input type="text" placeholder="🔗 Cole o Link da Imagem ou GIF aqui..." value="${h.img || ""}" oninput="habilidades[${i}].img=this.value; document.getElementById('preview_hab_${i}').src=this.value; document.getElementById('preview_hab_${i}').style.display = this.value ? 'block' : 'none';" style="font-size: 0.8rem; padding: 6px; margin-top: -6px; background: rgba(0,0,0,0.3); border-style: dashed;">
+      <input type="text" placeholder="🔗 Cole o Link da Imagem..." value="${h.img || ""}" oninput="habilidades[${i}].img=this.value; document.getElementById('preview_hab_${i}').src=this.value; document.getElementById('preview_hab_${i}').style.display = this.value ? 'block' : 'none';" style="font-size: 0.8rem; padding: 6px; margin-top: -6px; background: rgba(0,0,0,0.3); border-style: dashed;">
       <img id="preview_hab_${i}" src="${h.img || ""}" style="max-width: 100%; border-radius: 6px; display: ${h.img ? 'block' : 'none'}; border: 1px solid var(--cor-dourado-transp); margin-top: 5px;">
-      
       <div class="hab-rolagens-grid" style="display: flex; flex-direction: column; width: 100%;">
         ${rolagensHTML}
       </div>
-      
       <button class="btn-hab-add" onclick="adicionarRolagem(${i})">+ Outra Rolagem</button>
       <div id="resHab_${i}" class="resultado" style="margin-top:10px; font-weight:bold; color:var(--cor-dourado);"></div>
     </div>`;
   });
+
+  box.innerHTML = htmlString; // Atualiza o DOM UMA VEZ!
 }
 
 function rolarHabilidadeIndividual(idxHab, idxRoll) {
@@ -2822,92 +3719,131 @@ function carregarImagem(event){
   reader.readAsDataURL(file);
 }
   
-function salvarFicha(){
-  const slot=document.getElementById("slot").value;
-  const chave="fichaRPG_"+slot;
+function baixarFichaJSON() {
+  const slot = document.getElementById("slot")?.value || "1";
+  const chave = "fichaRPG_" + slot;
+  const dadosSalvos = localStorage.getItem(chave);
 
-  const dados={
-    imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome:document.getElementById("nome").value,
-    idade:document.getElementById("idade").value,
-    antecedencia:document.getElementById("antecedencia").value,
-    descricao:document.getElementById("descricao").value,
-    historia:document.getElementById("historia").value,
-    inventario: inventario,
-    nivel:document.getElementById("nivel").value,
-    vida:document.getElementById("vida").value,
-    sanidade:document.getElementById("sanidade").value,
-    aura:document.getElementById("aura").value,
-    habilidades:habilidades,
-    dtBonus: document.getElementById("dtBonus").value,
-    dtAtributoBase: document.getElementById("dtAtributoBase").value,
-    atributos:{},
-    pericias:{},
-    rdFisica: document.getElementById("rdFisica").value,
-    rdMental: document.getElementById("rdMental").value,
-    dtBonus: document.getElementById("dtBonus").value,
-  };
+  if (!usuarioAtual) {
+    alert("⚠️ Você precisa fazer login com o Google para salvar a ficha!");
+    return;
+  }
 
-  atributos.forEach(a=>{
-    dados.atributos[a.sigla]=document.getElementById("atr_"+a.sigla).value;
-  });
+   if (!dadosSalvos) {
+    return alert("Nenhum dado encontrado nesse slot!");
+  }
 
-  pericias.forEach((p,i)=>{
-    dados.pericias["per_"+i] = {
-      valor: document.getElementById("per_"+i).value,
-      bonus: document.getElementById("bonus_per_"+i).value,
-      atributo: document.getElementById("atrKey_per_"+i).value
-  };
-});
-
-  localStorage.setItem(chave,JSON.stringify(dados));
-
-  const alerta=document.getElementById("alerta");
-  alerta.style.display="block";
-  setTimeout(()=>alerta.style.display="none",2500);
-}
-
-function salvarFichaManual(chave) {
   const dados = {
+    jogador: usuarioAtual.displayName, // Salva o nome real do Google
+    uid: usuarioAtual.uid,             // Salva o ID único
+    imagem: document.getElementById("previewImg").dataset.base64 || "",
     nome: document.getElementById("nome").value,
     idade: document.getElementById("idade").value,
     antecedencia: document.getElementById("antecedencia").value,
     descricao: document.getElementById("descricao").value,
     historia: document.getElementById("historia").value,
+    inventario: inventario,
     nivel: document.getElementById("nivel").value,
     vida: document.getElementById("vida").value,
     sanidade: document.getElementById("sanidade").value,
     aura: document.getElementById("aura").value,
+    habilidades: habilidades,
+    dtBonus: document.getElementById("dtBonus").value,
+    dtAtributoBase: document.getElementById("dtAtributoBase").value,
     rdFisica: document.getElementById("rdFisica").value,
     rdMental: document.getElementById("rdMental").value,
-    dtBonus: document.getElementById("dtBonus").value,
-    habilidades: habilidades,
-    inventario: inventario, // ADICIONADO: Agora salva o inventário
     atributos: {},
     pericias: {}
   };
 
-  // Salva Atributos
   atributos.forEach(a => {
-    const el = document.getElementById("atr_" + a.sigla);
-    if (el) dados.atributos[a.sigla] = el.value;
+    dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla).value;
   });
 
-  // Salva Perícias (com estrutura completa)
   pericias.forEach((p, i) => {
-    const id = "per_" + i;
-    dados.pericias[id] = {
-      valor: document.getElementById(id).value,
-      bonus: document.getElementById("bonus_" + id).value,
-      atributo: document.getElementById("atrKey_" + id).value
+    dados.pericias["per_" + i] = {
+      valor: document.getElementById("per_" + i).value,
+      bonus: document.getElementById("bonus_per_" + i).value,
+      atributo: document.getElementById("atrKey_per_" + i).value
     };
   });
 
-  // A imagem base64 é pesada, salvamos apenas se houver
-  const imgData = document.getElementById("previewImg").dataset.base64;
-  if (imgData) dados.imagem = imgData;
+  database.ref('fichas/' + usuarioAtual.uid).set(dados)
+    .then(() => {
+      const alerta = document.getElementById("alerta");
+      alerta.innerText = "☁️ Ficha salva na nuvem com sucesso!";
+      alerta.style.display = "block";
+      setTimeout(() => alerta.style.display = "none", 2500);
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Erro ao salvar na nuvem: Permissão negada ou erro de conexão.");
+    });
+} 
+
+function getSlotAtual() {
+  return document.getElementById("slot")?.value || "1";
+}
+
+function getChaveSlot(slot) {
+  return "fichaRPG_" + slot;
+}
+
+function montarDadosFicha() {
+  return {
+    jogador: document.getElementById("jogador").value || (usuarioAtual ? usuarioAtual.displayName : ""),
+    uid: usuarioAtual ? usuarioAtual.uid : "",
+    imagem: document.getElementById("previewImg").dataset.base64 || "",
+    nome: document.getElementById("nome").value || "",
+    idade: document.getElementById("idade").value || "",
+    antecedencia: document.getElementById("antecedencia").value || "",
+    descricao: document.getElementById("descricao").value || "",
+    historia: document.getElementById("historia").value || "",
+    inventario: JSON.parse(JSON.stringify(inventario)),
+    nivel: document.getElementById("nivel").value || 1,
+    vida: document.getElementById("vida").value || 0,
+    sanidade: document.getElementById("sanidade").value || 0,
+    aura: document.getElementById("aura").value || 0,
+    habilidades: JSON.parse(JSON.stringify(habilidades)),
+    dtBonus: document.getElementById("dtBonus").value || 0,
+    dtAtributoBase: document.getElementById("dtAtributoBase").value || "POD",
+    rdFisica: document.getElementById("rdFisica").value || 0,
+    rdMental: document.getElementById("rdMental").value || 0,
+    atributos: {},
+    pericias: {}
+  };
+}
+
+function salvarFichaManual() {
+  if (!usuarioAtual) {
+    alert("⚠️ Você precisa fazer login com o Google para salvar a ficha!");
+    return;
+  }
+
+  const slot = getSlotAtual();
+  const chave = getChaveSlot(slot);
+  const dados = montarDadosFicha();
+
+  atributos.forEach(a => {
+    dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla).value;
+  });
+
+  pericias.forEach((p, i) => {
+    dados.pericias["per_" + i] = {
+      valor: document.getElementById("per_" + i).value,
+      bonus: document.getElementById("bonus_per_" + i).value,
+      atributo: document.getElementById("atrKey_per_" + i).value
+    };
+  });
 
   localStorage.setItem(chave, JSON.stringify(dados));
+  fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
+  atualizarNomeSlotEspecifico(slot, dados.nome);
+
+  const alerta = document.getElementById("alerta");
+  alerta.innerText = `Ficha salva no Slot ${slot} com sucesso!`;
+  alerta.style.display = "block";
+  setTimeout(() => alerta.style.display = "none", 2500);
 }
   
 function limparFicha(){
@@ -2946,87 +3882,91 @@ function limparFicha(){
   atualizarBloqueio();
   atualizarDT();
 }
-  
-/* =============== CARREGAR =============== */
-function carregarFicha(){
-  const slot=document.getElementById("slot").value;
-  const chave="fichaRPG_"+slot;
-  const salvo=localStorage.getItem(chave);
 
-  if(!salvo){
+/* =============== CARREGAR =============== */
+function carregarFichaDaNuvem() {
+  if (!usuarioAtual) return;
+
+  const slot = document.getElementById("slot").value;
+  const chave = "fichaRPG_" + slot;
+  const dadosSalvos = localStorage.getItem(chave);
+
+  if (!dadosSalvos) {
     limparFicha();
     return;
   }
 
-  const d=JSON.parse(salvo);
+  try {
+    const d = JSON.parse(dadosSalvos);
 
-  document.getElementById("nome").value=d.nome||"";
-  document.getElementById("idade").value=d.idade||"";
-  document.getElementById("antecedencia").value=d.antecedencia||"";
-  document.getElementById("descricao").value=d.descricao||"";
-  document.getElementById("historia").value=d.historia||"";
-  document.getElementById("nivel").value=d.nivel||1;
-  document.getElementById("vida").value = d.vida || 0;
-  document.getElementById("sanidade").value = d.sanidade || 0;
-  document.getElementById("aura").value = d.aura || 0;
-  document.getElementById("rdFisica").value = d.rdFisica || 0;
-  document.getElementById("rdMental").value = d.rdMental || 0;
-  document.getElementById("dtBonus").value = d.dtBonus || 0;
-  document.getElementById("dtAtributoBase").value = d.dtAtributoBase || "POD";
-  
-  const img = document.getElementById("previewImg");
-  if(d.imagem){
-    img.src = d.imagem;
-    img.style.display = "block";
-    img.dataset.base64 = d.imagem;
-  }else{
-    img.style.display = "none";
-    img.dataset.base64 = "";
-  }
+    document.getElementById("nome").value = d.nome || "";
+    document.getElementById("idade").value = d.idade || "";
+    document.getElementById("antecedencia").value = d.antecedencia || "";
+    document.getElementById("descricao").value = d.descricao || "";
+    document.getElementById("historia").value = d.historia || "";
+    document.getElementById("nivel").value = d.nivel || 1;
+    document.getElementById("vida").value = d.vida || 0;
+    document.getElementById("sanidade").value = d.sanidade || 0;
+    document.getElementById("aura").value = d.aura || 0;
+    document.getElementById("rdFisica").value = d.rdFisica || 0;
+    document.getElementById("rdMental").value = d.rdMental || 0;
+    document.getElementById("dtBonus").value = d.dtBonus || 0;
+    document.getElementById("dtAtributoBase").value = d.dtAtributoBase || "POD";
 
-  for(const s in d.atributos){
-    const el=document.getElementById("atr_"+s);
-    if(el) el.value=d.atributos[s];
-  }
-
-  for(const p in d.pericias){
-    const data = d.pericias[p];
-
-    if(typeof data === "object"){
-      document.getElementById(p).value = data.valor || 1;
-      document.getElementById("bonus_"+p).value = data.bonus || 0;
-      document.getElementById("atrKey_"+p).value = data.atributo || "FOR";
+    const img = document.getElementById("previewImg");
+    console.log("☁️ Ficha sincronizada com a nuvem!");
+    if (d.imagem) {
+      img.src = d.imagem;
+      img.style.display = "block";
+      img.dataset.base64 = d.imagem;
     } else {
-      document.getElementById(p).value = data;
+      img.style.display = "none";
+      img.dataset.base64 = "";
     }
+
+    for (const s in d.atributos) {
+      const el = document.getElementById("atr_" + s);
+      if (el) el.value = d.atributos[s];
+    }
+
+    for (const p in d.pericias) {
+      const data = d.pericias[p];
+      if (typeof data === "object") {
+        const elValor = document.getElementById(p);
+        if (elValor) elValor.value = data.valor || 1;
+
+        const elBonus = document.getElementById("bonus_" + p);
+        if (elBonus) elBonus.value = data.bonus || 0;
+
+        const elAtr = document.getElementById("atrKey_" + p);
+        if (elAtr) elAtr.value = data.atributo || "FOR";
+      } else {
+        const elValor = document.getElementById(p);
+        if (elValor) elValor.value = data;
+      }
+    }
+
+    habilidades = d.habilidades || [];
+    renderHabilidades();
+
+    inventario = d.inventario || [];
+    renderInventario();
+
+    atualizarDT();
+    recalcularVidaSanidade();
+    atualizarBloqueio();
+
+    atualizarNomeSlotEspecifico(slot, d.nome);
+  } catch (e) {
+    console.error(e);
+    limparFicha();
   }
-  habilidades=d.habilidades||[];
-  renderHabilidades();
-
-  inventario = d.inventario || [];
-  renderInventario();
-
-  atualizarDT();
-
-  recalcularVidaSanidade();
-  atualizarBloqueio();
 }
 
-let slotAtual = document.getElementById("slot").value;
-
-document.getElementById("slot").addEventListener("change", function(){
-
-  // salva no slot antigo
-  const chaveAntiga = "fichaRPG_" + slotAtual;
-  salvarFichaManual(chaveAntiga);
-
-  // atualiza slot atual
-  slotAtual = this.value;
-
-  // carrega o novo
-  carregarFicha();
+document.getElementById("nome").addEventListener("input", () => {
+  sincronizarNomeDoSlotAtual();
+  salvarFichaManual();
 });
-
 
 /* ======== ABA DE NAVEGAÇÃO ======== */
 const abas = document.querySelectorAll(".tab-button");
@@ -3052,6 +3992,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const abas = document.querySelectorAll(".tab-button");
   const conteudos = document.querySelectorAll(".tab-content");
 
+document.getElementById("nome").addEventListener("input", () => {
+  sincronizarNomeDoSlotAtual();
+});
+
   abas.forEach(btn => {
     btn.addEventListener("click", () => {
       abas.forEach(b => b.classList.remove("active"));
@@ -3067,7 +4011,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
-carregarFicha();
 
 </script>
 
