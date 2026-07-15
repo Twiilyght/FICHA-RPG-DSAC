@@ -3059,7 +3059,7 @@ function recalcularVidaSanidade(){
   const pod = Number(document.getElementById("atr_POD")?.value) || 0;
   const intt = Number(document.getElementById("atr_INT")?.value) || 0;
 
-  const vidaMax = (20 + con * 2) * nivel;
+  const vidaMax = (30 + con * 3) * nivel;
   const sanidadeMax = (20 + intt * 2) * nivel;
 
   const auraBase = (con + pod) * 3;
