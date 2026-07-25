@@ -1927,11 +1927,20 @@
     <h2>Status</h2>
     <div class="status-card">
       
+<!-- VIDA -->
       <div class="status-item vida">
         <div class="status-top"><div>Vida</div><span>❤️</span></div>
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px;">
           <input id="vida" type="number" oninput="atualizarVida()" style="width: 60px !important;" />
-          <small id="vidaMaxTxt" style="white-space: nowrap; flex-grow: 1;"></small>
+          
+          <div style="display: flex; flex-direction: column; align-items: center; flex-grow: 1;">
+            <small id="vidaMaxTxt" style="white-space: nowrap;"></small>
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 10px; margin-top: 2px;">
+              <span style="color: rgba(255,255,255,0.7);">+Bônus:</span>
+              <input type="number" id="bonusVidaMax" value="0" oninput="recalcularVidaSanidade()" style="width: 35px !important; height: 16px !important; font-size: 10px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.35); background: rgba(0,0,0,0.2); color: #fff; border-radius: 3px;" />
+            </div>
+          </div>
+
           <div style="display: flex; border: 1px solid rgba(197, 160, 89, 0.35); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2);">
             <input type="number" id="vidaQuick" placeholder="+/-" style="width: 40px !important; border: none !important; background: transparent !important; color: #fff; text-align: center; font-size: 12px;" />
             <button onclick="ajustarStatus('vida')" style="background: rgba(197, 160, 89, 0.35); border: none; color: white; padding: 0 8px; cursor: pointer; font-size: 10px;">OK</button>
@@ -1941,11 +1950,20 @@
         <div class="status-bar"><div id="vida-bar" class="status-fill"></div></div>
       </div>
 
+      <!-- SANIDADE -->
       <div class="status-item sanidade">
         <div class="status-top"><div>Sanidade</div><span>🧠</span></div>
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px;">
           <input id="sanidade" type="number" oninput="atualizarSanidade()" style="width: 60px !important;" />
-          <small id="sanidadeMaxTxt" style="white-space: nowrap; flex-grow: 1;"></small>
+          
+          <div style="display: flex; flex-direction: column; align-items: center; flex-grow: 1;">
+            <small id="sanidadeMaxTxt" style="white-space: nowrap;"></small>
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 10px; margin-top: 2px;">
+              <span style="color: rgba(255,255,255,0.7);">+Bônus:</span>
+              <input type="number" id="bonusSanidadeMax" value="0" oninput="recalcularVidaSanidade()" style="width: 35px !important; height: 16px !important; font-size: 10px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.35); background: rgba(0,0,0,0.2); color: #fff; border-radius: 3px;" />
+            </div>
+          </div>
+
           <div style="display: flex; border: 1px solid rgba(197, 160, 89, 0.35); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2);">
             <input type="number" id="sanidadeQuick" placeholder="+/-" style="width: 40px !important; border: none !important; background: transparent !important; color: #fff; text-align: center; font-size: 12px;" />
             <button onclick="ajustarStatus('sanidade')" style="background: rgba(197, 160, 89, 0.35); border: none; color: white; padding: 0 8px; cursor: pointer; font-size: 10px;">OK</button>
@@ -1955,11 +1973,20 @@
         <div class="status-bar"><div id="sanidade-bar" class="status-fill sanity"></div></div>
       </div>
 
+      <!-- AURA -->
       <div class="status-item aura">
         <div class="status-top"><div>Aura</div><span>✨</span></div>
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px;">
           <input id="aura" type="number" oninput="atualizarAura()" style="width: 60px !important;" />
-          <small id="auraMaxTxt" style="white-space: nowrap; flex-grow: 1;">Máx: 0</small>
+          
+          <div style="display: flex; flex-direction: column; align-items: center; flex-grow: 1;">
+            <small id="auraMaxTxt" style="white-space: nowrap;"></small>
+            <div style="display: flex; align-items: center; gap: 4px; font-size: 10px; margin-top: 2px;">
+              <span style="color: rgba(255,255,255,0.7);">+Bônus:</span>
+              <input type="number" id="bonusAuraMax" value="0" oninput="recalcularVidaSanidade()" style="width: 35px !important; height: 16px !important; font-size: 10px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.35); background: rgba(0,0,0,0.2); color: #fff; border-radius: 3px;" />
+            </div>
+          </div>
+
           <div style="display: flex; border: 1px solid rgba(197, 160, 89, 0.35); border-radius: 4px; overflow: hidden; background: rgba(0,0,0,0.2);">
             <input type="number" id="auraQuick" placeholder="+/-" style="width: 40px !important; border: none !important; background: transparent !important; color: #fff; text-align: center; font-size: 12px;" />
             <button onclick="ajustarStatus('aura')" style="background: rgba(197, 160, 89, 0.35); border: none; color: white; padding: 0 8px; cursor: pointer; font-size: 10px;">OK</button>
@@ -1969,11 +1996,18 @@
         <div class="status-bar"><div id="aura-bar" class="status-fill aura"></div></div>
       </div>
 
+      <!-- DESLOCAMENTO -->
       <div class="status-item deslocamento">
         <div class="status-top">
           <div>Deslocamento (Quadrados)</div><span>👟</span>
         </div>
-        <input id="deslocamento" type="number" disabled />
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <input id="deslocamento" type="number" disabled style="width: 60px !important;" />
+          <div style="display: flex; align-items: center; gap: 4px; font-size: 10px;">
+            <span style="color: rgba(255,255,255,0.7);">+Bônus:</span>
+            <input type="number" id="bonusDeslocamento" value="0" oninput="recalcularDeslocamento()" style="width: 35px !important; height: 18px !important; font-size: 10px; text-align: center; border: 1px solid rgba(197, 160, 89, 0.35); background: rgba(0,0,0,0.2); color: #fff; border-radius: 3px;" />
+          </div>
+        </div>
       </div>
 
       <div class="status-item dt">
@@ -2488,163 +2522,125 @@ function toggleSecao(idContent, idIcon) {
    LÓGICA DE CONDIÇÕES
    ========================================= */
 
-// Dicionário com todas as condições e seus efeitos
+/* =========================================
+   SISTEMA DE CONDIÇÕES E DEBUFFS
+   ========================================= */
 const dicionarioCondicoes = {
-  "Abalado": "Você sofre -1d20 em qualquer teste de resistência.",
+  "Abalado": "Você sofre -1d20 em qualquer teste de resistência (Fortitude, Reflexos, Vontade).",
   "Assustado": "Algo te deixou assustado. Você sofre -2 em testes de Vontade.",
-  "Atordoado": "O personagem fica desprevenido e não pode fazer ações. Ao receber algum tipo de dano, deixa de ficar atordoado.",
-  "Cego": "O personagem fica desprevenido e precisa rodar um teste de percepção contra a furtividade do inimigo. Se falhar, não pode esquivar nem bloquear o próximo ataque.",
+  "Atordoado": "Desprevenido e não pode fazer ações. Perde a condição ao sofrer dano.",
+  "Cego": "Desprevenido e falha automática em percepção baseada em visão.",
   "Congelado": "O personagem fica paralisado e fraco.",
-  "Desprevenido": "Você fica despreparado para reagir. Recebe -5 em reações até que receba seu próximo ataque. Inimigos podem usar 'ataque surpresa' contra você como ação livre. Após reagir ao primeiro ataque de um inimigo, sai da condição.",
-  "Exausto": "O personagem fica fatigado (fraco e vulnerável) e lento. Se ficar exausto novamente, fica inconsciente.",
-  "Fatigado": "O personagem fica fraco e vulnerável. Se ficar fatigado novamente, fica exausto.",
-  "Fraco": "O personagem sofre -1d20 em testes de força, constituição e agilidade.",
-  "Hipertermia": "Temperatura aumenta em nível extremo. Deve ser mantida externamente. Se mantida por 3 turnos sem regulação, fica confuso e fraco.",
-  "Hipotermia": "Temperatura abaixa em nível extremo. Deve ser mantida externamente. Se mantida por 3 turnos sem regulação, fica congelado.",
-  "Inconsciente": "Seu personagem desmaia e você não pode fazer ações.",
-  "Lento": "Todas as formas de deslocamento são reduzidas à metade e não pode correr ou fazer investidas.",
-  "Ofuscado": "Sofre menos 1 dado (ou -1d20) em testes de ataque e de Percepção.",
-  "Paralisado": "Por 1 rodada, fica imóvel e não pode realizar esquiva ou movimento (pode fazer ações mentais/canalizar energia). Se atacado, pode bloquear recebendo -5 em fortitude. Após o ataque, sai do estado de paralisia.",
-  "Vulnerável": "O personagem recebe -2 em fortitude e reflexos."
+  "Desprevenido": "Recebe -5 em reações. Inimigos podem usar ataque surpresa.",
+  "Exausto": "Fica fatigado (fraco e vulnerável) e lento. Se exausto de novo, desmaia.",
+  "Fatigado": "Fica fraco e vulnerável.",
+  "Fraco": "Sofre -1d20 em testes de Força, Agilidade e Constituição (Vigor).",
+  "Inconsciente": "Personagem desmaia, não pode fazer ações.",
+  "Lento": "Deslocamento reduzido à metade.",
+  "Ofuscado": "Sofre -1d20 em testes de Ataque e Percepção.",
+  "Paralisado": "Imóvel, não pode esquivar. Bloqueio recebe -5 em Fortitude.",
+  "Vulnerável": "Recebe -2 fixo em Fortitude e Reflexos."
 };
 
 let condicoesAtivas = [];
 
-// Carrega as opções no select quando a página abre
 function inicializarCondicoes() {
   const select = document.getElementById("selectCondicao");
-  select.innerHTML = '<option value="" disabled selected>Selecione uma condição...</option>';
-  
-  Object.keys(dicionarioCondicoes).forEach(condicao => {
-    let opt = document.createElement("option");
-    opt.value = condicao;
-    opt.textContent = condicao;
-    select.appendChild(opt);
-  });
+  if(select) {
+    select.innerHTML = '<option value="" disabled selected>Adicionar Condição...</option>';
+    Object.keys(dicionarioCondicoes).forEach(condicao => {
+      let opt = document.createElement("option");
+      opt.value = condicao;
+      opt.textContent = condicao;
+      select.appendChild(opt);
+    });
+  }
 }
 
-// Adiciona a tag visualmente
 function adicionarCondicao() {
   const select = document.getElementById("selectCondicao");
   const condicao = select.value;
-  
-  if (!condicao) return;
-  if (condicoesAtivas.includes(condicao)) {
-    // Alerta visual mais imersivo em vez de alert() comum (opcional)
-    alert("Esta condição já está ativa no personagem!");
-    return;
-  }
+  if (!condicao || condicoesAtivas.includes(condicao)) return;
   
   condicoesAtivas.push(condicao);
   renderizarCondicoes();
-  atualizarStatusMatematicos();
-  select.value = ""; // Reseta o select
-  
-  // Se você tiver uma função salvarFichaManual(), pode chamá-la aqui:
-  // salvarFichaManual(); 
+  recalcularDeslocamento();
+  select.value = ""; 
 }
 
-// Remove a tag
 function removerCondicao(condicaoParaRemover) {
   condicoesAtivas = condicoesAtivas.filter(c => c !== condicaoParaRemover);
   renderizarCondicoes();
-  atualizarStatusMatematicos();
-  
-  // salvarFichaManual();
+  recalcularDeslocamento();
 }
 
-// Atualiza a interface
 function renderizarCondicoes() {
   const lista = document.getElementById("lista-condicoes");
+  if(!lista) return;
   lista.innerHTML = "";
-  
   condicoesAtivas.forEach(condicao => {
-    const descricao = dicionarioCondicoes[condicao];
-    const tag = document.createElement("div");
-    tag.className = "condicao-tag";
-    
-    tag.innerHTML = `
-      ${condicao}
-      <div class="condicao-tooltip">${descricao}</div>
-      <button class="condicao-remove" onclick="removerCondicao('${condicao}')" title="Remover">×</button>
+    lista.innerHTML += `
+      <div class="condicao-tag">
+        ${condicao}
+        <div class="condicao-tooltip">${dicionarioCondicoes[condicao]}</div>
+        <button class="condicao-remove" onclick="removerCondicao('${condicao}')">×</button>
+      </div>
     `;
-    
-    lista.appendChild(tag);
   });
 }
 
-function atualizarStatusMatematicos() {
-  // --- Lógica para Deslocamento ---
-  const inputDeslocamentoBase = document.getElementById("deslocamentoBase");
-  const displayDeslocamento = document.getElementById("deslocamentoAtual"); // Onde aparece na ficha
+function recalcularDeslocamento() {
+  const elDesloc = document.getElementById("deslocamento");
+  const atrAgi = document.getElementById("atr_AGI");
+  const bonusDesloc = document.getElementById("bonusDeslocamento");
   
-  if (inputDeslocamentoBase && displayDeslocamento) {
-    let valorDeslocamento = parseFloat(inputDeslocamentoBase.value) || 0;
+  if (elDesloc && atrAgi) {
+    // Calcula o valor base + bônus
+    let valorBase = 5 + Number(atrAgi.value || 0) + Number(bonusDesloc?.value || 0);
     
-    // Aplica a condição "Lento"
-    if (condicoesAtivas.includes("Lento")) {
-      valorDeslocamento = Math.floor(valorDeslocamento / 2);
+    // Aplica as reduções pelas condições (Lento, Exausto, etc) garantindo a compatibilidade com a resposta anterior
+    if (typeof condicoesAtivas !== 'undefined') {
+      if (condicoesAtivas.includes("Lento") || condicoesAtivas.includes("Exausto")) {
+        valorBase = Math.floor(valorBase / 2);
+      }
     }
-    // Aplica a condição "Exausto" (também deixa lento)
-    else if (condicoesAtivas.includes("Exausto")) {
-      valorDeslocamento = Math.floor(valorDeslocamento / 2);
-    }
-
-    displayDeslocamento.innerText = valorDeslocamento + "m";
+    
+    elDesloc.value = valorBase;
   }
 }
 
-function aplicarDebuffsRolagem(nomeTeste, atributoBase, qtdDadosPericia, modFixoAtributo) {
-  let dadosFinal = qtdDadosPericia;
-  let modFinal = modFixoAtributo;
-
-  const teste = nomeTeste.toLowerCase();
-  const atributo = atributoBase.toLowerCase();
+function aplicarDebuffsRolagem(nomeTeste, siglaAtributo, qtdDadosOriginais, modFixoOriginal) {
+  let dados = qtdDadosOriginais;
+  let mod = modFixoOriginal;
   
-  // Condição: Abalado (-1d20 em testes de resistência)
-  if (condicoesAtivas.includes("Abalado")) {
-    if (["Fortitude", "Vontade", "Reflexos"].includes(teste)) {
-      dadosFinal -= 1;
-    }
+  const teste = (nomeTeste || "").toLowerCase().trim();
+  const sigla = (siglaAtributo || "").toUpperCase().trim();
+
+  // -1d20 Resistências
+  if (condicoesAtivas.includes("Abalado") && ["fortitude", "vontade", "reflexos"].includes(teste)) dados -= 1;
+  // -2 Vontade
+  if (condicoesAtivas.includes("Assustado") && teste === "vontade") mod -= 2;
+  // -1d20 Físicos
+  if ((condicoesAtivas.includes("Fraco") || condicoesAtivas.includes("Fatigado") || condicoesAtivas.includes("Exausto") || condicoesAtivas.includes("Congelado")) && 
+      ["FOR", "CON", "VIG", "AGI"].includes(sigla)) {
+    dados -= 1;
+  }
+  // -1d20 Ataque e Percepção
+  if (condicoesAtivas.includes("Ofuscado") && (teste.includes("ataque") || teste.includes("percep"))) dados -= 1;
+  // -2 Fortitude e Reflexos
+  if ((condicoesAtivas.includes("Vulnerável") || condicoesAtivas.includes("Fatigado") || condicoesAtivas.includes("Exausto")) && 
+      ["fortitude", "reflexos"].includes(teste)) {
+    mod -= 2;
   }
 
-  // Condição: Assustado (-2 fixo em Vontade)
-  if (condicoesAtivas.includes("Assustado") && teste === "Vontade") {
-    modFinal -= 2;
-  }
-
-  // Condição: Fraco (-1d20 em força, constituição e agilidade)
-  if (condicoesAtivas.includes("Fraco") || condicoesAtivas.includes("Fatigado") || condicoesAtivas.includes("Exausto")) {
-    // Fatigado e Exausto deixam o personagem "Fraco" na descrição da regra
-    if (["Força", "Constituição", "Agilidade"].includes(atributo)) {
-      dadosFinal -= 1;
-    }
-  }
-
-  // Condição: Ofuscado (-1d20 em Ataque e Percepção)
-  if (condicoesAtivas.includes("Ofuscado")) {
-    if (teste === "ataque" || teste === "Percepção") {
-      dadosFinal -= 1;
-    }
-  }
-
-  // Condição: Vulnerável (-2 fixo em Fortitude e Reflexos)
-  if (condicoesAtivas.includes("Vulnerável") || condicoesAtivas.includes("Fatigado") || condicoesAtivas.includes("Exausto")) {
-    // Fatigado e Exausto deixam o personagem "Vulnerável"
-    if (teste === "Fortitude" || teste === "Reflexos") {
-      modFinal -= 2;
-    }
-  }
-
-  if (dadosFinal < 0) {
-    dadosFinal = 0; 
-  }
-
-  return {
-    dadosFinal: dadosFinal,
-    modFinal: modFinal
-  };
+  return { dadosFinal: dados, modFinal: mod };
 }
+
+// Inicializa as condições no carregamento
+document.addEventListener("DOMContentLoaded", () => {
+  inicializarCondicoes();
+  recalcularDeslocamento();
+});
 
 // Inicializa quando o documento estiver pronto
 document.addEventListener("DOMContentLoaded", () => {
@@ -2681,7 +2677,7 @@ document.addEventListener('keydown', function(event) {
 });
 
 function registrarLog(tipo, detalhe, total){
-  const nome = document.getElementById("jogador").value || "Anônimo";
+  const nome = document.getElementById("nome").value || "Anônimo";
   
   const checkbox = document.getElementById("rolagemPrivada");
 
@@ -3163,7 +3159,7 @@ function criarInterface() {
       <div class="atributo-card">
         <div class="atr-label">${a.nome}</div>
         <div class="atr-value-wrapper">
-          <select id="atr_${a.sigla}" class="atr-select" onchange="recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT();">
+          <select id="atr_${a.sigla}" class="atr-select" onchange="recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT(); recalcularDeslocamento();">
             ${[...Array(21).keys()].map(v => `<option value="${v}">${v}</option>`).join("")}
           </select>
         </div>
@@ -3213,91 +3209,104 @@ function limparDepois(id,ms=8000){
   },ms);
 }
 
-function rolarAtributo(sigla){
+function rolarAtributo(sigla) {
+  const v = Number(document.getElementById("atr_" + sigla).value);
+  const resId = "resAtr_" + sigla;
   
-  const v=Number(document.getElementById("atr_"+sigla).value);
-  const resId="resAtr_"+sigla;
-  const d=d20();
-  const total = d + v;
-  document.getElementById(resId).innerText =
-`1d20 (${d}) + ${v} = ${total}`;
+  // Aplica o filtro de debuff no atributo (1 dado, + Modificador)
+  const debuffs = aplicarDebuffsRolagem("Atributo", sigla, 1, v);
+  let desvantagem = debuffs.dadosFinal <= 0;
+  let dadosParaRolar = desvantagem ? 2 : debuffs.dadosFinal;
+  
+  let resultados = [];
+  for(let i = 0; i < dadosParaRolar; i++) {
+    resultados.push(typeof d20 === "function" ? d20() : Math.floor(Math.random() * 20) + 1);
+  }
+  
+  // Se zerou os dados, pega o menor. Senão, pega o maior.
+  const d = desvantagem ? Math.min(...resultados) : Math.max(...resultados);
+  const total = d + debuffs.modFinal;
+  
+  const avisoDesvantagem = desvantagem ? " (Desv.)" : "";
+  
+  document.getElementById(resId).innerText = `${dadosParaRolar}d20${avisoDesvantagem} (${d}) + ${debuffs.modFinal} = ${total}`;
 
-  mostrarPopup(
-    sigla,
-    `1d20 (${d}) + ${v}`,
-    total
-    );
-
-  registrarLog(sigla, `1d20 (${d}) + ${v}`, total);
+  mostrarPopup(sigla, `${dadosParaRolar}d20${avisoDesvantagem} (${d}) + ${debuffs.modFinal}`, total);
+  registrarLog(sigla, `${dadosParaRolar}d20${avisoDesvantagem} (${d}) + ${debuffs.modFinal}`, total);
   limparDepois(resId);
-    if (isRolagemOculta) {
+  
+  if (isRolagemOculta) {
     document.getElementById("logRolagens").innerHTML += resultadoHTML;
   } else {
-    }
+  }
 }
 
 function rolarPericia(id) {
-  // 1. Definições Iniciais e Captura de Dados
   const inputPericia = document.getElementById(id);
-  const qtdDados = parseInt(inputPericia.value) || 1;
+  const qtdDadosOriginais = parseInt(inputPericia.value) || 1;
   const sigla = document.getElementById("atrKey_" + id).value;
   const bonusExtra = parseInt(document.getElementById("bonus_" + id).value) || 0;
   const indice = parseInt(id.split("_")[1]);
   const nomePericia = pericias[indice] ? pericias[indice][1] : "Perícia";
-
-  // 2. Busca Dinâmica do Atributo (Correção da Etapa 1)
   const atributoValor = parseInt(document.getElementById("atr_" + sigla).value) || 0;
-  const modificadorTotal = atributoValor + bonusExtra;
 
-  // 3. Lógica de Rolagem e Sons
+  // 1. FILTRO DE CONDIÇÕES APLICADO AQUI
+  const debuffs = aplicarDebuffsRolagem(nomePericia, sigla, qtdDadosOriginais, atributoValor);
+  const modificadorTotal = debuffs.modFinal + bonusExtra;
+  
+  let desvantagem = debuffs.dadosFinal <= 0;
+  let dadosParaRolar = desvantagem ? 2 : debuffs.dadosFinal;
+
   let resultados = [];
   let maior = 0;
+  let menor = 99;
   let critou = false;
   const margemPadrao = 20;
 
-  // Toca o som inicial
   somDado.currentTime = 0;
   somDado.play();
 
-  for (let i = 0; i < qtdDados; i++) {
-    // Usando sua função d20() da segunda versão
+  for (let i = 0; i < dadosParaRolar; i++) {
     const roll = typeof d20 === "function" ? d20() : Math.floor(Math.random() * 20) + 1;
     resultados.push(roll);
-    if (roll >= margemPadrao) critou = true;
     if (roll > maior) maior = roll;
+    if (roll < menor) menor = roll;
+    // Crítico só acontece se a rolagem não for com desvantagem ou se o menor dado tirou 20
+    if (roll >= margemPadrao && !desvantagem) critou = true;
   }
+  
+  const resultadoDoDado = desvantagem ? menor : maior;
+  if (desvantagem && resultadoDoDado >= margemPadrao) critou = true;
 
-  // Som de crítico se houver 20 natural
   if (critou) {
     somCritico.currentTime = 0;
     somCritico.play();
   }
 
-  const total = maior + modificadorTotal;
+  const total = resultadoDoDado + modificadorTotal;
 
-  // 4. Exibição de Resultados (Log e Popup)
   const labelCritico = critou ? "🔥 CRÍTICO: " : "";
+  const labelDesvantagem = desvantagem ? " (Rolado c/ Desvantagem)" : "";
   
   mostrarPopup(
     nomePericia.toUpperCase(), 
-    `Dados: [${resultados.join(", ")}] | Bônus: ${modificadorTotal}`, 
+    `Dados: [${resultados.join(", ")}]${labelDesvantagem} | Bônus: ${modificadorTotal}`, 
     labelCritico + total
   );
 
   registrarLog(
     nomePericia.toUpperCase(), 
-    `${qtdDados}d20 [${resultados.join(", ")}] + ${atributoValor} (Atrib) + ${bonusExtra} (Extra)`, 
+    `${dadosParaRolar}d20 [${resultados.join(", ")}]${labelDesvantagem} + ${debuffs.modFinal} (Atrib) + ${bonusExtra} (Extra)`, 
     total
   );
 
-  // 5. Atualização da Interface (HTML)
   const resId = "res_" + id;
   const output = document.getElementById(resId);
   
   if (output) {
     let msg = critou ? `<span style="color:#ff2944; font-weight:bold;">🔥 CRÍTICO! 🔥</span><br>` : "";
-    msg += `🎲 ${qtdDados}d20 [${resultados.join(", ")}]<br>
-            Maior: ${maior} + ${atributoValor} (${sigla.toUpperCase()}) + ${bonusExtra} (Extra)<br>
+    msg += `🎲 ${dadosParaRolar}d20 [${resultados.join(", ")}]${labelDesvantagem}<br>
+            Resultado: ${resultadoDoDado} + ${debuffs.modFinal} (${sigla.toUpperCase()}) + ${bonusExtra} (Extra)<br>
             <strong>Total: ${total}</strong>`;
     
     output.innerHTML = msg;
@@ -3307,9 +3316,8 @@ function rolarPericia(id) {
   if (isRolagemOculta) {
     document.getElementById("logRolagens").innerHTML += resultadoHTML;
   } else {
-    }
+  }
 
-  // 6. Lógica Específica (Fortitude/Bloqueio)
   if (nomePericia === "Fortitude") {
     ultimoTesteFortitude = total;
     if (typeof atualizarBloqueio === "function") atualizarBloqueio();
@@ -3318,19 +3326,24 @@ function rolarPericia(id) {
 
 /* =============== VIDA, SANIDADE & AURA =============== */
 function recalcularVidaSanidade(){
-  // O sinal de interrogação (?.) impede que o código quebre se o elemento ainda não existir
   const nivel = Number(document.getElementById("nivel")?.value) || 1;
 
   const con = Number(document.getElementById("atr_CON")?.value) || 0;
   const pod = Number(document.getElementById("atr_POD")?.value) || 0;
   const intt = Number(document.getElementById("atr_INT")?.value) || 0;
 
-  const vidaMax = (30 + con * 3) * nivel;
-  const sanidadeMax = (20 + intt * 2) * nivel;
+  // Resgata os valores das caixinhas de bônus máximo
+  const bonusVida = Number(document.getElementById("bonusVidaMax")?.value) || 0;
+  const bonusSanidade = Number(document.getElementById("bonusSanidadeMax")?.value) || 0;
+  const bonusAura = Number(document.getElementById("bonusAuraMax")?.value) || 0;
+
+  // Matemática original somada aos bônus
+  const vidaMax = ((30 + con * 3) * nivel) + bonusVida;
+  const sanidadeMax = ((20 + intt * 2) * nivel) + bonusSanidade;
 
   const auraBase = (con + pod) * 3;
   const auraNivel = (con + pod) * (nivel - 1);
-  const auraMax = auraBase + auraNivel;
+  const auraMax = auraBase + auraNivel + bonusAura;
 
   const vidaInput = document.getElementById("vida");
   const sanidadeInput = document.getElementById("sanidade");
@@ -3340,13 +3353,15 @@ function recalcularVidaSanidade(){
   if(sanidadeInput) sanidadeInput.max = sanidadeMax;
   if(auraInput) auraInput.max = auraMax;
 
-  if(vidaInput && (!vidaInput.value || vidaInput.value > vidaMax)){
+  // Garante que o valor atual diminua se o máximo diminuir (removendo bônus, por exemplo), 
+  // mas ignora essa correção se o jogador tiver ativado a barra de vida/sanidade temporária (valor > max)
+  if(vidaInput && (!vidaInput.value || vidaInput.value > vidaMax) && !document.getElementById("vidaTempTxt").style.display.includes("block")){
     vidaInput.value = vidaMax;
   }
-  if(sanidadeInput && (!sanidadeInput.value || sanidadeInput.value > sanidadeMax)){
+  if(sanidadeInput && (!sanidadeInput.value || sanidadeInput.value > sanidadeMax) && !document.getElementById("sanidadeTempTxt").style.display.includes("block")){
     sanidadeInput.value = sanidadeMax;
   }
-  if(auraInput && (!auraInput.value || auraInput.value > auraMax)){
+  if(auraInput && (!auraInput.value || auraInput.value > auraMax) && !document.getElementById("auraTempTxt").style.display.includes("block")){
     auraInput.value = auraMax;
   }
 
@@ -3359,11 +3374,13 @@ function recalcularVidaSanidade(){
   const elAuraMax = document.getElementById("auraMaxTxt");
   if(elAuraMax) elAuraMax.innerText = "Máx: " + auraMax;
 
-  const elDesloc = document.getElementById("deslocamento");
-  if(elDesloc) elDesloc.value = 5 + Number(document.getElementById("atr_AGI")?.value || 0);
+  // A linha antiga que calculava deslocamento aqui foi removida para usar a função dedicada abaixo.
+  if (typeof recalcularDeslocamento === 'function') {
+    recalcularDeslocamento();
+  }
 
-  atualizarBarra("vida","vida-bar",vidaMax);
-  atualizarBarra("sanidade","sanidade-bar",sanidadeMax);
+  atualizarBarra("vida", "vida-bar", vidaMax);
+  atualizarBarra("sanidade", "sanidade-bar", sanidadeMax);
   atualizarAura();
 }
 
