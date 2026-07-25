@@ -1387,6 +1387,87 @@
 }
 
 /* =========================================
+   SISTEMA DE CONDIÇÕES
+   ========================================= */
+.condicao-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.condicao-tag {
+  background: var(--cor-tab-active-bg);
+  border: 1px solid var(--cor-dourado-transp);
+  color: var(--cor-dourado);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: help;
+  position: relative;
+  box-shadow: inset 0 0 5px var(--cor-dourado-transp);
+  transition: all 0.3s ease;
+  font-family: 'Cinzel', serif;
+}
+
+.condicao-tag:hover {
+  border-color: #ff2944;
+  background: var(--cor-tab-hover-bg);
+  box-shadow: 0 0 10px rgba(255, 41, 68, 0.4);
+}
+
+/* Tooltip Interativo para ler o efeito */
+.condicao-tooltip {
+  visibility: hidden;
+  width: 280px;
+  background: var(--cor-popup-bg);
+  color: var(--cor-texto);
+  text-align: center;
+  border: 1px solid var(--cor-popup-border);
+  padding: 12px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 100;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease, bottom 0.3s ease;
+  font-size: 0.8rem;
+  font-weight: normal;
+  box-shadow: 0 0 15px var(--cor-popup-shadow);
+  pointer-events: none;
+}
+
+.condicao-tag:hover .condicao-tooltip {
+  visibility: visible;
+  opacity: 1;
+  bottom: 140%;
+}
+
+.condicao-remove {
+  background: none;
+  border: none;
+  color: #ff2944;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.condicao-remove:hover {
+  color: #fff;
+  text-shadow: 0 0 8px #ff2944;
+  transform: scale(1.2);
+}
+
+/* =========================================
        NOVO MENU LATERAL (SIDEBAR) & ESCUDO DO MESTRE
        ========================================= */
     
@@ -1934,6 +2015,24 @@
   </div>
   </div>
 
+  <!-- Bloco de Condições -->
+<div class="bloco">
+  <h2 onclick="toggleSecao('condicoesContent', 'iconCond')" style="cursor:pointer; user-select:none;">
+    Condições <span id="iconCond" class="toggle-icon">▼</span>
+  </h2>
+  <div id="condicoesContent">
+    <div class="linha" style="flex-direction: row; gap: 10px; align-items: center;">
+      <select id="selectCondicao" style="flex-grow: 1; padding: 10px; cursor: pointer;">
+        <!-- As opções serão geradas pelo JavaScript -->
+      </select>
+      <button class="salvar-btn" style="margin-top: 0; padding: 10px 20px;" onclick="adicionarCondicao()">Adicionar</button>
+    </div>
+    
+    <!-- Área onde as tags das condições ativas vão aparecer -->
+    <div id="lista-condicoes" class="condicao-container"></div>
+  </div>
+</div>
+
 <!-- MODAL DO BLOCO DE NOTAS -->
   <div id="modalNotas" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 10000; justify-content: center; align-items: center;">
     <div class="modal-content bloco" style="max-width: 800px; width: 95%; height: 85vh; display: flex; flex-direction: column;">
@@ -2384,6 +2483,173 @@ function toggleSecao(idContent, idIcon) {
     icon.classList.add("minimized");
   }
 }
+
+/* =========================================
+   LÓGICA DE CONDIÇÕES
+   ========================================= */
+
+// Dicionário com todas as condições e seus efeitos
+const dicionarioCondicoes = {
+  "Abalado": "Você sofre -1d20 em qualquer teste de resistência.",
+  "Assustado": "Algo te deixou assustado. Você sofre -2 em testes de Vontade.",
+  "Atordoado": "O personagem fica desprevenido e não pode fazer ações. Ao receber algum tipo de dano, deixa de ficar atordoado.",
+  "Cego": "O personagem fica desprevenido e precisa rodar um teste de percepção contra a furtividade do inimigo. Se falhar, não pode esquivar nem bloquear o próximo ataque.",
+  "Congelado": "O personagem fica paralisado e fraco.",
+  "Desprevenido": "Você fica despreparado para reagir. Recebe -5 em reações até que receba seu próximo ataque. Inimigos podem usar 'ataque surpresa' contra você como ação livre. Após reagir ao primeiro ataque de um inimigo, sai da condição.",
+  "Exausto": "O personagem fica fatigado (fraco e vulnerável) e lento. Se ficar exausto novamente, fica inconsciente.",
+  "Fatigado": "O personagem fica fraco e vulnerável. Se ficar fatigado novamente, fica exausto.",
+  "Fraco": "O personagem sofre -1d20 em testes de força, constituição e agilidade.",
+  "Hipertermia": "Temperatura aumenta em nível extremo. Deve ser mantida externamente. Se mantida por 3 turnos sem regulação, fica confuso e fraco.",
+  "Hipotermia": "Temperatura abaixa em nível extremo. Deve ser mantida externamente. Se mantida por 3 turnos sem regulação, fica congelado.",
+  "Inconsciente": "Seu personagem desmaia e você não pode fazer ações.",
+  "Lento": "Todas as formas de deslocamento são reduzidas à metade e não pode correr ou fazer investidas.",
+  "Ofuscado": "Sofre menos 1 dado (ou -1d20) em testes de ataque e de Percepção.",
+  "Paralisado": "Por 1 rodada, fica imóvel e não pode realizar esquiva ou movimento (pode fazer ações mentais/canalizar energia). Se atacado, pode bloquear recebendo -5 em fortitude. Após o ataque, sai do estado de paralisia.",
+  "Vulnerável": "O personagem recebe -2 em fortitude e reflexos."
+};
+
+let condicoesAtivas = [];
+
+// Carrega as opções no select quando a página abre
+function inicializarCondicoes() {
+  const select = document.getElementById("selectCondicao");
+  select.innerHTML = '<option value="" disabled selected>Selecione uma condição...</option>';
+  
+  Object.keys(dicionarioCondicoes).forEach(condicao => {
+    let opt = document.createElement("option");
+    opt.value = condicao;
+    opt.textContent = condicao;
+    select.appendChild(opt);
+  });
+}
+
+// Adiciona a tag visualmente
+function adicionarCondicao() {
+  const select = document.getElementById("selectCondicao");
+  const condicao = select.value;
+  
+  if (!condicao) return;
+  if (condicoesAtivas.includes(condicao)) {
+    // Alerta visual mais imersivo em vez de alert() comum (opcional)
+    alert("Esta condição já está ativa no personagem!");
+    return;
+  }
+  
+  condicoesAtivas.push(condicao);
+  renderizarCondicoes();
+  atualizarStatusMatematicos();
+  select.value = ""; // Reseta o select
+  
+  // Se você tiver uma função salvarFichaManual(), pode chamá-la aqui:
+  // salvarFichaManual(); 
+}
+
+// Remove a tag
+function removerCondicao(condicaoParaRemover) {
+  condicoesAtivas = condicoesAtivas.filter(c => c !== condicaoParaRemover);
+  renderizarCondicoes();
+  atualizarStatusMatematicos();
+  
+  // salvarFichaManual();
+}
+
+// Atualiza a interface
+function renderizarCondicoes() {
+  const lista = document.getElementById("lista-condicoes");
+  lista.innerHTML = "";
+  
+  condicoesAtivas.forEach(condicao => {
+    const descricao = dicionarioCondicoes[condicao];
+    const tag = document.createElement("div");
+    tag.className = "condicao-tag";
+    
+    tag.innerHTML = `
+      ${condicao}
+      <div class="condicao-tooltip">${descricao}</div>
+      <button class="condicao-remove" onclick="removerCondicao('${condicao}')" title="Remover">×</button>
+    `;
+    
+    lista.appendChild(tag);
+  });
+}
+
+function atualizarStatusMatematicos() {
+  // --- Lógica para Deslocamento ---
+  const inputDeslocamentoBase = document.getElementById("deslocamentoBase");
+  const displayDeslocamento = document.getElementById("deslocamentoAtual"); // Onde aparece na ficha
+  
+  if (inputDeslocamentoBase && displayDeslocamento) {
+    let valorDeslocamento = parseFloat(inputDeslocamentoBase.value) || 0;
+    
+    // Aplica a condição "Lento"
+    if (condicoesAtivas.includes("Lento")) {
+      valorDeslocamento = Math.floor(valorDeslocamento / 2);
+    }
+    // Aplica a condição "Exausto" (também deixa lento)
+    else if (condicoesAtivas.includes("Exausto")) {
+      valorDeslocamento = Math.floor(valorDeslocamento / 2);
+    }
+
+    displayDeslocamento.innerText = valorDeslocamento + "m";
+  }
+}
+
+function aplicarDebuffsRolagem(nomeTeste, atributoBase, qtdDadosPericia, modFixoAtributo) {
+  let dadosFinal = qtdDadosPericia;
+  let modFinal = modFixoAtributo;
+
+  const teste = nomeTeste.toLowerCase();
+  const atributo = atributoBase.toLowerCase();
+  
+  // Condição: Abalado (-1d20 em testes de resistência)
+  if (condicoesAtivas.includes("Abalado")) {
+    if (["Fortitude", "Vontade", "Reflexos"].includes(teste)) {
+      dadosFinal -= 1;
+    }
+  }
+
+  // Condição: Assustado (-2 fixo em Vontade)
+  if (condicoesAtivas.includes("Assustado") && teste === "Vontade") {
+    modFinal -= 2;
+  }
+
+  // Condição: Fraco (-1d20 em força, constituição e agilidade)
+  if (condicoesAtivas.includes("Fraco") || condicoesAtivas.includes("Fatigado") || condicoesAtivas.includes("Exausto")) {
+    // Fatigado e Exausto deixam o personagem "Fraco" na descrição da regra
+    if (["Força", "Constituição", "Agilidade"].includes(atributo)) {
+      dadosFinal -= 1;
+    }
+  }
+
+  // Condição: Ofuscado (-1d20 em Ataque e Percepção)
+  if (condicoesAtivas.includes("Ofuscado")) {
+    if (teste === "ataque" || teste === "Percepção") {
+      dadosFinal -= 1;
+    }
+  }
+
+  // Condição: Vulnerável (-2 fixo em Fortitude e Reflexos)
+  if (condicoesAtivas.includes("Vulnerável") || condicoesAtivas.includes("Fatigado") || condicoesAtivas.includes("Exausto")) {
+    // Fatigado e Exausto deixam o personagem "Vulnerável"
+    if (teste === "Fortitude" || teste === "Reflexos") {
+      modFinal -= 2;
+    }
+  }
+
+  if (dadosFinal < 0) {
+    dadosFinal = 0; 
+  }
+
+  return {
+    dadosFinal: dadosFinal,
+    modFinal: modFinal
+  };
+}
+
+// Inicializa quando o documento estiver pronto
+document.addEventListener("DOMContentLoaded", () => {
+  inicializarCondicoes();
+});
 
 function ajustarStatus(tipo) {
   const inputQuick = document.getElementById(tipo + "Quick");
