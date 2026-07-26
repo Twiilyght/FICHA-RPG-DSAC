@@ -1680,6 +1680,104 @@
       border-color: var(--cor-dourado);
     }
 
+/* =========================================
+   RESPONSIVIDADE (MOBILE)
+   ========================================= */
+@media (max-width: 900px) {
+  
+  /* 1. Ajuste do Layout Principal */
+  body {
+    flex-direction: column;
+    padding: 0 10px 40px;
+  }
+
+  .main-content {
+    padding-left: 0 !important; 
+    padding-right: 0 !important;
+    width: 100%;
+  }
+
+  /* 2. Ajuste do Título para não colidir com os botões */
+  h1 {
+    font-size: 2.2rem;
+    margin-top: 60px;
+  }
+
+  /* 3. Comportamento Flutuante das Barras Laterais */
+  .sidebar, .sidebar-right {
+    width: 85vw; /* Ocupa 85% da tela, deixando espaço para clicar fora */
+    max-width: 320px;
+    z-index: 2000; /* Garante que ficarão acima de todo o resto */
+  }
+
+  /* 4. Reposicionamento dos Botões de Ocultar/Mostrar Menu */
+  #btnToggleSidebar {
+    left: 10px !important;
+    top: 10px !important;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    z-index: 2001;
+  }
+  
+  #btnToggleSidebarRight {
+    right: 10px !important;
+    top: 10px !important;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    z-index: 2001;
+  }
+
+  /* 5. Reorganização das Abas (Tabs) */
+  .tab-container {
+    gap: 10px;
+  }
+  .tab-button {
+    flex-basis: 100%; /* Faz cada aba ocupar uma linha inteira no celular */
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+  .tab-button.active {
+    font-size: 1.1rem;
+  }
+
+  /* 6. Empilhamento dos Status (Vida, Sanidade, etc) */
+  .status-card {
+    grid-template-columns: 1fr; /* Muda de 2 colunas para 1 coluna */
+    grid-template-areas:
+      "vida"
+      "sanidade"
+      "aura"
+      "deslocamento"
+      "dt"
+      "bloqueio";
+  }
+
+  /* 7. Ajuste de Perícias e Habilidades para não vazarem da tela */
+  .pericia, .atributo {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed var(--cor-dourado-transp);
+  }
+  
+  /* 8. Ajustes Modais (Configuração e Rolagem) */
+  .modal-content {
+    width: 95% !important;
+    padding: 15px !important;
+  }
+  .flex-row {
+    flex-direction: column; /* Coloca configurações lado a lado em uma lista vertical */
+  }
+
+  /* 9. Popup de Rolagem de Dados */
+  .dice-popup {
+    width: 90vw;
+    right: 5vw;
+    bottom: 10px;
+  }
+}
+    
   </style>
 </head>
 
