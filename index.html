@@ -3057,6 +3057,12 @@ function carregarFichaDoSlotAtual() {
       }
     }
 
+    // Adicione junto das outras variáveis que estão sendo puxadas (if dados.x ...)
+if (dados.bonusVidaMax) document.getElementById('bonusVidaMax').value = dados.bonusVidaMax;
+if (dados.bonusSanidadeMax) document.getElementById('bonusSanidadeMax').value = dados.bonusSanidadeMax;
+if (dados.bonusAuraMax) document.getElementById('bonusAuraMax').value = dados.bonusAuraMax;
+if (dados.bonusDeslocamento) document.getElementById('bonusDeslocamento').value = dados.bonusDeslocamento;
+
     habilidades = d.habilidades || [];
     inventario = d.inventario || [];
     renderHabilidades();
@@ -3073,153 +3079,62 @@ function carregarFichaDoSlotAtual() {
 }
 
 function baixarFichaJSON() {
-  const slot = document.getElementById("slot")?.value || "1";
-  const chave = "fichaRPG_" + slot;
-  const dadosSalvos = localStorage.getItem(chave);
-
-  if (!dadosSalvos) {
-    return alert("Nenhum dado encontrado nesse slot!");
-  }
-
-  const blob = new Blob([dadosSalvos], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement("a");
-  link.href = url;
-
-  let nomePersonagem = `Slot ${slot}`;
-  try {
-    const obj = JSON.parse(dadosSalvos);
-    if (obj.nome && obj.nome.trim() !== "") {
-      nomePersonagem = obj.nome.trim();
+    // Pega qual slot está selecionado no momento
+    const slotAtual = document.getElementById('slot').value;
+    
+    // Pega apenas os dados do slot atual salvos no LocalStorage
+    // (Assumindo que você salva como 'ficha_slot_1', etc. Se o seu nome for diferente, altere aqui)
+    const dadosFicha = localStorage.getItem('ficha_slot_' + slotAtual);
+    
+    if (!dadosFicha) {
+        alert("Nenhum dado salvo no Slot " + slotAtual + " para exportar! Salve a ficha antes.");
+        return;
     }
-  } catch (e) {}
 
-  link.download = `Ficha_${nomePersonagem}_Slot${slot}.json`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+    // Cria o arquivo JSON
+    const blob = new Blob([dadosFicha], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    
+    // Nome do arquivo fica dinâmico: Ficha_SlotX_NomeDoPersonagem.json
+    const nomePersonagem = document.getElementById('nome').value || "Desconhecido";
+    a.download = `Ficha_Slot${slotAtual}_${nomePersonagem}.json`;
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
-/**
- * Carrega e processa os dados de uma ficha a partir de um arquivo JSON.
- * @param {Event} event - O evento de input file.
- */
 function carregarFichaJSON(event) {
-  if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
-    console.warn("Nenhum arquivo selecionado.");
-    return;
-  }
+    const file = event.target.files[0];
+    if (!file) return;
 
-  const slot = getSlotAtual();
-  const chave = getChaveSlot(slot);
-  const file = event.target.files[0];
-  const reader = new FileReader();
-
-  reader.onload = function(e) {
-    try {
-      let dados = JSON.parse(e.target.result);
-
-      if (Array.isArray(dados)) {
-        const lista = dados;
-        dados = {
-          nome: lista[0] || "",
-          idade: lista[1] || "",
-          nivel: lista[2] || "",
-          vida: lista[3] || "",
-          sanidade: lista[4] || "",
-          aura: lista[5] || "",
-          antecedencia: lista[6] || "",
-          descricao: lista[7] || "",
-          historia: lista[8] || "",
-          rdFisica: lista[9] || 0,
-          rdMental: lista[10] || 0,
-          dtBonus: lista[11] || 0,
-          atributos: {},
-          pericias: {},
-          habilidades: [],
-          inventario: []
-        };
-
-        const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
-        if (lista[12]) lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
-
-        if (lista[13]) lista[13].forEach((p, i) => {
-          dados.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
-        });
-
-        if (lista[14]) dados.habilidades = lista[14].map(h => ({
-          nome: h[0], dado: h[1], desc: h[2], config: h[3] || {}, rolagens: h[4] || [], img: h[5] || ""
-        }));
-
-        if (lista[15]) dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
-      }
-
-      document.getElementById("nome").value = dados.nome || "";
-      document.getElementById("idade").value = dados.idade || "";
-      document.getElementById("antecedencia").value = dados.antecedencia || "";
-      document.getElementById("descricao").value = dados.descricao || "";
-      document.getElementById("historia").value = dados.historia || "";
-      document.getElementById("nivel").value = dados.nivel || 1;
-      document.getElementById("vida").value = dados.vida || 0;
-      document.getElementById("sanidade").value = dados.sanidade || 0;
-      document.getElementById("aura").value = dados.aura || 0;
-      document.getElementById("rdFisica").value = dados.rdFisica || 0;
-      document.getElementById("rdMental").value = dados.rdMental || 0;
-      document.getElementById("dtBonus").value = dados.dtBonus || 0;
-      document.getElementById("dtAtributoBase").value = dados.dtAtributoBase || "POD";
-
-      const img = document.getElementById("previewImg");
-      if (dados.imagem) {
-        img.src = dados.imagem;
-        img.style.display = "block";
-        img.dataset.base64 = dados.imagem;
-      } else {
-        img.style.display = "none";
-        img.dataset.base64 = "";
-      }
-
-      for (const s in dados.atributos) {
-        const el = document.getElementById("atr_" + s);
-        if (el) el.value = dados.atributos[s];
-      }
-
-      for (const p in dados.pericias) {
-        const data = dados.pericias[p];
-        if (typeof data === "object") {
-          const elValor = document.getElementById(p);
-          if (elValor) elValor.value = data.valor || 1;
-
-          const elBonus = document.getElementById("bonus_" + p);
-          if (elBonus) elBonus.value = data.bonus || 0;
-
-          const elAtr = document.getElementById("atrKey_" + p);
-          if (elAtr) elAtr.value = data.atributo || "FOR";
+    // Pega o slot atual selecionado no HTML
+    const slotAtual = document.getElementById('slot').value;
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            // Verifica se o arquivo é um JSON válido
+            const json = JSON.parse(e.target.result);
+            
+            // Salva os dados lidos EXATAMENTE no slot que está selecionado
+            localStorage.setItem('ficha_slot_' + slotAtual, JSON.stringify(json));
+            
+            alert(`Ficha importada com sucesso para o Slot ${slotAtual}!`);
+            
+            // Recarrega a página para puxar os dados visuais (ou chame sua função carregarFicha())
+            location.reload(); 
+        } catch (error) {
+            alert("Erro ao ler o arquivo. Certifique-se de que é um arquivo .json de ficha válido.");
         }
-      }
-
-      habilidades = dados.habilidades || [];
-      inventario = dados.inventario || [];
-
-      renderHabilidades();
-      renderInventario();
-      atualizarDT();
-      recalcularVidaSanidade();
-      atualizarBloqueio();
-
-      localStorage.setItem(chave, JSON.stringify(dados));
-      fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
-      atualizarNomeSlotEspecifico(slot, dados.nome);
-
-      alert(`Fichas dos Slots importadas com sucesso!`);
-    } catch (erro) {
-      console.error(erro);
-      alert("Erro ao ler o arquivo JSON. Tem certeza que é uma ficha válida?");
-    }
-  };
-
-  reader.readAsText(file);
+    };
+    reader.readAsText(file);
+    
+    // Limpa o input para permitir importar o mesmo arquivo de novo, se necessário
+    event.target.value = '';
 }
   
 const somDado = new Audio("dado.mp3")
@@ -4217,6 +4132,11 @@ function salvarFichaManual() {
     };
   });
 
+dados.bonusVidaMax = document.getElementById('bonusVidaMax').value;
+dados.bonusSanidadeMax = document.getElementById('bonusSanidadeMax').value;
+dados.bonusAuraMax = document.getElementById('bonusAuraMax').value;
+dados.bonusDeslocamento = document.getElementById('bonusDeslocamento').value;
+
   localStorage.setItem(chave, JSON.stringify(dados));
   fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
   atualizarNomeSlotEspecifico(slot, dados.nome);
@@ -4389,6 +4309,36 @@ document.getElementById("nome").addEventListener("input", () => {
   });
 });
 
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Resolve o bug do celular: Força as barras laterais a começarem minimizadas em telas pequenas
+    if (window.innerWidth <= 900) {
+        document.getElementById('sidebar').classList.add('minimized');
+        document.getElementById('sidebarRight').classList.add('minimized');
+    }
+
+    // 2. Lógica das abas à prova de falhas para Desktop e Mobile
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            // Remove a classe 'active' de todos os botões e conteúdos
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Adiciona a classe 'active' no botão clicado
+            button.classList.add('active');
+            
+            // Pega o ID da aba que precisa abrir pelo atributo 'data-tab'
+            const tabId = button.getAttribute('data-tab');
+            const targetContent = document.getElementById(tabId);
+            
+            if (targetContent) {
+                targetContent.classList.add('active');
+            }
+        });
+    });
+});
 
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
