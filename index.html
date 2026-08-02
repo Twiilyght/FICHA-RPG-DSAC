@@ -3078,54 +3078,72 @@ if (dados.bonusDeslocamento) document.getElementById('bonusDeslocamento').value 
   }
 }
 
-function baixarFichaJSON() {
-    const slotAtual = document.getElementById('slot').value;
-    
-    const dadosFicha = localStorage.getItem('ficha_slot_' + slotAtual);
-    
-    if (!dadosFicha) {
-        alert("Nenhum dado salvo no Slot " + slotAtual + " para exportar! Salve a ficha antes.");
-        return;
-    }
+// ================= IMPORTAR / EXPORTAR JSON =================
 
-    const blob = new Blob([dadosFicha], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    
-    const nomePersonagem = document.getElementById('nome').value || "Desconhecido";
-    a.download = `Ficha_Slot${slotAtual}_${nomePersonagem}.json`;
-    
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+function baixarFichaJSON() {
+  const slot = getSlotAtual();
+  const chave = getChaveSlot(slot);
+  let dados = localStorage.getItem(chave);
+  
+  if (!dados) {
+    alert("Salve a ficha no slot atual antes de exportar!");
+    return;
+  }
+  
+  // Cria o arquivo virtual
+  const blob = new Blob([dados], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  
+  // Cria um link invisível e clica nele para forçar o download
+  const a = document.createElement("a");
+  a.href = url;
+  
+  // Tenta pegar o nome do personagem para o arquivo, se não houver usa genérico
+  const dadosObj = JSON.parse(dados);
+  const nomeArq = dadosObj.nome ? dadosObj.nome.replace(/\s+/g, '_') : "Desconhecido";
+  a.download = `DSAC_Ficha_${nomeArq}_Slot${slot}.json`;
+  
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function carregarFichaJSON(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+  const file = event.target.files[0];
+  if (!file) return;
 
-    const slotAtual = document.getElementById('slot').value;
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        try {
-            // Verifica se o arquivo é um JSON válido
-            const json = JSON.parse(e.target.result);
-            
-            localStorage.setItem('ficha_slot_' + slotAtual, JSON.stringify(json));
-            
-            alert(`Ficha importada com sucesso para o Slot ${slotAtual}!`);
-            
-            location.reload(); 
-        } catch (error) {
-            alert("Erro ao ler o arquivo. Certifique-se de que é um arquivo .json de ficha válido.");
-        }
-    };
-    reader.readAsText(file);
-    
-    event.target.value = '';
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const dadosObj = JSON.parse(e.target.result);
+      const slot = getSlotAtual();
+      const chave = getChaveSlot(slot);
+      
+      // Salva o JSON no localStorage no slot atual
+      localStorage.setItem(chave, JSON.stringify(dadosObj));
+      
+      // Força a tela a carregar os dados novos
+      carregarFichaDaNuvem();
+      
+      const alerta = document.getElementById("alerta");
+      if(alerta) {
+          alerta.innerText = `Ficha importada com sucesso no Slot ${slot}!`;
+          alerta.style.display = "block";
+          setTimeout(() => alerta.style.display = "none", 3000);
+      } else {
+          alert(`Ficha importada com sucesso no Slot ${slot}!`);
+      }
+      
+    } catch (error) {
+      alert("Erro ao importar a ficha. O arquivo JSON pode estar corrompido.");
+      console.error(error);
+    }
+    // Limpa o input file para permitir importar o mesmo arquivo novamente se necessário
+    event.target.value = "";
+  };
+  
+  reader.readAsText(file);
 }
   
 const somDado = new Audio("dado.mp3")
@@ -4086,7 +4104,10 @@ function limparFicha(){
 
   document.getElementById("rdFisica").value = 0;
   document.getElementById("rdMental").value = 0;
-  
+  document.getElementById("bonusVidaMax").value = 0;
+  document.getElementById("bonusSanidadeMax").value = 0;
+  document.getElementById("bonusAuraMax").value = 0;
+  document.getElementById("bonusDeslocamento").value = 0;
   document.getElementById("nivel").value = 1;
 
   atributos.forEach(a=>{
@@ -4143,6 +4164,10 @@ function carregarFichaDaNuvem() {
     document.getElementById("rdMental").value = d.rdMental || 0;
     document.getElementById("dtBonus").value = d.dtBonus || 0;
     document.getElementById("dtAtributoBase").value = d.dtAtributoBase || "POD";
+    document.getElementById("bonusVidaMax").value = d.bonusVidaMax || 0;
+    document.getElementById("bonusSanidadeMax").value = d.bonusSanidadeMax || 0;
+    document.getElementById("bonusAuraMax").value = d.bonusAuraMax || 0;
+    document.getElementById("bonusDeslocamento").value = d.bonusDeslocamento || 0;
 
     const img = document.getElementById("previewImg");
     console.log("☁️ Ficha sincronizada com a nuvem!");
@@ -4200,58 +4225,32 @@ document.getElementById("nome").addEventListener("input", () => {
 });
 
 /* ======== ABA DE NAVEGAÇÃO ======== */
-const abas = document.querySelectorAll(".tab-button");
-const conteudos = document.querySelectorAll(".tab-content");
-
-abas.forEach(btn => {
-  btn.addEventListener("click", () => {
-    // Remove ativo das abas
-    abas.forEach(b => b.classList.remove("active"));
-    // Oculta todos os conteúdos
-    conteudos.forEach(c => c.classList.remove("active"));
-
-    // Ativa aba clicada
-    btn.classList.add("active");
-    // Mostra conteúdo correspondente
-    const tab = btn.dataset.tab;
-    document.getElementById(tab).classList.add("active");
-  });
-});
-
-
 document.addEventListener('DOMContentLoaded', () => {
-  const abas = document.querySelectorAll(".tab-button");
-  const conteudos = document.querySelectorAll(".tab-content");
-
-document.getElementById("nome").addEventListener("input", () => {
-  sincronizarNomeDoSlotAtual();
-});
-
-  abas.forEach(btn => {
-    btn.addEventListener("click", () => {
-      abas.forEach(b => b.classList.remove("active"));
-      conteudos.forEach(c => c.classList.remove("active"));
-
-      btn.classList.add("active");
-      const tab = btn.dataset.tab;
-      document.getElementById(tab).classList.add("active");
-    });
-  });
-});
-
-window.addEventListener('DOMContentLoaded', () => {
-    // 1. Resolve o bug do celular: Força as barras laterais a começarem minimizadas em telas pequenas
-    if (window.innerWidth <= 900) {
-        document.getElementById('sidebar').classList.add('minimized');
-        document.getElementById('sidebarRight').classList.add('minimized');
+    // 1. Sincronização de nome
+    const inputNome = document.getElementById("nome");
+    if (inputNome) {
+        inputNome.addEventListener("input", () => {
+            sincronizarNomeDoSlotAtual();
+        });
     }
 
-    // 2. Lógica das abas à prova de falhas para Desktop e Mobile
+    // 2. Resolve o bug do celular: Força as barras laterais a começarem minimizadas
+    if (window.innerWidth <= 900) {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarRight = document.getElementById('sidebarRight');
+        if (sidebar) sidebar.classList.add('minimized');
+        if (sidebarRight) sidebarRight.classList.add('minimized');
+    }
+
+    // 3. Lógica das abas à prova de falhas (Única instância)
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
     tabButtons.forEach(button => {
+        // Usa click padrão (o iOS entende bem se não houver conflitos)
         button.addEventListener('click', (e) => {
+            e.preventDefault(); // Evita comportamentos estranhos em links/buttons no mobile
+
             // Remove a classe 'active' de todos os botões e conteúdos
             tabButtons.forEach(btn => btn.classList.remove('active'));
             tabContents.forEach(content => content.classList.remove('active'));
@@ -4259,7 +4258,7 @@ window.addEventListener('DOMContentLoaded', () => {
             // Adiciona a classe 'active' no botão clicado
             button.classList.add('active');
             
-            // Pega o ID da aba que precisa abrir pelo atributo 'data-tab'
+            // Pega o ID da aba e ativa o conteúdo
             const tabId = button.getAttribute('data-tab');
             const targetContent = document.getElementById(tabId);
             
@@ -4268,10 +4267,10 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-});
 
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
+});
 
 </script>
 
