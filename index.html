@@ -2353,6 +2353,38 @@
       if (option) option.textContent = nomePersonagem ? `${nomePersonagem} (Slot ${slot})` : `Slot ${slot}`;
     }
 
+    function registrarLog(tipo, detalhe, total){
+  const nome = document.getElementById("nome").value || "Anônimo";
+  const log = {
+    uid: usuarioAtual ? usuarioAtual.uid : "",
+    email: usuarioAtual ? usuarioAtual.email : "",
+    nome,
+    tipo,
+    detalhe,
+    total,
+    oculto: isRolagemOculta,
+    hora: new Date().toLocaleString("pt-BR")
+  };
+
+  database.ref('rolagens').push(log);
+  logRolagens.unshift(log);
+  renderLogRolagens();
+}
+
+function renderLogRolagens() {
+  const container = document.getElementById("logRolagens");
+  if (!container) return;
+
+  container.innerHTML = logRolagens.map(log => `
+    <div class="log-item">
+      <div><span class="log-nome">${log.nome}</span> - ${log.tipo}</div>
+      <div>${log.detalhe}</div>
+      <div class="log-valor">${log.total}</div>
+      <small>${log.hora}</small>
+    </div>
+  `).join("");
+}
+
     function montarSelectsEListeners() {
       const temaSelector = document.getElementById('temaSelector');
       const temas = ['tema-classico', 'tema-vermelho-roxo', 'tema-azul-preto', 'tema-roxo-preto', 'tema-azul-ciano', 'tema-preto-branco'];
