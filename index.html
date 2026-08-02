@@ -470,12 +470,6 @@
       text-shadow: 0 0 3px var(--cor-dourado-transp);
     }
 
-    .tab-button {
-    cursor: pointer !important;
-    -webkit-tap-highlight-color: transparent; /* Remove aquele quadrado cinza ao tocar */
-    touch-action: manipulation; /* Melhora a resposta ao toque */
-}
-
     .tab-button:hover {
       background-color: var(--cor-tab-hover-bg);
       border-color: var(--cor-tab-hover-border);
@@ -2232,7 +2226,6 @@ let fichasSlots = {};
 let inventario = [];
 let logRolagens = [];
 let habilidades = [];
-let slotAtual = 1;
 
 
 // Variável global para sabermos qual habilidade está sendo editada no momento
@@ -3064,12 +3057,6 @@ function carregarFichaDoSlotAtual() {
       }
     }
 
-    // Adicione junto das outras variáveis que estão sendo puxadas (if dados.x ...)
-if (dados.bonusVidaMax) document.getElementById('bonusVidaMax').value = dados.bonusVidaMax;
-if (dados.bonusSanidadeMax) document.getElementById('bonusSanidadeMax').value = dados.bonusSanidadeMax;
-if (dados.bonusAuraMax) document.getElementById('bonusAuraMax').value = dados.bonusAuraMax;
-if (dados.bonusDeslocamento) document.getElementById('bonusDeslocamento').value = dados.bonusDeslocamento;
-
     habilidades = d.habilidades || [];
     inventario = d.inventario || [];
     renderHabilidades();
@@ -3085,71 +3072,153 @@ if (dados.bonusDeslocamento) document.getElementById('bonusDeslocamento').value 
   }
 }
 
-// ================= IMPORTAR / EXPORTAR JSON =================
-
 function baixarFichaJSON() {
-  const slot = getSlotAtual();
-  const chave = getChaveSlot(slot);
-  let dados = localStorage.getItem(chave);
-  
-  if (!dados) {
-    alert("Salve a ficha no slot atual antes de exportar!");
-    return;
+  const slot = document.getElementById("slot")?.value || "1";
+  const chave = "fichaRPG_" + slot;
+  const dadosSalvos = localStorage.getItem(chave);
+
+  if (!dadosSalvos) {
+    return alert("Nenhum dado encontrado nesse slot!");
   }
-  
-  // Cria o arquivo virtual
-  const blob = new Blob([dados], { type: "application/json" });
+
+  const blob = new Blob([dadosSalvos], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  
-  // Cria um link invisível e clica nele para forçar o download
-  const a = document.createElement("a");
-  a.href = url;
-  
-  // Tenta pegar o nome do personagem para o arquivo, se não houver usa genérico
-  const dadosObj = JSON.parse(dados);
-  const nomeArq = dadosObj.nome ? dadosObj.nome.replace(/\s+/g, '_') : "Desconhecido";
-  a.download = `DSAC_Ficha_${nomeArq}_Slot${slot}.json`;
-  
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
+
+  const link = document.createElement("a");
+  link.href = url;
+
+  let nomePersonagem = `Slot ${slot}`;
+  try {
+    const obj = JSON.parse(dadosSalvos);
+    if (obj.nome && obj.nome.trim() !== "") {
+      nomePersonagem = obj.nome.trim();
+    }
+  } catch (e) {}
+
+  link.download = `Ficha_${nomePersonagem}_Slot${slot}.json`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Carrega e processa os dados de uma ficha a partir de um arquivo JSON.
+ * @param {Event} event - O evento de input file.
+ */
 function carregarFichaJSON(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  if (!event || !event.target || !event.target.files || event.target.files.length === 0) {
+    console.warn("Nenhum arquivo selecionado.");
+    return;
+  }
 
+  const slot = getSlotAtual();
+  const chave = getChaveSlot(slot);
+  const file = event.target.files[0];
   const reader = new FileReader();
+
   reader.onload = function(e) {
     try {
-      const dadosObj = JSON.parse(e.target.result);
-      const slot = getSlotAtual();
-      const chave = getChaveSlot(slot);
-      
-      // Salva o JSON no localStorage no slot atual
-      localStorage.setItem(chave, JSON.stringify(dadosObj));
-      
-      // Força a tela a carregar os dados novos
-      carregarFichaDaNuvem();
-      
-      const alerta = document.getElementById("alerta");
-      if(alerta) {
-          alerta.innerText = `Ficha importada com sucesso no Slot ${slot}!`;
-          alerta.style.display = "block";
-          setTimeout(() => alerta.style.display = "none", 3000);
-      } else {
-          alert(`Ficha importada com sucesso no Slot ${slot}!`);
+      let dados = JSON.parse(e.target.result);
+
+      if (Array.isArray(dados)) {
+        const lista = dados;
+        dados = {
+          nome: lista[0] || "",
+          idade: lista[1] || "",
+          nivel: lista[2] || "",
+          vida: lista[3] || "",
+          sanidade: lista[4] || "",
+          aura: lista[5] || "",
+          antecedencia: lista[6] || "",
+          descricao: lista[7] || "",
+          historia: lista[8] || "",
+          rdFisica: lista[9] || 0,
+          rdMental: lista[10] || 0,
+          dtBonus: lista[11] || 0,
+          atributos: {},
+          pericias: {},
+          habilidades: [],
+          inventario: []
+        };
+
+        const siglas = ["FOR", "CON", "AGI", "INT", "POD"];
+        if (lista[12]) lista[12].forEach((val, i) => { dados.atributos[siglas[i]] = val; });
+
+        if (lista[13]) lista[13].forEach((p, i) => {
+          dados.pericias["per_" + i] = { valor: p[0], bonus: p[1], atributo: p[2] };
+        });
+
+        if (lista[14]) dados.habilidades = lista[14].map(h => ({
+          nome: h[0], dado: h[1], desc: h[2], config: h[3] || {}, rolagens: h[4] || [], img: h[5] || ""
+        }));
+
+        if (lista[15]) dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
       }
-      
-    } catch (error) {
-      alert("Erro ao importar a ficha. O arquivo JSON pode estar corrompido.");
-      console.error(error);
+
+      document.getElementById("nome").value = dados.nome || "";
+      document.getElementById("idade").value = dados.idade || "";
+      document.getElementById("antecedencia").value = dados.antecedencia || "";
+      document.getElementById("descricao").value = dados.descricao || "";
+      document.getElementById("historia").value = dados.historia || "";
+      document.getElementById("nivel").value = dados.nivel || 1;
+      document.getElementById("vida").value = dados.vida || 0;
+      document.getElementById("sanidade").value = dados.sanidade || 0;
+      document.getElementById("aura").value = dados.aura || 0;
+      document.getElementById("rdFisica").value = dados.rdFisica || 0;
+      document.getElementById("rdMental").value = dados.rdMental || 0;
+      document.getElementById("dtBonus").value = dados.dtBonus || 0;
+      document.getElementById("dtAtributoBase").value = dados.dtAtributoBase || "POD";
+
+      const img = document.getElementById("previewImg");
+      if (dados.imagem) {
+        img.src = dados.imagem;
+        img.style.display = "block";
+        img.dataset.base64 = dados.imagem;
+      } else {
+        img.style.display = "none";
+        img.dataset.base64 = "";
+      }
+
+      for (const s in dados.atributos) {
+        const el = document.getElementById("atr_" + s);
+        if (el) el.value = dados.atributos[s];
+      }
+
+      for (const p in dados.pericias) {
+        const data = dados.pericias[p];
+        if (typeof data === "object") {
+          const elValor = document.getElementById(p);
+          if (elValor) elValor.value = data.valor || 1;
+
+          const elBonus = document.getElementById("bonus_" + p);
+          if (elBonus) elBonus.value = data.bonus || 0;
+
+          const elAtr = document.getElementById("atrKey_" + p);
+          if (elAtr) elAtr.value = data.atributo || "FOR";
+        }
+      }
+
+      habilidades = dados.habilidades || [];
+      inventario = dados.inventario || [];
+
+      renderHabilidades();
+      renderInventario();
+      atualizarDT();
+      recalcularVidaSanidade();
+      atualizarBloqueio();
+
+      localStorage.setItem(chave, JSON.stringify(dados));
+      fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
+      atualizarNomeSlotEspecifico(slot, dados.nome);
+
+      alert(`Fichas dos Slots importadas com sucesso!`);
+    } catch (erro) {
+      console.error(erro);
+      alert("Erro ao ler o arquivo JSON. Tem certeza que é uma ficha válida?");
     }
-    // Limpa o input file para permitir importar o mesmo arquivo novamente se necessário
-    event.target.value = "";
   };
-  
+
   reader.readAsText(file);
 }
   
@@ -4030,13 +4099,75 @@ function carregarImagem(event){
   };
   reader.readAsDataURL(file);
 }
+  
+function baixarFichaJSON() {
+  const slot = document.getElementById("slot")?.value || "1";
+  const chave = "fichaRPG_" + slot;
+  const dadosSalvos = localStorage.getItem(chave);
+
+  if (!usuarioAtual) {
+    alert("⚠️ Você precisa fazer login com o Google para salvar a ficha!");
+    return;
+  }
+
+   if (!dadosSalvos) {
+    return alert("Nenhum dado encontrado nesse slot!");
+  }
+
+  const dados = {
+    jogador: usuarioAtual.displayName, // Salva o nome real do Google
+    uid: usuarioAtual.uid,             // Salva o ID único
+    imagem: document.getElementById("previewImg").dataset.base64 || "",
+    nome: document.getElementById("nome").value,
+    idade: document.getElementById("idade").value,
+    antecedencia: document.getElementById("antecedencia").value,
+    descricao: document.getElementById("descricao").value,
+    historia: document.getElementById("historia").value,
+    inventario: inventario,
+    nivel: document.getElementById("nivel").value,
+    vida: document.getElementById("vida").value,
+    sanidade: document.getElementById("sanidade").value,
+    aura: document.getElementById("aura").value,
+    habilidades: habilidades,
+    dtBonus: document.getElementById("dtBonus").value,
+    dtAtributoBase: document.getElementById("dtAtributoBase").value,
+    rdFisica: document.getElementById("rdFisica").value,
+    rdMental: document.getElementById("rdMental").value,
+    atributos: {},
+    pericias: {}
+  };
+
+  atributos.forEach(a => {
+    dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla).value;
+  });
+
+  pericias.forEach((p, i) => {
+    dados.pericias["per_" + i] = {
+      valor: document.getElementById("per_" + i).value,
+      bonus: document.getElementById("bonus_per_" + i).value,
+      atributo: document.getElementById("atrKey_per_" + i).value
+    };
+  });
+
+  database.ref('fichas/' + usuarioAtual.uid).set(dados)
+    .then(() => {
+      const alerta = document.getElementById("alerta");
+      alerta.innerText = "☁️ Ficha salva na nuvem com sucesso!";
+      alerta.style.display = "block";
+      setTimeout(() => alerta.style.display = "none", 2500);
+    })
+    .catch(error => {
+      console.error(error);
+      alert("Erro ao salvar na nuvem: Permissão negada ou erro de conexão.");
+    });
+} 
 
 function getSlotAtual() {
-    return slotAtual;
+  return document.getElementById("slot")?.value || "1";
 }
 
 function getChaveSlot(slot) {
-    return `dsac_ficha_slot_${slot}`; // Chave única para cada slot no localStorage
+  return "fichaRPG_" + slot;
 }
 
 function montarDadosFicha() {
@@ -4064,31 +4195,6 @@ function montarDadosFicha() {
   };
 }
 
-function mudarSlot(numeroDoNovoSlot) {
-    if (slotAtual === numeroDoNovoSlot) return; // Evita recarregar se já estiver no slot
-
-    // 1. Salva automaticamente a ficha atual ANTES de mudar
-    salvarFichaManual(); 
-
-    // 2. Atualiza a referência global para o novo slot
-    slotAtual = numeroDoNovoSlot;
-
-    // 3. LIMPA A TELA COMPLETAMENTE. Se não fizermos isso, os dados da 
-    // ficha antiga continuam na tela e podem ser salvos por engano no novo slot.
-    limparFichaVisualmente();
-
-    // 4. Carrega os dados do novo slot do localStorage (se houver)
-    carregarFichaDaNuvem();
-
-    // 5. Atualiza o visual dos botões (feedback visual de qual está ativo)
-    document.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('active'));
-    const btnAtivo = document.getElementById(`btn-slot-${numeroDoNovoSlot}`);
-    if(btnAtivo) btnAtivo.classList.add('active');
-    
-    // (Opcional) Avisa o usuário
-    console.log(`Você mudou para o Slot ${slotAtual}.`);
-}
-
 function salvarFichaManual() {
   if (!usuarioAtual) {
     alert("⚠️ Você precisa fazer login com o Google para salvar a ficha!");
@@ -4111,12 +4217,6 @@ function salvarFichaManual() {
     };
   });
 
-  dados.bonusVidaMax = document.getElementById("bonusVidaMax").value;
-  dados.bonusSanidadeMax = document.getElementById("bonusSanidadeMax").value;
-  dados.bonusAuraMax = document.getElementById("bonusAuraMax").value;
-  dados.bonusDeslocamento = document.getElementById("bonusDeslocamento").value;
-  // -------------------------------------
-
   localStorage.setItem(chave, JSON.stringify(dados));
   fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
   atualizarNomeSlotEspecifico(slot, dados.nome);
@@ -4136,10 +4236,7 @@ function limparFicha(){
 
   document.getElementById("rdFisica").value = 0;
   document.getElementById("rdMental").value = 0;
-  document.getElementById("bonusVidaMax").value = 0;
-  document.getElementById("bonusSanidadeMax").value = 0;
-  document.getElementById("bonusAuraMax").value = 0;
-  document.getElementById("bonusDeslocamento").value = 0;
+  
   document.getElementById("nivel").value = 1;
 
   atributos.forEach(a=>{
@@ -4196,10 +4293,6 @@ function carregarFichaDaNuvem() {
     document.getElementById("rdMental").value = d.rdMental || 0;
     document.getElementById("dtBonus").value = d.dtBonus || 0;
     document.getElementById("dtAtributoBase").value = d.dtAtributoBase || "POD";
-    document.getElementById("bonusVidaMax").value = d.bonusVidaMax || 0;
-    document.getElementById("bonusSanidadeMax").value = d.bonusSanidadeMax || 0;
-    document.getElementById("bonusAuraMax").value = d.bonusAuraMax || 0;
-    document.getElementById("bonusDeslocamento").value = d.bonusDeslocamento || 0;
 
     const img = document.getElementById("previewImg");
     console.log("☁️ Ficha sincronizada com a nuvem!");
@@ -4257,43 +4350,45 @@ document.getElementById("nome").addEventListener("input", () => {
 });
 
 /* ======== ABA DE NAVEGAÇÃO ======== */
-document.addEventListener('DOMContentLoaded', () => {
-    const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+const abas = document.querySelectorAll(".tab-button");
+const conteudos = document.querySelectorAll(".tab-content");
 
-    function ativarAba(e) {
-        e.preventDefault();
-        
-        // Se foi um evento de toque, evita que o click dispare logo depois (duplo disparo)
-        if (e.type === 'touchstart') {
-            e.target.dataset.touched = 'true';
-        } else if (e.type === 'click' && e.target.dataset.touched) {
-            delete e.target.dataset.touched;
-            return; 
-        }
+abas.forEach(btn => {
+  btn.addEventListener("click", () => {
+    // Remove ativo das abas
+    abas.forEach(b => b.classList.remove("active"));
+    // Oculta todos os conteúdos
+    conteudos.forEach(c => c.classList.remove("active"));
 
-        const button = e.currentTarget;
-        const tabId = button.getAttribute('data-tab');
-        
-        if (!tabId) return;
-
-        // Desativa tudo
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
-        // Ativa apenas o alvo
-        button.classList.add('active');
-        const targetContent = document.getElementById(tabId);
-        if (targetContent) {
-            targetContent.classList.add('active');
-        }
-    }
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', ativarAba, { passive: false });
-        button.addEventListener('touchstart', ativarAba, { passive: false });
-    });
+    // Ativa aba clicada
+    btn.classList.add("active");
+    // Mostra conteúdo correspondente
+    const tab = btn.dataset.tab;
+    document.getElementById(tab).classList.add("active");
+  });
 });
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const abas = document.querySelectorAll(".tab-button");
+  const conteudos = document.querySelectorAll(".tab-content");
+
+document.getElementById("nome").addEventListener("input", () => {
+  sincronizarNomeDoSlotAtual();
+});
+
+  abas.forEach(btn => {
+    btn.addEventListener("click", () => {
+      abas.forEach(b => b.classList.remove("active"));
+      conteudos.forEach(c => c.classList.remove("active"));
+
+      btn.classList.add("active");
+      const tab = btn.dataset.tab;
+      document.getElementById(tab).classList.add("active");
+    });
+  });
+});
+
 
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
