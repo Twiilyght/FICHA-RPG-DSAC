@@ -4089,39 +4089,6 @@ function mudarSlot(numeroDoNovoSlot) {
     console.log(`Você mudou para o Slot ${slotAtual}.`);
 }
 
-function limparFichaVisualmente() {
-    // Inputs de texto e números básicos
-    const inputsParaLimpar = [
-        "nome", "origem", "classe", "trilha",
-        "forca", "agilidade", "intelecto", "presenca", "vigor",
-        "vidaAtual", "vidaMax", "sanidadeAtual", "sanidadeMax",
-        "auraAtual", "auraMax", "defesaPassiva", "esquiva", "bloqueio", "deslocamento",
-        "bonusVidaMax", "bonusSanidadeMax", "bonusAuraMax", "bonusDeslocamento", "dtAtributoBase"
-    ];
-
-    inputsParaLimpar.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            // Se for número, zera. Se for texto, deixa vazio.
-            el.value = el.type === 'number' ? "" : ""; 
-        }
-    });
-
-    // Limpa imagem de perfil
-    const foto = document.getElementById("fotoPerfil");
-    if (foto) foto.src = "default.png"; // coloque o caminho da sua imagem padrão
-
-    // Limpa divs dinâmicas (inventário, perícias, armas)
-    const conteineresDinamicos = ["listaArmas", "listaInventario", "listaHabilidades"];
-    conteineresDinamicos.forEach(id => {
-        const div = document.getElementById(id);
-        if (div) div.innerHTML = "";
-    });
-
-    // Zera os checkboxes de rituais/habilidades
-    document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
-}
-
 function salvarFichaManual() {
   if (!usuarioAtual) {
     alert("⚠️ Você precisa fazer login com o Google para salvar a ficha!");
