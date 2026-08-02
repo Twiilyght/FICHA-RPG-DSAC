@@ -3079,11 +3079,8 @@ if (dados.bonusDeslocamento) document.getElementById('bonusDeslocamento').value 
 }
 
 function baixarFichaJSON() {
-    // Pega qual slot está selecionado no momento
     const slotAtual = document.getElementById('slot').value;
     
-    // Pega apenas os dados do slot atual salvos no LocalStorage
-    // (Assumindo que você salva como 'ficha_slot_1', etc. Se o seu nome for diferente, altere aqui)
     const dadosFicha = localStorage.getItem('ficha_slot_' + slotAtual);
     
     if (!dadosFicha) {
@@ -3091,13 +3088,11 @@ function baixarFichaJSON() {
         return;
     }
 
-    // Cria o arquivo JSON
     const blob = new Blob([dadosFicha], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
     
-    // Nome do arquivo fica dinâmico: Ficha_SlotX_NomeDoPersonagem.json
     const nomePersonagem = document.getElementById('nome').value || "Desconhecido";
     a.download = `Ficha_Slot${slotAtual}_${nomePersonagem}.json`;
     
@@ -3111,7 +3106,6 @@ function carregarFichaJSON(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Pega o slot atual selecionado no HTML
     const slotAtual = document.getElementById('slot').value;
     const reader = new FileReader();
     
@@ -3120,12 +3114,10 @@ function carregarFichaJSON(event) {
             // Verifica se o arquivo é um JSON válido
             const json = JSON.parse(e.target.result);
             
-            // Salva os dados lidos EXATAMENTE no slot que está selecionado
             localStorage.setItem('ficha_slot_' + slotAtual, JSON.stringify(json));
             
             alert(`Ficha importada com sucesso para o Slot ${slotAtual}!`);
             
-            // Recarrega a página para puxar os dados visuais (ou chame sua função carregarFicha())
             location.reload(); 
         } catch (error) {
             alert("Erro ao ler o arquivo. Certifique-se de que é um arquivo .json de ficha válido.");
@@ -3133,7 +3125,6 @@ function carregarFichaJSON(event) {
     };
     reader.readAsText(file);
     
-    // Limpa o input para permitir importar o mesmo arquivo de novo, se necessário
     event.target.value = '';
 }
   
@@ -4014,68 +4005,6 @@ function carregarImagem(event){
   };
   reader.readAsDataURL(file);
 }
-  
-function baixarFichaJSON() {
-  const slot = document.getElementById("slot")?.value || "1";
-  const chave = "fichaRPG_" + slot;
-  const dadosSalvos = localStorage.getItem(chave);
-
-  if (!usuarioAtual) {
-    alert("⚠️ Você precisa fazer login com o Google para salvar a ficha!");
-    return;
-  }
-
-   if (!dadosSalvos) {
-    return alert("Nenhum dado encontrado nesse slot!");
-  }
-
-  const dados = {
-    jogador: usuarioAtual.displayName, // Salva o nome real do Google
-    uid: usuarioAtual.uid,             // Salva o ID único
-    imagem: document.getElementById("previewImg").dataset.base64 || "",
-    nome: document.getElementById("nome").value,
-    idade: document.getElementById("idade").value,
-    antecedencia: document.getElementById("antecedencia").value,
-    descricao: document.getElementById("descricao").value,
-    historia: document.getElementById("historia").value,
-    inventario: inventario,
-    nivel: document.getElementById("nivel").value,
-    vida: document.getElementById("vida").value,
-    sanidade: document.getElementById("sanidade").value,
-    aura: document.getElementById("aura").value,
-    habilidades: habilidades,
-    dtBonus: document.getElementById("dtBonus").value,
-    dtAtributoBase: document.getElementById("dtAtributoBase").value,
-    rdFisica: document.getElementById("rdFisica").value,
-    rdMental: document.getElementById("rdMental").value,
-    atributos: {},
-    pericias: {}
-  };
-
-  atributos.forEach(a => {
-    dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla).value;
-  });
-
-  pericias.forEach((p, i) => {
-    dados.pericias["per_" + i] = {
-      valor: document.getElementById("per_" + i).value,
-      bonus: document.getElementById("bonus_per_" + i).value,
-      atributo: document.getElementById("atrKey_per_" + i).value
-    };
-  });
-
-  database.ref('fichas/' + usuarioAtual.uid).set(dados)
-    .then(() => {
-      const alerta = document.getElementById("alerta");
-      alerta.innerText = "☁️ Ficha salva na nuvem com sucesso!";
-      alerta.style.display = "block";
-      setTimeout(() => alerta.style.display = "none", 2500);
-    })
-    .catch(error => {
-      console.error(error);
-      alert("Erro ao salvar na nuvem: Permissão negada ou erro de conexão.");
-    });
-} 
 
 function getSlotAtual() {
   return document.getElementById("slot")?.value || "1";
@@ -4132,10 +4061,11 @@ function salvarFichaManual() {
     };
   });
 
-dados.bonusVidaMax = document.getElementById('bonusVidaMax').value;
-dados.bonusSanidadeMax = document.getElementById('bonusSanidadeMax').value;
-dados.bonusAuraMax = document.getElementById('bonusAuraMax').value;
-dados.bonusDeslocamento = document.getElementById('bonusDeslocamento').value;
+  dados.bonusVidaMax = document.getElementById("bonusVidaMax").value;
+  dados.bonusSanidadeMax = document.getElementById("bonusSanidadeMax").value;
+  dados.bonusAuraMax = document.getElementById("bonusAuraMax").value;
+  dados.bonusDeslocamento = document.getElementById("bonusDeslocamento").value;
+  // -------------------------------------
 
   localStorage.setItem(chave, JSON.stringify(dados));
   fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
