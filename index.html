@@ -470,6 +470,12 @@
       text-shadow: 0 0 3px var(--cor-dourado-transp);
     }
 
+    .tab-button {
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: transparent; /* Remove aquele quadrado cinza ao tocar */
+    touch-action: manipulation; /* Melhora a resposta ao toque */
+}
+
     .tab-button:hover {
       background-color: var(--cor-tab-hover-bg);
       border-color: var(--cor-tab-hover-border);
@@ -2226,6 +2232,7 @@ let fichasSlots = {};
 let inventario = [];
 let logRolagens = [];
 let habilidades = [];
+let slotAtual = 1;
 
 
 // Variável global para sabermos qual habilidade está sendo editada no momento
@@ -4025,11 +4032,11 @@ function carregarImagem(event){
 }
 
 function getSlotAtual() {
-  return document.getElementById("slot")?.value || "1";
+    return slotAtual;
 }
 
 function getChaveSlot(slot) {
-  return "fichaRPG_" + slot;
+    return `dsac_ficha_slot_${slot}`; // Chave única para cada slot no localStorage
 }
 
 function montarDadosFicha() {
@@ -4055,6 +4062,64 @@ function montarDadosFicha() {
     atributos: {},
     pericias: {}
   };
+}
+
+function mudarSlot(numeroDoNovoSlot) {
+    if (slotAtual === numeroDoNovoSlot) return; // Evita recarregar se já estiver no slot
+
+    // 1. Salva automaticamente a ficha atual ANTES de mudar
+    salvarFichaManual(); 
+
+    // 2. Atualiza a referência global para o novo slot
+    slotAtual = numeroDoNovoSlot;
+
+    // 3. LIMPA A TELA COMPLETAMENTE. Se não fizermos isso, os dados da 
+    // ficha antiga continuam na tela e podem ser salvos por engano no novo slot.
+    limparFichaVisualmente();
+
+    // 4. Carrega os dados do novo slot do localStorage (se houver)
+    carregarFichaDaNuvem();
+
+    // 5. Atualiza o visual dos botões (feedback visual de qual está ativo)
+    document.querySelectorAll('.slot-btn').forEach(btn => btn.classList.remove('active'));
+    const btnAtivo = document.getElementById(`btn-slot-${numeroDoNovoSlot}`);
+    if(btnAtivo) btnAtivo.classList.add('active');
+    
+    // (Opcional) Avisa o usuário
+    console.log(`Você mudou para o Slot ${slotAtual}.`);
+}
+
+function limparFichaVisualmente() {
+    // Inputs de texto e números básicos
+    const inputsParaLimpar = [
+        "nome", "origem", "classe", "trilha",
+        "forca", "agilidade", "intelecto", "presenca", "vigor",
+        "vidaAtual", "vidaMax", "sanidadeAtual", "sanidadeMax",
+        "auraAtual", "auraMax", "defesaPassiva", "esquiva", "bloqueio", "deslocamento",
+        "bonusVidaMax", "bonusSanidadeMax", "bonusAuraMax", "bonusDeslocamento", "dtAtributoBase"
+    ];
+
+    inputsParaLimpar.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            // Se for número, zera. Se for texto, deixa vazio.
+            el.value = el.type === 'number' ? "" : ""; 
+        }
+    });
+
+    // Limpa imagem de perfil
+    const foto = document.getElementById("fotoPerfil");
+    if (foto) foto.src = "default.png"; // coloque o caminho da sua imagem padrão
+
+    // Limpa divs dinâmicas (inventário, perícias, armas)
+    const conteineresDinamicos = ["listaArmas", "listaInventario", "listaHabilidades"];
+    conteineresDinamicos.forEach(id => {
+        const div = document.getElementById(id);
+        if (div) div.innerHTML = "";
+    });
+
+    // Zera os checkboxes de rituais/habilidades
+    document.querySelectorAll('input[type="checkbox"]').forEach(chk => chk.checked = false);
 }
 
 function salvarFichaManual() {
@@ -4226,51 +4291,45 @@ document.getElementById("nome").addEventListener("input", () => {
 
 /* ======== ABA DE NAVEGAÇÃO ======== */
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Sincronização de nome
-    const inputNome = document.getElementById("nome");
-    if (inputNome) {
-        inputNome.addEventListener("input", () => {
-            sincronizarNomeDoSlotAtual();
-        });
-    }
-
-    // 2. Resolve o bug do celular: Força as barras laterais a começarem minimizadas
-    if (window.innerWidth <= 900) {
-        const sidebar = document.getElementById('sidebar');
-        const sidebarRight = document.getElementById('sidebarRight');
-        if (sidebar) sidebar.classList.add('minimized');
-        if (sidebarRight) sidebarRight.classList.add('minimized');
-    }
-
-    // 3. Lógica das abas à prova de falhas (Única instância)
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    tabButtons.forEach(button => {
-        // Usa click padrão (o iOS entende bem se não houver conflitos)
-        button.addEventListener('click', (e) => {
-            e.preventDefault(); // Evita comportamentos estranhos em links/buttons no mobile
+    function ativarAba(e) {
+        e.preventDefault();
+        
+        // Se foi um evento de toque, evita que o click dispare logo depois (duplo disparo)
+        if (e.type === 'touchstart') {
+            e.target.dataset.touched = 'true';
+        } else if (e.type === 'click' && e.target.dataset.touched) {
+            delete e.target.dataset.touched;
+            return; 
+        }
 
-            // Remove a classe 'active' de todos os botões e conteúdos
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-            
-            // Adiciona a classe 'active' no botão clicado
-            button.classList.add('active');
-            
-            // Pega o ID da aba e ativa o conteúdo
-            const tabId = button.getAttribute('data-tab');
-            const targetContent = document.getElementById(tabId);
-            
-            if (targetContent) {
-                targetContent.classList.add('active');
-            }
-        });
+        const button = e.currentTarget;
+        const tabId = button.getAttribute('data-tab');
+        
+        if (!tabId) return;
+
+        // Desativa tudo
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+        
+        // Ativa apenas o alvo
+        button.classList.add('active');
+        const targetContent = document.getElementById(tabId);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
+    }
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', ativarAba, { passive: false });
+        button.addEventListener('touchstart', ativarAba, { passive: false });
     });
+});
 
 /* =============== INICIALIZAÇÃO =============== */
 criarInterface();
-});
 
 </script>
 
