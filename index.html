@@ -3,10 +3,11 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Ficha RPG DSAC</title>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
     :root {
       /* Tema Clássico (default) */
@@ -1777,10 +1778,325 @@
     bottom: 10px;
   }
 }
+
+/* =========================================
+   REFINAMENTO VISUAL E ACESSIBILIDADE
+   ========================================= */
+html {
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  line-height: 1.5;
+}
+
+h1, h2, h3, .tab-button, .salvar-btn, button {
+  font-family: 'Cinzel', Georgia, serif;
+}
+
+h1 {
+  font-size: clamp(2rem, 4vw, 2.65rem);
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+  text-shadow: 0 4px 18px rgba(0, 0, 0, 0.65);
+}
+
+h2 {
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+}
+
+.main-content {
+  min-width: 0;
+}
+
+.bloco {
+  width: min(100%, 980px);
+  box-sizing: border-box;
+  margin: 18px auto;
+  padding: clamp(16px, 2.5vw, 24px);
+  border-radius: 14px;
+  background: rgba(10, 12, 20, 0.62);
+  border-image: none;
+  border: 1px solid var(--cor-borda-bloco-sombra);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.bloco:hover {
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.tab-container {
+  max-width: 980px;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.tab-button {
+  border-radius: 10px;
+  font-size: 1rem;
+  padding: 12px 14px;
+  letter-spacing: 0.025em;
+  box-shadow: none;
+}
+
+.tab-button.active {
+  font-size: 1rem;
+  box-shadow: inset 0 -2px 0 var(--cor-tab-active-border), 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+
+input, select, textarea {
+  font-family: 'Inter', system-ui, sans-serif !important;
+  border-radius: 8px !important;
+  line-height: 1.35;
+}
+
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, .tab-button:focus-visible {
+  outline: 2px solid var(--cor-dourado);
+  outline-offset: 2px;
+}
+
+.salvar-btn {
+  border-radius: 9px;
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.24);
+}
+
+.salvar-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar, .sidebar-right {
+  gap: 14px;
+  background: rgba(8, 10, 18, 0.94);
+  border-color: var(--cor-dourado-transp);
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.42);
+}
+
+.sidebar-right {
+  box-shadow: -8px 0 30px rgba(0, 0, 0, 0.42);
+}
+
+#btnToggleSidebar, #btnToggleSidebarRight {
+  min-height: 38px;
+  border-radius: 9px;
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.32);
+}
+
+.sync-status {
+  margin-top: 9px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  color: #aaa;
+  background: rgba(255, 255, 255, 0.035);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.sync-status.syncing { color: #ffd77a; border-color: rgba(255, 215, 122, 0.35); }
+.sync-status.synced { color: #8ee0ae; border-color: rgba(142, 224, 174, 0.35); }
+.sync-status.error { color: #ff9b9b; border-color: rgba(255, 155, 155, 0.35); }
+
+.log-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 3px solid var(--cor-log-valor);
+  overflow-wrap: anywhere;
+}
+
+.log-item small {
+  display: block;
+  margin-top: 5px;
+  color: #929292;
+  font-size: 0.68rem;
+}
+
+.menu-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1900;
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(2px);
+}
+
+.menu-backdrop.visible { display: block; }
+
+.notas-toolbar {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.7fr) minmax(180px, 1.6fr) minmax(100px, 0.6fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(5px);
+}
+
+.modal-escudo-content {
+  width: min(760px, 96vw);
+  max-height: 88vh;
+  overflow: auto;
+}
+
+.modal-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--cor-dourado-transp);
+}
+
+.modal-title-row h3 { margin: 0; color: var(--cor-dourado); }
+
+.modal-close-button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.escudo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.escudo-detail {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.card-jogador {
+  cursor: pointer;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.card-jogador:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+@media (max-width: 900px) {
+  body {
+    min-width: 0;
+    padding: 0 max(10px, env(safe-area-inset-right)) 32px max(10px, env(safe-area-inset-left));
+  }
+
+  .main-content { padding: 0 !important; }
+
+  h1 {
+    margin-top: 68px;
+    margin-bottom: 8px;
+    font-size: clamp(1.7rem, 8vw, 2.2rem);
+  }
+
+  .sidebar, .sidebar-right {
+    width: min(88vw, 340px);
+    max-width: none;
+    padding: max(18px, env(safe-area-inset-top)) 18px max(18px, env(safe-area-inset-bottom));
+  }
+
+  #btnToggleSidebar, #btnToggleSidebarRight {
+    top: max(10px, env(safe-area-inset-top)) !important;
+    min-height: 42px;
+    padding: 6px 9px;
+    font-size: 0.7rem;
+  }
+
+  .tab-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 6px;
+  }
+
+  .tab-button, .tab-button.active {
+    min-width: 0;
+    padding: 10px 5px;
+    font-size: 0.72rem;
+    line-height: 1.25;
+  }
+
+  .bloco { margin: 12px auto; }
+
+  .linha { min-width: 0; }
+
+  .status-item > div {
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .item-inventario {
+    grid-template-columns: minmax(0, 1fr) 74px 40px;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .rolagem-item input { min-width: 0 !important; }
+
+  .notas-toolbar { grid-template-columns: 1fr; }
+
+  #modalNotas .modal-content {
+    width: 100% !important;
+    height: min(88vh, 760px) !important;
+    margin: 0;
+  }
+
+  .escudo-grid { grid-template-columns: 1fr; }
+
+  .condicao-tooltip {
+    position: fixed;
+    left: 5vw;
+    right: 5vw;
+    bottom: 90px;
+    width: auto;
+    transform: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .tab-button, .tab-button.active { font-size: 0.66rem; }
+  #btnToggleSidebar, #btnToggleSidebarRight { max-width: 46vw; }
+  .hab-header { align-items: flex-start; }
+  .hab-actions { gap: 5px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
   </style>
 </head>
 
 <body>
+  <div id="menuBackdrop" class="menu-backdrop" onclick="fecharMenusMobile()" aria-hidden="true"></div>
   <button id="btnToggleSidebar" onclick="toggleSidebar()">🗃️ Ocultar Menu</button>
 
   <aside id="sidebar" class="sidebar">
@@ -1791,16 +2107,16 @@
         Jogando como:<br><span id="userName" style="color: #fff; font-size: 1rem;"></span><br>
         <button onclick="logoutGoogle()" style="background:transparent; border:1px solid #ff2944; color:#ff2944; cursor:pointer; padding:4px 8px; border-radius:4px; margin-top:8px; width: 100%;">Sair</button>
       </div>
+      <div id="syncStatus" class="sync-status" aria-live="polite">Dados locais</div>
     </div>
 
     <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;">
-      <button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.9rem;" onclick="salvarFichaManual()">Salvar Ficha</button>
+      <button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.9rem;" onclick="salvarFichaManual(false)">Salvar Ficha</button>
       <div style="display: flex; gap: 5px;">
         <button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.8rem; flex: 1;" onclick="baixarFichaJSON()">Exportar</button>
         <button class="salvar-btn" style="margin-top: 0; padding: 8px; font-size: 0.8rem; flex: 1;" onclick="document.getElementById('inputFicha').click()">Importar</button>
         <input type="file" id="inputFicha" style="display:none;" accept=".json" onchange="carregarFichaJSON(event)">
       </div>
-      <textarea id="codigoFicha" placeholder="Código da ficha para importação/exportação..." rows="2" style="width:100%; box-sizing: border-box; border-radius:4px; padding:5px; font-size: 10px;"></textarea>
       <div id="alerta" class="alerta" style="font-size: 12px; padding: 5px;">Ficha salva com sucesso!</div>
     </div>
 
@@ -1838,9 +2154,9 @@
     </div>
 
     <div class="tab-container">
-      <div class="tab-button active" data-tab="geral">Geral</div>
-      <div class="tab-button" data-tab="atributos-pericias">Atributos e Perícias</div>
-      <div class="tab-button" data-tab="estatisticas">Estatísticas</div>
+      <button type="button" class="tab-button active" data-tab="geral">Geral</button>
+      <button type="button" class="tab-button" data-tab="atributos-pericias">Atributos e Perícias</button>
+      <button type="button" class="tab-button" data-tab="estatisticas">Estatísticas</button>
     </div>
 
     <div id="dicePopup" class="dice-popup" style="display:none">
@@ -1859,7 +2175,7 @@
         <h2>Seleção de Ficha</h2>
         <div class="linha">
           <label>Escolha o slot</label>
-          <select id="slot" onchange="carregarFichaDoSlotAtual(); salvarFichaManual();">
+          <select id="slot" onchange="trocarSlot()">
             <option value="1">Slot 1</option>
             <option value="2">Slot 2</option>
             <option value="3">Slot 3</option>
@@ -2049,7 +2365,6 @@
           </div>
         </div>
       </div>
-    </div>
 
     <div class="bloco">
       <h2 onclick="toggleSecao('condicoesContent', 'iconCond')" style="cursor:pointer; user-select:none;">Condições <span id="iconCond" class="toggle-icon">▼</span></h2>
@@ -2061,6 +2376,7 @@
         <div id="lista-condicoes" class="condicao-container"></div>
       </div>
     </div>
+    </div>
 
     <div id="modalNotas" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:center;">
       <div class="modal-content bloco" style="max-width:800px; width:95%; height:85vh; display:flex; flex-direction:column;">
@@ -2068,12 +2384,23 @@
           <h3 style="color: var(--cor-dourado); margin: 0;">Bloco de Notas Flutuante</h3>
           <span class="popup-close" onclick="fecharModalNotas()" style="font-size: 1.2rem;">✖</span>
         </div>
-        <div style="display:flex; gap:10px; margin-bottom:10px;">
-          <select id="categoriaNota" style="width:30%;"><option value="geral">Geral</option><option value="missoes">Missões/Quests</option><option value="pistas">Pistas e Lore</option><option value="npcs">NPCs/Contatos</option></select>
+        <div class="notas-toolbar">
+          <select id="categoriaNota"><option value="geral">Geral</option><option value="missoes">Missões/Quests</option><option value="pistas">Pistas e Lore</option><option value="npcs">NPCs/Contatos</option></select>
           <input type="text" id="tituloNota" placeholder="Título da anotação..." style="flex-grow:1;">
+          <select id="temaNota" aria-label="Cor do bloco de notas" onchange="mudarFundoNotas(this.value)"><option value="dark">Escuro</option><option value="grey">Cinza</option><option value="white">Claro</option></select>
         </div>
         <textarea id="textoAnotacao" class="notas-tema-dark" placeholder="Escreva suas anotações aqui..." style="flex-grow:1; resize:none; width:100%; box-sizing:border-box;"></textarea>
         <button class="salvar-btn" onclick="fecharModalNotas()" style="align-self:flex-end; margin-top:15px;">Salvar e Fechar</button>
+      </div>
+    </div>
+
+    <div id="modalFichaEscudo" class="modal" role="dialog" aria-modal="true" aria-labelledby="tituloFichaEscudo">
+      <div class="modal-content bloco modal-escudo-content">
+        <div class="modal-title-row">
+          <h3 id="tituloFichaEscudo">Ficha sincronizada</h3>
+          <button class="modal-close-button" onclick="fecharModalFichaEscudo()" aria-label="Fechar ficha">✖</button>
+        </div>
+        <div id="conteudoFichaEscudo"></div>
       </div>
     </div>
   </main>
@@ -2106,12 +2433,27 @@
     let indiceHabConfig = null;
     let usuarioAtual = null;
     const EMAIL_MESTRE = "icarogabrielcavalcantes@gmail.com";
-    const EMAIL_MESTRE_OFICIAL = EMAIL_MESTRE;
     let isMestre = false;
-    let rolagemOcultaAtiva = false;
     let isRolagemOculta = false;
-    let escutaRolagensAtiva = false;
     let ultimoTesteFortitude = 0;
+    let appInicializado = false;
+    let aplicandoDados = false;
+    let slotCarregado = "1";
+    let tokenCarregamento = 0;
+    let timerSalvarNuvem = null;
+    let timerSincronizarEscudo = null;
+    let isSynced = false;
+    let listenerEscudoMestre = null;
+    let consultaEscudo = null;
+    let consultaRolagens = null;
+    let consultaCriticos = null;
+    let inicioEscutaCriticos = Date.now();
+    let audioLiberado = false;
+    let criticoPendente = false;
+    let ultimaRolagemLocal = null;
+    const fichasEscudo = new Map();
+    const criticosOuvidos = new Set();
+    const refEscudo = database.ref('escudo_mestre');
 
     const dicionarioCondicoes = {
       "Abalado": "Você sofre -1d20 em qualquer teste de resistência (Fortitude, Reflexos, Vontade).",
@@ -2138,11 +2480,35 @@
     const somCritico = new Audio("somCritico.mp3");
 
     function getSlotAtual() { return document.getElementById("slot")?.value || "1"; }
-    function getChaveSlot(slot) { return `fichaRPG_${slot}`; }
+    function getChaveLegadaSlot(slot) { return `fichaRPG_${slot}`; }
+    function getChaveSlot(slot, uid = usuarioAtual?.uid) {
+      return uid ? `fichaRPG_${uid}_${slot}` : getChaveLegadaSlot(slot);
+    }
+    function getRefFicha(uid, slot) { return database.ref(`fichas/${uid}/slots/${slot}`); }
+
+    function atualizarStatusSync(texto, estado = "") {
+      const el = document.getElementById("syncStatus");
+      if (!el) return;
+      el.textContent = texto;
+      el.className = `sync-status ${estado}`.trim();
+    }
+
+    function mostrarAlerta(mensagem, tipo = "sucesso") {
+      const alerta = document.getElementById("alerta");
+      if (!alerta) return;
+      alerta.textContent = mensagem;
+      alerta.style.display = "block";
+      alerta.style.background = tipo === "erro" ? "rgba(90, 18, 18, .92)" : "rgba(18, 68, 43, .92)";
+      alerta.style.borderColor = tipo === "erro" ? "#ff6b6b" : "#68d391";
+      alerta.style.color = tipo === "erro" ? "#ffd0d0" : "#d7ffe6";
+      clearTimeout(mostrarAlerta.timer);
+      mostrarAlerta.timer = setTimeout(() => alerta.style.display = "none", 2800);
+    }
 
     function montarDadosFicha() {
       const slot = getSlotAtual();
       const dados = {
+        schemaVersion: 3,
         slot,
         jogador: document.getElementById("jogador").value || (usuarioAtual ? usuarioAtual.displayName : ""),
         uid: usuarioAtual ? usuarioAtual.uid : "",
@@ -2169,7 +2535,13 @@
         atributos: {},
         pericias: {},
         condicoesAtivas: JSON.parse(JSON.stringify(condicoesAtivas)),
-        isRolagemOculta: isRolagemOculta
+        isRolagemOculta: isRolagemOculta,
+        notas: {
+          categoria: document.getElementById("categoriaNota")?.value || "geral",
+          titulo: document.getElementById("tituloNota")?.value || "",
+          texto: document.getElementById("textoAnotacao")?.value || "",
+          tema: document.getElementById("temaNota")?.value || "dark"
+        }
       };
 
       atributos.forEach(a => dados.atributos[a.sigla] = document.getElementById("atr_" + a.sigla).value);
@@ -2184,31 +2556,57 @@
       return dados;
     }
 
-    function salvarFichaManual() {
-      if (!usuarioAtual) return;
+    function salvarDadosLocalmente(slot, dados) {
+      localStorage.setItem(getChaveSlot(slot), JSON.stringify(dados));
+      fichasSlots[slot] = JSON.parse(JSON.stringify(dados));
+      atualizarNomeSlotEspecifico(slot, dados.nome || "");
+    }
+
+    async function salvarFichaNaNuvem(slot, dados, exibirConfirmacao = false) {
+      if (!usuarioAtual) {
+        if (exibirConfirmacao) mostrarAlerta("Salva neste aparelho. Entre com o Google para sincronizar.", "erro");
+        atualizarStatusSync("Dados apenas neste aparelho");
+        return false;
+      }
+      atualizarStatusSync("Sincronizando…", "syncing");
+      try {
+        const dadosNuvem = { ...dados, uid: usuarioAtual.uid, atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
+        await getRefFicha(usuarioAtual.uid, slot).set(dadosNuvem);
+        atualizarStatusSync("Sincronizado com sua conta", "synced");
+        if (exibirConfirmacao) mostrarAlerta(`Ficha do Slot ${slot} salva na nuvem.`);
+        return true;
+      } catch (erro) {
+        console.error("Falha ao salvar ficha:", erro);
+        atualizarStatusSync("Falha ao sincronizar", "error");
+        if (exibirConfirmacao) mostrarAlerta("A ficha ficou salva neste aparelho, mas a nuvem recusou o envio.", "erro");
+        return false;
+      }
+    }
+
+    function salvarFichaManual(silencioso = true) {
+      if (aplicandoDados) return;
       const slot = getSlotAtual();
-      localStorage.setItem(getChaveSlot(slot), JSON.stringify(montarDadosFicha()));
-      fichasSlots[slot] = JSON.parse(localStorage.getItem(getChaveSlot(slot)));
-      atualizarNomeSlotEspecifico(slot, document.getElementById("nome").value || "");
-      const alerta = document.getElementById("alerta");
-      alerta.innerText = `Ficha salva no Slot ${slot} com sucesso!`;
-      alerta.style.display = "block";
-      setTimeout(() => alerta.style.display = "none", 2500);
+      const dados = montarDadosFicha();
+      salvarDadosLocalmente(slot, dados);
+      enviarDadosJogadorFirebase();
+
+      clearTimeout(timerSalvarNuvem);
+      if (silencioso) {
+        timerSalvarNuvem = setTimeout(() => salvarFichaNaNuvem(slot, dados, false), 650);
+      } else {
+        salvarFichaNaNuvem(slot, dados, true);
+      }
     }
 
     function baixarFichaJSON() {
       const slot = getSlotAtual();
-      const dadosSalvos = localStorage.getItem(getChaveSlot(slot));
-      if (!dadosSalvos) return alert("Nenhum dado encontrado nesse slot!");
-      const blob = new Blob([dadosSalvos], { type: "application/json;charset=utf-8" });
+      const dados = montarDadosFicha();
+      salvarDadosLocalmente(slot, dados);
+      const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json;charset=utf-8" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      let nomePersonagem = `Slot ${slot}`;
-      try {
-        const obj = JSON.parse(dadosSalvos);
-        if (obj.nome && obj.nome.trim() !== "") nomePersonagem = obj.nome.trim();
-      } catch (e) {}
+      const nomePersonagem = (dados.nome || `Slot ${slot}`).trim().replace(/[^a-z0-9áàâãéèêíïóôõöúçñ _-]/gi, "").replace(/\s+/g, "_");
       link.download = `Ficha_${nomePersonagem}_Slot${slot}.json`;
       document.body.appendChild(link);
       link.click();
@@ -2220,11 +2618,13 @@
       const file = event?.target?.files?.[0];
       if (!file) return;
       const slot = getSlotAtual();
-      const chave = getChaveSlot(slot);
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
           let dados = JSON.parse(e.target.result);
+          if (dados?.slots) dados = dados.slots[slot] || dados.slots[String(slot)];
+          if (dados?.fichasSlots) dados = dados.fichasSlots[slot] || dados.fichasSlots[String(slot)];
+          if (!dados) throw new Error("O arquivo não contém uma ficha para este slot.");
           if (Array.isArray(dados)) {
             const lista = dados;
             dados = {
@@ -2238,20 +2638,22 @@
             if (lista[14]) dados.habilidades = lista[14].map(h => ({ nome: h[0], dado: h[1], desc: h[2], config: h[3] || {}, rolagens: h[4] || [], img: h[5] || "" }));
             if (lista[15]) dados.inventario = lista[15].map(i => ({ nome: i[0], peso: i[1], desc: i[2] }));
           }
-          aplicarDadosNaFicha(dados, false);
-          localStorage.setItem(chave, JSON.stringify(montarDadosFicha()));
-          fichasSlots[slot] = JSON.parse(localStorage.getItem(chave));
-          atualizarNomeSlotEspecifico(slot, document.getElementById("nome").value || "");
-          alert(`Ficha importada com sucesso no Slot ${slot}!`);
+          aplicarDadosNaFicha(dados);
+          salvarFichaManual(false);
+          mostrarAlerta(`Ficha importada somente para o Slot ${slot}.`);
         } catch (erro) {
           console.error(erro);
           alert("Erro ao ler o arquivo JSON. Tem certeza que é uma ficha válida?");
+        } finally {
+          event.target.value = "";
         }
       };
       reader.readAsText(file);
     }
 
-    function aplicarDadosNaFicha(d, preservarSlot = true) {
+    function aplicarDadosNaFicha(d) {
+      aplicandoDados = true;
+      try {
       document.getElementById("jogador").value = d.jogador || "";
       document.getElementById("nome").value = d.nome || "";
       document.getElementById("idade").value = d.idade || "";
@@ -2270,6 +2672,12 @@
       document.getElementById("bonusSanidadeMax").value = d.bonusSanidadeMax || 0;
       document.getElementById("bonusAuraMax").value = d.bonusAuraMax || 0;
       document.getElementById("bonusDeslocamento").value = d.bonusDeslocamento || 0;
+      const notas = d.notas || {};
+      document.getElementById("categoriaNota").value = notas.categoria || "geral";
+      document.getElementById("tituloNota").value = notas.titulo || "";
+      document.getElementById("textoAnotacao").value = notas.texto || "";
+      document.getElementById("temaNota").value = notas.tema || "dark";
+      mudarFundoNotas(notas.tema || "dark", false);
 
       const img = document.getElementById("previewImg");
       if (d.imagem) { img.src = d.imagem; img.style.display = "block"; img.dataset.base64 = d.imagem; } else { img.style.display = "none"; img.dataset.base64 = ""; }
@@ -2299,20 +2707,70 @@
       if (document.getElementById("btnRolagemPrivada")) {
         document.getElementById("btnRolagemPrivada").innerHTML = isRolagemOculta ? "🙈 Rolagem Oculta (Mestre)" : "👁️ Rolar Aberto (Público)";
       }
+      } finally {
+        aplicandoDados = false;
+      }
     }
 
-    function carregarFichaDoSlotAtual() {
+    async function carregarFichaDoSlotAtual() {
       const slot = getSlotAtual();
-      const dadosSalvos = localStorage.getItem(getChaveSlot(slot));
-      if (!dadosSalvos) {
+      const meuToken = ++tokenCarregamento;
+      let dados = null;
+
+      if (usuarioAtual) {
+        atualizarStatusSync("Carregando da sua conta…", "syncing");
+        try {
+          const snapshot = await getRefFicha(usuarioAtual.uid, slot).once("value");
+          if (meuToken !== tokenCarregamento) return;
+          if (snapshot.exists()) dados = snapshot.val();
+        } catch (erro) {
+          console.error("Falha ao carregar ficha da nuvem:", erro);
+          atualizarStatusSync("Nuvem indisponível; usando este aparelho", "error");
+        }
+      }
+
+      if (!dados) {
+        const cacheAtual = localStorage.getItem(getChaveSlot(slot));
+        const cacheLegado = localStorage.getItem(getChaveLegadaSlot(slot));
+        const dadosSalvos = cacheAtual || cacheLegado;
+        if (dadosSalvos) {
+          try { dados = JSON.parse(dadosSalvos); } catch (erro) { console.error(erro); }
+        }
+      }
+
+      if (meuToken !== tokenCarregamento) return;
+      if (dados) {
+        aplicarDadosNaFicha(dados);
+        salvarDadosLocalmente(slot, montarDadosFicha());
+        if (usuarioAtual) atualizarStatusSync("Sincronizado com sua conta", "synced");
+      } else {
         limparFicha();
         atualizarNomeSlotEspecifico(slot, "");
-        return;
+        if (usuarioAtual) atualizarStatusSync("Slot vazio na sua conta", "synced");
       }
-      try { aplicarDadosNaFicha(JSON.parse(dadosSalvos)); } catch (e) { limparFicha(); }
+      slotCarregado = slot;
+      if (!isMestre) verificarStatusSincronizacaoJogador();
+    }
+
+    async function trocarSlot() {
+      clearTimeout(timerSalvarNuvem);
+      clearTimeout(timerSincronizarEscudo);
+      if (isSynced && usuarioAtual && slotCarregado !== getSlotAtual()) {
+        const syncAnterior = `${usuarioAtual.uid}_slot_${slotCarregado}`;
+        try {
+          await refEscudo.child(syncAnterior).onDisconnect().cancel();
+          await refEscudo.child(syncAnterior).remove();
+        } catch (erro) {
+          console.error("Falha ao encerrar sincronização do slot anterior:", erro);
+        }
+      }
+      isSynced = false;
+      carregarFichaDoSlotAtual();
     }
 
     function limparFicha() {
+      aplicandoDados = true;
+      try {
       document.querySelectorAll("input, textarea").forEach(el => { if (el.type !== "file") el.value = ""; });
       document.getElementById("rdFisica").value = 0;
       document.getElementById("rdMental").value = 0;
@@ -2321,6 +2779,11 @@
       document.getElementById("bonusSanidadeMax").value = 0;
       document.getElementById("bonusAuraMax").value = 0;
       document.getElementById("bonusDeslocamento").value = 0;
+      document.getElementById("categoriaNota").value = "geral";
+      document.getElementById("tituloNota").value = "";
+      document.getElementById("textoAnotacao").value = "";
+      document.getElementById("temaNota").value = "dark";
+      mudarFundoNotas("dark", false);
       atributos.forEach(a => { const el = document.getElementById("atr_" + a.sigla); if (el) el.value = 0; });
       pericias.forEach((p, i) => { const el = document.getElementById("per_" + i); if (el) el.value = 1; });
       habilidades = [];
@@ -2337,6 +2800,9 @@
       atualizarBloqueio();
       atualizarDT();
       recalcularDeslocamento();
+      } finally {
+        aplicandoDados = false;
+      }
     }
 
     function carregarImagem(event) {
@@ -2352,38 +2818,6 @@
       const option = document.querySelector(`#slot option[value="${slot}"]`);
       if (option) option.textContent = nomePersonagem ? `${nomePersonagem} (Slot ${slot})` : `Slot ${slot}`;
     }
-
-    function registrarLog(tipo, detalhe, total){
-  const nome = document.getElementById("nome").value || "Anônimo";
-  const log = {
-    uid: usuarioAtual ? usuarioAtual.uid : "",
-    email: usuarioAtual ? usuarioAtual.email : "",
-    nome,
-    tipo,
-    detalhe,
-    total,
-    oculto: isRolagemOculta,
-    hora: new Date().toLocaleString("pt-BR")
-  };
-
-  database.ref('rolagens').push(log);
-  logRolagens.unshift(log);
-  renderLogRolagens();
-}
-
-function renderLogRolagens() {
-  const container = document.getElementById("logRolagens");
-  if (!container) return;
-
-  container.innerHTML = logRolagens.map(log => `
-    <div class="log-item">
-      <div><span class="log-nome">${log.nome}</span> - ${log.tipo}</div>
-      <div>${log.detalhe}</div>
-      <div class="log-valor">${log.total}</div>
-      <small>${log.hora}</small>
-    </div>
-  `).join("");
-}
 
     function montarSelectsEListeners() {
       const temaSelector = document.getElementById('temaSelector');
@@ -2492,22 +2926,22 @@ function renderLogRolagens() {
       const sanidadeMax = ((20 + intt * 2) * nivel) + bonusSanidade;
       const auraMax = ((con + pod) * 3) + ((con + pod) * (nivel - 1)) + bonusAura;
 
-      document.getElementById("vida").max = vidaMax;
-      document.getElementById("sanidade").max = sanidadeMax;
-      document.getElementById("aura").max = auraMax;
-
-      if ((!document.getElementById("vida").value || document.getElementById("vida").value > vidaMax) && !document.getElementById("vidaTempTxt").style.display.includes("block")) document.getElementById("vida").value = vidaMax;
-      if ((!document.getElementById("sanidade").value || document.getElementById("sanidade").value > sanidadeMax) && !document.getElementById("sanidadeTempTxt").style.display.includes("block")) document.getElementById("sanidade").value = sanidadeMax;
-      if ((!document.getElementById("aura").value || document.getElementById("aura").value > auraMax) && !document.getElementById("auraTempTxt").style.display.includes("block")) document.getElementById("aura").value = auraMax;
+      [["vida", vidaMax], ["sanidade", sanidadeMax], ["aura", auraMax]].forEach(([id, novoMax]) => {
+        const el = document.getElementById(id);
+        const maxAnterior = Number(el.max) || 0;
+        const valorAtual = el.value;
+        el.max = novoMax;
+        if (valorAtual === "" || Number(valorAtual) === maxAnterior) el.value = novoMax;
+      });
 
       document.getElementById("vidaMaxTxt").innerText = "Máx: " + vidaMax;
       document.getElementById("sanidadeMaxTxt").innerText = "Máx: " + sanidadeMax;
       document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
 
       recalcularDeslocamento();
-      atualizarBarra("vida", "vida-bar", vidaMax);
-      atualizarBarra("sanidade", "sanidade-bar", sanidadeMax);
-      atualizarAura();
+      atualizarVida(false);
+      atualizarSanidade(false);
+      atualizarAura(false);
       salvarFichaManual();
     }
 
@@ -2516,7 +2950,7 @@ function renderLogRolagens() {
       document.getElementById(barId).style.width = max > 0 ? ((v / max) * 100) + "%" : "0%";
     }
 
-    function atualizarAura() {
+    function atualizarAura(salvar = true) {
       const auraEl = document.getElementById("aura");
       const max = Number(auraEl.getAttribute("max")) || 0;
       let v = Number(auraEl.value) || 0;
@@ -2534,10 +2968,11 @@ function renderLogRolagens() {
         bar.classList.remove("temp-aura");
         bar.style.width = max > 0 ? ((v / max) * 100) + "%" : "0%";
       }
-      salvarFichaManual();
+      enviarDadosJogadorFirebase();
+      if (salvar) salvarFichaManual();
     }
 
-    function atualizarVida() {
+    function atualizarVida(salvar = true) {
       const max = Number(document.getElementById("vida").max) || 0;
       let v = Number(document.getElementById("vida").value) || 0;
       if (v < 0) v = 0;
@@ -2555,10 +2990,10 @@ function renderLogRolagens() {
         atualizarBarra("vida", "vida-bar", max);
       }
       enviarDadosJogadorFirebase();
-      salvarFichaManual();
+      if (salvar) salvarFichaManual();
     }
 
-    function atualizarSanidade() {
+    function atualizarSanidade(salvar = true) {
       const max = Number(document.getElementById("sanidade").max) || 0;
       let v = Number(document.getElementById("sanidade").value) || 0;
       if (v < 0) v = 0;
@@ -2576,7 +3011,7 @@ function renderLogRolagens() {
         atualizarBarra("sanidade", "sanidade-bar", max);
       }
       enviarDadosJogadorFirebase();
-      salvarFichaManual();
+      if (salvar) salvarFichaManual();
     }
 
     function ajustarStatus(tipo) {
@@ -2593,23 +3028,44 @@ function renderLogRolagens() {
     }
 
     function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('minimized');
-      document.getElementById('btnToggleSidebar').innerHTML = document.getElementById('sidebar').classList.contains('minimized') ? "☰ Mostrar Menu" : "🗃️ Ocultar Menu";
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('minimized');
+      if (window.matchMedia('(max-width: 900px)').matches && !sidebar.classList.contains('minimized')) {
+        document.getElementById('sidebarRight').classList.add('minimized');
+      }
       atualizarLayout();
     }
 
     function toggleSidebarRight() {
-      document.getElementById('sidebarRight').classList.toggle('minimized');
-      document.getElementById('btnToggleSidebarRight').innerHTML = document.getElementById('sidebarRight').classList.contains('minimized') ? "Registro 📚" : "📚 Ocultar Registro";
+      const sidebar = document.getElementById('sidebarRight');
+      sidebar.classList.toggle('minimized');
+      if (window.matchMedia('(max-width: 900px)').matches && !sidebar.classList.contains('minimized')) {
+        document.getElementById('sidebar').classList.add('minimized');
+      }
       atualizarLayout();
     }
 
     function atualizarLayout() {
       const leftOpen = !document.getElementById('sidebar').classList.contains('minimized');
       const rightOpen = !document.getElementById('sidebarRight').classList.contains('minimized');
+      const mobile = window.matchMedia('(max-width: 900px)').matches;
       const main = document.getElementById('main-content');
-      main.style.paddingLeft = leftOpen ? '340px' : '20px';
-      main.style.paddingRight = rightOpen ? '340px' : '20px';
+      main.style.paddingLeft = mobile ? '0' : (leftOpen ? '340px' : '20px');
+      main.style.paddingRight = mobile ? '0' : (rightOpen ? '340px' : '20px');
+      document.getElementById('btnToggleSidebar').classList.toggle('minimized', !leftOpen);
+      document.getElementById('btnToggleSidebarRight').classList.toggle('minimized', !rightOpen);
+      document.getElementById('btnToggleSidebar').textContent = mobile ? (leftOpen ? '✕ Menu' : '☰ Menu') : (leftOpen ? '🗃️ Ocultar Menu' : '☰ Mostrar Menu');
+      document.getElementById('btnToggleSidebarRight').textContent = mobile ? (rightOpen ? '✕ Registro' : '📚 Registro') : (rightOpen ? '📚 Ocultar Registro' : 'Registro 📚');
+      const backdrop = document.getElementById('menuBackdrop');
+      backdrop.classList.toggle('visible', mobile && (leftOpen || rightOpen));
+      backdrop.setAttribute('aria-hidden', String(!(mobile && (leftOpen || rightOpen))));
+    }
+
+    function fecharMenusMobile() {
+      if (!window.matchMedia('(max-width: 900px)').matches) return;
+      document.getElementById('sidebar').classList.add('minimized');
+      document.getElementById('sidebarRight').classList.add('minimized');
+      atualizarLayout();
     }
 
     function toggleRolagemOculta() {
@@ -2628,7 +3084,12 @@ function renderLogRolagens() {
       icon.classList.toggle("minimized", !hidden);
     }
 
-    function loginGoogle() { const provider = new firebase.auth.GoogleAuthProvider(); auth.signInWithPopup(provider).catch(error => alert("Erro ao fazer login: " + error.message)); }
+    function loginGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      const mobile = window.matchMedia('(max-width: 900px)').matches;
+      const tentativa = mobile ? auth.signInWithRedirect(provider) : auth.signInWithPopup(provider);
+      tentativa.catch(error => alert("Erro ao fazer login: " + error.message));
+    }
     function logoutGoogle() { auth.signOut(); }
 
     function criarInterface() {
@@ -2704,7 +3165,7 @@ function renderLogRolagens() {
       salvarFichaManual();
     }
 
-    function d20() { somDado.currentTime = 0; somDado.play(); return Math.floor(Math.random()*20)+1; }
+    function d20() { return Math.floor(Math.random()*20)+1; }
     function limparDepois(id,ms=8000){ setTimeout(()=>{ const el=document.getElementById(id); if(el) el.innerText=""; },ms); }
     function mostrarPopup(titulo, detalhe, total){ document.getElementById("popupTitulo").innerText = titulo; document.getElementById("popupDetalhe").innerText = detalhe; document.getElementById("popupTotal").innerText = total; document.getElementById("dicePopup").style.display = "block"; }
     function fecharPopup(){ document.getElementById("dicePopup").style.display = "none"; }
@@ -2721,13 +3182,134 @@ function renderLogRolagens() {
       return { dadosFinal: dados, modFinal: mod };
     }
 
-    function registrarLog(tipo, detalhe, total){
+    function tocarSomSeguro(audio) {
+      if (!audioLiberado) return Promise.resolve(false);
+      try {
+        audio.currentTime = 0;
+        return audio.play().then(() => true).catch(() => false);
+      } catch (erro) {
+        return Promise.resolve(false);
+      }
+    }
+
+    function tocarCriticoGlobal() {
+      if (!audioLiberado) {
+        criticoPendente = true;
+        return;
+      }
+      criticoPendente = false;
+      tocarSomSeguro(somCritico);
+    }
+
+    function liberarAudio() {
+      audioLiberado = true;
+      if (criticoPendente) tocarCriticoGlobal();
+    }
+
+    function registrarLog(tipo, detalhe, total, critico = false){
       const nome = document.getElementById("nome").value || "Anônimo";
-      const log = { uid: usuarioAtual ? usuarioAtual.uid : "", email: usuarioAtual ? usuarioAtual.email : "", nome, tipo, detalhe, total, oculto: isRolagemOculta, hora: new Date().toLocaleString("pt-BR") };
-      database.ref('rolagens').push(log);
+      const log = {
+        uid: usuarioAtual ? usuarioAtual.uid : "",
+        email: usuarioAtual ? usuarioAtual.email : "",
+        nome,
+        tipo,
+        detalhe,
+        total,
+        critico: !!critico,
+        oculto: isRolagemOculta,
+        hora: new Date().toLocaleString("pt-BR"),
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      };
+      ultimaRolagemLocal = { tipo, detalhe, total, critico: !!critico, oculto: isRolagemOculta };
+      enviarDadosJogadorFirebase();
+      database.ref('rolagens').push(log).catch(erro => {
+        console.error("Falha ao registrar rolagem:", erro);
+        const local = { ...log, timestamp: Date.now() };
+        logRolagens.unshift(local);
+        logRolagens = logRolagens.slice(0, 20);
+        renderLogRolagens();
+        if (critico) tocarCriticoGlobal();
+      });
+    }
+
+    function formatarHoraLog(log) {
+      if (typeof log.timestamp === "number") return new Date(log.timestamp).toLocaleString("pt-BR");
+      return log.hora || "";
+    }
+
+    function renderLogRolagens() {
+      const container = document.getElementById("logRolagens");
+      if (!container) return;
+      container.innerHTML = "";
+
+      logRolagens.slice(0, 20).forEach(log => {
+        const item = document.createElement("div");
+        item.className = "log-item";
+        const ehDono = !!usuarioAtual && log.uid === usuarioAtual.uid;
+        const podeVer = !log.oculto || ehDono || isMestre;
+
+        const cabecalho = document.createElement("div");
+        const nome = document.createElement("span");
+        nome.className = "log-nome";
+        nome.textContent = log.nome || "Anônimo";
+        cabecalho.append(nome, document.createTextNode(` — ${podeVer ? (log.tipo || "Rolagem") : "[ROLAGEM SECRETA]"}`));
+        item.appendChild(cabecalho);
+
+        if (podeVer) {
+          const detalhe = document.createElement("div");
+          detalhe.textContent = `${log.oculto ? "[SECRETO] " : ""}${log.detalhe || ""}`;
+          const valor = document.createElement("div");
+          valor.className = "log-valor";
+          valor.textContent = `${log.critico ? "🔥 CRÍTICO — " : ""}${log.total ?? ""}`;
+          item.append(detalhe, valor);
+          if (log.oculto) item.style.borderLeftColor = "#8b2d3d";
+        } else {
+          const segredo = document.createElement("div");
+          segredo.textContent = "O resultado está visível apenas para quem rolou e para o mestre.";
+          segredo.style.cssText = "color:#999;font-style:italic;font-size:.78rem";
+          item.appendChild(segredo);
+        }
+
+        const hora = document.createElement("small");
+        hora.textContent = formatarHoraLog(log);
+        item.appendChild(hora);
+        container.appendChild(item);
+      });
+
+      if (!logRolagens.length) {
+        container.innerHTML = '<div style="color:#888;font-size:.8rem;padding:8px 0">Nenhuma rolagem registrada.</div>';
+      }
+    }
+
+    function iniciarEscutaRolagens() {
+      if (consultaRolagens) consultaRolagens.off();
+      if (consultaCriticos) consultaCriticos.off();
+
+      consultaRolagens = database.ref('rolagens').limitToLast(20);
+      consultaRolagens.on('value', snapshot => {
+        const novosLogs = [];
+        snapshot.forEach(child => novosLogs.push({ id: child.key, ...child.val() }));
+        logRolagens = novosLogs.reverse().slice(0, 20);
+        renderLogRolagens();
+      }, erro => {
+        console.error("Falha ao carregar histórico:", erro);
+        const container = document.getElementById("logRolagens");
+        if (container) container.innerHTML = '<div style="color:#ff9b9b;font-size:.78rem">Não foi possível abrir o histórico em tempo real.</div>';
+      });
+
+      inicioEscutaCriticos = Date.now();
+      consultaCriticos = database.ref('rolagens').limitToLast(1);
+      consultaCriticos.on('child_added', snapshot => {
+        const log = snapshot.val() || {};
+        if (!log.critico || criticosOuvidos.has(snapshot.key)) return;
+        criticosOuvidos.add(snapshot.key);
+        const quando = Number(log.timestamp) || 0;
+        if (quando >= inicioEscutaCriticos - 1500) tocarCriticoGlobal();
+      });
     }
 
     function rolarAtributo(sigla) {
+      tocarSomSeguro(somDado);
       const v = Number(document.getElementById("atr_" + sigla).value);
       const resId = "resAtr_" + sigla;
       const debuffs = aplicarDebuffsRolagem("Atributo", sigla, 1, v);
@@ -2745,6 +3327,7 @@ function renderLogRolagens() {
     }
 
     function rolarPericia(id) {
+      tocarSomSeguro(somDado);
       const inputPericia = document.getElementById(id);
       const qtdDadosOriginais = parseInt(inputPericia.value) || 1;
       const sigla = document.getElementById("atrKey_" + id).value;
@@ -2770,10 +3353,9 @@ function renderLogRolagens() {
       }
       const resultadoDoDado = desvantagem ? menor : maior;
       if (desvantagem && resultadoDoDado >= margemPadrao) critou = true;
-      if (critou) somCritico.currentTime = 0, somCritico.play();
       const total = resultadoDoDado + modificadorTotal;
       mostrarPopup(nomePericia.toUpperCase(), `Dados: [${resultados.join(", ")}]${desvantagem ? " (Rolado c/ Desvantagem)" : ""} | Bônus: ${modificadorTotal}`, (critou ? "🔥 " : "") + total);
-      registrarLog(nomePericia.toUpperCase(), `${dadosParaRolar}d20 [${resultados.join(", ")}] + ${debuffs.modFinal} (Atrib) + ${bonusExtra} (Extra)`, total);
+      registrarLog(nomePericia.toUpperCase(), `${dadosParaRolar}d20 [${resultados.join(", ")}] + ${debuffs.modFinal} (Atrib) + ${bonusExtra} (Extra)`, total, critou);
       const output = document.getElementById("res_" + id);
       if (output) output.innerHTML = `${critou ? '<span style="color:#ff2944; font-weight:bold;">🔥 CRÍTICO! 🔥</span><br>' : ""}🎲 ${dadosParaRolar}d20 [${resultados.join(", ")}]${desvantagem ? "<br>(Desvantagem)" : ""}<br>Resultado: ${resultadoDoDado} + ${debuffs.modFinal} (${sigla.toUpperCase()}) + ${bonusExtra} (Extra)<br><strong>Total: ${total}</strong>`;
       limparDepois("res_" + id);
@@ -2859,75 +3441,339 @@ function renderLogRolagens() {
       let danoFinal = resultadoDano.total;
       const houveCriticoGeral = critouNoAtaque || resultadoDano.critouNoDano;
       if (houveCriticoGeral) {
-        somCritico.currentTime = 0;
-        somCritico.play();
         if (cfg.dadosCritico) danoFinal += calcularDanoComplexo(cfg.dadosCritico, 999, 999).total;
       } else {
-        somDado.currentTime = 0;
-        somDado.play();
+        tocarSomSeguro(somDado);
       }
       mostrarPopup(`${h.nome} [${r.nome}]`, linhasPopup.join("\n"), (houveCriticoGeral ? "🔥 " : "") + danoFinal);
-      registrarLog(`${h.nome} [${r.nome}]`, partesLog.join(" | "), danoFinal);
+      registrarLog(`${h.nome} [${r.nome}]`, partesLog.join(" | "), danoFinal, houveCriticoGeral);
       const resElem = document.getElementById("resHab_" + idxHab);
       if (resElem) resElem.innerHTML = `Resultado: <strong>${danoFinal}</strong>`;
       salvarFichaManual();
-    }
-
-    function inicializarAplicacao() {
-      criarInterface();
-      montarSelectsEListeners();
-      inicializarCondicoes();
-      const slot = getSlotAtual();
-      const dadosSalvos = localStorage.getItem(getChaveSlot(slot));
-      if (dadosSalvos) aplicarDadosNaFicha(JSON.parse(dadosSalvos));
-      else limparFicha();
-      atualizarLayout();
     }
 
     function sincronizarNomeDoSlotAtual() {
       atualizarNomeSlotEspecifico(getSlotAtual(), document.getElementById("nome").value.trim());
     }
 
-    function enviarDadosJogadorFirebase() {}
+    function abrirModalNotas() {
+      const modal = document.getElementById("modalNotas");
+      modal.style.display = "flex";
+      setTimeout(() => document.getElementById("tituloNota")?.focus(), 0);
+    }
 
-    auth.onAuthStateChanged(user => {
+    function fecharModalNotas() {
+      salvarFichaManual(false);
+      document.getElementById("modalNotas").style.display = "none";
+    }
+
+    function mudarFundoNotas(tema, salvar = true) {
+      const temaSeguro = ["dark", "grey", "white"].includes(tema) ? tema : "dark";
+      const textarea = document.getElementById("textoAnotacao");
+      if (!textarea) return;
+      textarea.classList.remove("notas-tema-dark", "notas-tema-grey", "notas-tema-white");
+      textarea.classList.add("notas-tema-" + temaSeguro);
+      const seletor = document.getElementById("temaNota");
+      if (seletor) seletor.value = temaSeguro;
+      if (salvar) salvarFichaManual();
+    }
+
+    function getSyncId() {
+      return usuarioAtual ? `${usuarioAtual.uid}_slot_${getSlotAtual()}` : null;
+    }
+
+    function obterMaximoStatus(id) {
+      return Number(document.getElementById(id)?.max) || 0;
+    }
+
+    function montarDadosEscudo() {
+      const ficha = montarDadosFicha();
+      delete ficha.imagem;
+      delete ficha.notas;
+      return {
+        nome: ficha.nome || "Sem nome",
+        jogador: ficha.jogador || usuarioAtual?.displayName || "Jogador",
+        uid: usuarioAtual?.uid || "",
+        slot: getSlotAtual(),
+        vida: Number(ficha.vida) || 0,
+        vidaMax: obterMaximoStatus("vida"),
+        sanidade: Number(ficha.sanidade) || 0,
+        sanidadeMax: obterMaximoStatus("sanidade"),
+        aura: Number(ficha.aura) || 0,
+        auraMax: obterMaximoStatus("aura"),
+        ultimaRolagem: ultimaRolagemLocal,
+        ficha,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      };
+    }
+
+    async function enviarDadosParaEscudo() {
+      if (!isSynced || !usuarioAtual || isMestre) return;
+      const syncId = getSyncId();
+      if (!syncId) return;
+      try {
+        await refEscudo.child(syncId).set(montarDadosEscudo());
+        refEscudo.child(syncId).onDisconnect().remove();
+      } catch (erro) {
+        console.error("Falha ao sincronizar com o mestre:", erro);
+      }
+    }
+
+    function enviarDadosJogadorFirebase() {
+      if (!isSynced) return;
+      clearTimeout(timerSincronizarEscudo);
+      timerSincronizarEscudo = setTimeout(enviarDadosParaEscudo, 220);
+    }
+
+    async function toggleSincronizacao() {
+      if (!usuarioAtual) return mostrarAlerta("Entre com o Google para sincronizar com o mestre.", "erro");
+      const syncId = getSyncId();
+      const btn = document.getElementById("btnSyncFicha");
+      if (!syncId || !btn) return;
+
+      if (isSynced) {
+        await refEscudo.child(syncId).onDisconnect().cancel();
+        await refEscudo.child(syncId).remove();
+        isSynced = false;
+      } else {
+        isSynced = true;
+        await enviarDadosParaEscudo();
+      }
+      btn.textContent = isSynced ? "Interromper sincronização" : "Sincronizar ficha";
+      btn.classList.toggle("danger", isSynced);
+    }
+
+    async function verificarStatusSincronizacaoJogador() {
+      const syncId = getSyncId();
+      const btn = document.getElementById("btnSyncFicha");
+      if (!syncId || !btn) return;
+      try {
+        const snapshot = await refEscudo.child(syncId).once("value");
+        isSynced = snapshot.exists();
+      } catch (erro) {
+        isSynced = false;
+      }
+      btn.textContent = isSynced ? "Interromper sincronização" : "Sincronizar ficha";
+      btn.classList.toggle("danger", isSynced);
+      if (isSynced) refEscudo.child(syncId).onDisconnect().remove();
+    }
+
+    function renderizarUIEscudo() {
+      const container = document.getElementById("escudoMestreContainer");
+      if (!container) return;
+      if (!usuarioAtual) {
+        container.innerHTML = '<p style="color:#888;font-size:.78rem;margin:0">Entre com o Google para usar a sincronização em tempo real.</p>';
+        return;
+      }
+
+      if (isMestre) {
+        container.innerHTML = '<h3 style="color:var(--cor-dourado);font-size:1rem;margin-top:0">Escudo do Mestre</h3><div id="listaFichasEscudo"></div>';
+        iniciarMonitoramentoMestre();
+      } else {
+        container.innerHTML = '<h3 style="color:var(--cor-dourado);font-size:1rem;margin-top:0">Escudo do Mestre</h3><button id="btnSyncFicha" class="salvar-btn" style="width:100%;padding:10px;font-size:.82rem" onclick="toggleSincronizacao()">Sincronizar ficha</button><p style="font-size:.7rem;color:#888;text-align:center;margin:7px 0 0">Compartilha esta ficha com o mestre enquanto o site estiver aberto.</p>';
+        verificarStatusSincronizacaoJogador();
+      }
+    }
+
+    function iniciarMonitoramentoMestre() {
+      if (consultaEscudo && listenerEscudoMestre) consultaEscudo.off("value", listenerEscudoMestre);
+      consultaEscudo = refEscudo.orderByChild("timestamp").limitToLast(10);
+      listenerEscudoMestre = consultaEscudo.on("value", snapshot => {
+        const lista = document.getElementById("listaFichasEscudo");
+        if (!lista) return;
+        fichasEscudo.clear();
+        lista.innerHTML = "";
+        const itens = [];
+        snapshot.forEach(child => itens.push([child.key, child.val()]));
+        itens.reverse().forEach(([id, dados]) => {
+          fichasEscudo.set(id, dados);
+          const card = document.createElement("div");
+          card.className = "card-jogador";
+          card.tabIndex = 0;
+          card.setAttribute("role", "button");
+          card.setAttribute("aria-label", `Abrir ficha de ${dados.nome || "personagem"}`);
+
+          const titulo = document.createElement("strong");
+          titulo.style.color = "var(--cor-dourado)";
+          titulo.textContent = dados.nome || "Sem nome";
+          const jogador = document.createElement("div");
+          jogador.style.cssText = "font-size:.68rem;color:#aaa;margin:2px 0 8px";
+          jogador.textContent = `${dados.jogador || "Jogador"} • Slot ${dados.slot || "?"}`;
+          const status = document.createElement("div");
+          status.style.cssText = "display:grid;grid-template-columns:repeat(3,1fr);gap:5px;font-size:.72rem";
+          [["❤️", dados.vida, dados.vidaMax], ["🧠", dados.sanidade, dados.sanidadeMax], ["✨", dados.aura, dados.auraMax]].forEach(([icone, atual, max]) => {
+            const item = document.createElement("span");
+            item.style.cssText = "padding:5px;background:rgba(0,0,0,.25);border-radius:6px;text-align:center";
+            item.textContent = `${icone} ${atual ?? 0}/${max ?? 0}`;
+            status.appendChild(item);
+          });
+          card.append(titulo, jogador, status);
+          card.addEventListener("click", () => abrirModalFichaEscudo(id));
+          card.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") abrirModalFichaEscudo(id); });
+          lista.appendChild(card);
+        });
+        if (!itens.length) lista.innerHTML = '<p style="color:#888;font-size:.75rem">Nenhuma ficha sincronizada agora.</p>';
+      });
+    }
+
+    function escaparHTML(valor) {
+      return String(valor ?? "").replace(/[&<>'"]/g, caractere => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[caractere]);
+    }
+
+    function abrirModalFichaEscudo(id) {
+      const dados = fichasEscudo.get(id);
+      if (!dados) return;
+      const ficha = dados.ficha || {};
+      const atributosHTML = Object.entries(ficha.atributos || {}).map(([sigla, valor]) => `<span class="escudo-detail"><strong>${escaparHTML(sigla)}</strong><br>${escaparHTML(valor)}</span>`).join("");
+      const habilidadesHTML = (ficha.habilidades || []).map(h => `<li><strong>${escaparHTML(h.nome || "Habilidade")}</strong>${h.desc ? ` — ${escaparHTML(h.desc)}` : ""}</li>`).join("") || "<li>Nenhuma habilidade cadastrada.</li>";
+      const condicoesHTML = (ficha.condicoesAtivas || []).map(escaparHTML).join(", ") || "Nenhuma";
+      const ultima = dados.ultimaRolagem;
+      document.getElementById("tituloFichaEscudo").textContent = `${dados.nome || "Ficha"} — Slot ${dados.slot || "?"}`;
+      document.getElementById("conteudoFichaEscudo").innerHTML = `
+        <p style="color:#aaa;margin-top:0">Jogador: ${escaparHTML(dados.jogador || "")}</p>
+        <div class="escudo-grid">
+          <div class="escudo-detail">❤️ Vida<br><strong>${escaparHTML(dados.vida)}/${escaparHTML(dados.vidaMax)}</strong></div>
+          <div class="escudo-detail">🧠 Sanidade<br><strong>${escaparHTML(dados.sanidade)}/${escaparHTML(dados.sanidadeMax)}</strong></div>
+          <div class="escudo-detail">✨ Aura<br><strong>${escaparHTML(dados.aura)}/${escaparHTML(dados.auraMax)}</strong></div>
+        </div>
+        <h3 style="color:var(--cor-dourado);margin-bottom:8px">Atributos</h3>
+        <div class="escudo-grid">${atributosHTML}</div>
+        <h3 style="color:var(--cor-dourado);margin-bottom:8px">Condições</h3>
+        <p>${condicoesHTML}</p>
+        <h3 style="color:var(--cor-dourado);margin-bottom:8px">Habilidades</h3>
+        <ul>${habilidadesHTML}</ul>
+        <h3 style="color:var(--cor-dourado);margin-bottom:8px">Última rolagem</h3>
+        <p>${ultima ? `${escaparHTML(ultima.tipo)}: ${ultima.oculto ? "[SECRETO] " : ""}${escaparHTML(ultima.total)}` : "Nenhuma rolagem nesta sessão."}</p>`;
+      document.getElementById("modalFichaEscudo").style.display = "flex";
+    }
+
+    function fecharModalFichaEscudo() {
+      document.getElementById("modalFichaEscudo").style.display = "none";
+    }
+
+    async function migrarSlotsLocaisParaNuvem(user) {
+      atualizarStatusSync("Verificando fichas da sua conta…", "syncing");
+      try {
+        const raizRef = database.ref(`fichas/${user.uid}`);
+        const snapshot = await raizRef.once("value");
+        const raiz = snapshot.val() || {};
+        const slotsNuvem = raiz.slots || {};
+        const atualizacoes = {};
+
+        if (!raiz.slots && raiz.nome) {
+          const slot = String(raiz.slot || getSlotAtual());
+          atualizacoes[slot] = { ...raiz, slot, uid: user.uid, schemaVersion: 3, atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
+        }
+
+        for (let numero = 1; numero <= 10; numero++) {
+          const slot = String(numero);
+          if (slotsNuvem[slot] || atualizacoes[slot]) continue;
+          const cacheDaConta = localStorage.getItem(getChaveSlot(slot, user.uid));
+          const cacheLegado = localStorage.getItem(getChaveLegadaSlot(slot));
+          const bruto = cacheDaConta || cacheLegado;
+          if (!bruto) continue;
+          try {
+            const dados = JSON.parse(bruto);
+            if (dados.uid && dados.uid !== user.uid) continue;
+            atualizacoes[slot] = { ...dados, slot, uid: user.uid, schemaVersion: 3, atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
+          } catch (erro) {
+            console.warn(`Slot local ${slot} ignorado por estar corrompido.`);
+          }
+        }
+
+        if (Object.keys(atualizacoes).length) await raizRef.child("slots").update(atualizacoes);
+        const slotsFinais = { ...slotsNuvem, ...atualizacoes };
+        Object.entries(slotsFinais).forEach(([slot, dados]) => {
+          if (!dados || typeof dados !== "object") return;
+          localStorage.setItem(getChaveSlot(slot, user.uid), JSON.stringify(dados));
+          atualizarNomeSlotEspecifico(slot, dados.nome || "");
+        });
+        atualizarStatusSync("Sincronizado com sua conta", "synced");
+      } catch (erro) {
+        console.error("Falha na migração de slots:", erro);
+        atualizarStatusSync("Não foi possível acessar a nuvem", "error");
+      }
+    }
+
+    async function aoAlterarAutenticacao(user) {
       usuarioAtual = user || null;
       const btnLogin = document.getElementById('btnLogin');
       const userInfo = document.getElementById('userInfo');
+
       if (user) {
         userInfo.style.display = 'block';
-        document.getElementById('userName').innerText = user.displayName || "";
+        document.getElementById('userName').textContent = user.displayName || user.email || "Conta Google";
         btnLogin.style.display = 'none';
-        isMestre = user.email && user.email.toLowerCase() === EMAIL_MESTRE.toLowerCase();
-        document.getElementById("jogador").value = user.displayName || "";
+        isMestre = !!user.email && user.email.toLowerCase() === EMAIL_MESTRE.toLowerCase();
+        await migrarSlotsLocaisParaNuvem(user);
+        await carregarFichaDoSlotAtual();
+        if (!document.getElementById("jogador").value) document.getElementById("jogador").value = user.displayName || "";
       } else {
         userInfo.style.display = 'none';
         btnLogin.style.display = 'block';
         isMestre = false;
+        isSynced = false;
+        if (consultaEscudo && listenerEscudoMestre) consultaEscudo.off("value", listenerEscudoMestre);
+        atualizarStatusSync("Dados apenas neste aparelho");
+        if (appInicializado) limparFicha();
       }
-      if (document.getElementById("escudoMestreContainer")) {
-        document.getElementById("escudoMestreContainer").innerHTML = "";
-      }
-    });
+      renderizarUIEscudo();
+      renderLogRolagens();
+    }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      inicializarAplicacao();
-      document.getElementById("temaSelector").value = localStorage.getItem('temaFichaRPG') || 'tema-classico';
-      document.getElementById("temaSelector").dispatchEvent(new Event("change"));
-      document.getElementById("slot").addEventListener("change", carregarFichaDoSlotAtual);
-      document.getElementById("nome").addEventListener("input", () => { sincronizarNomeDoSlotAtual(); salvarFichaManual(); });
-      document.addEventListener("click", () => {}, { passive: true });
-      document.querySelectorAll(".tab-button").forEach(btn => {
-        btn.addEventListener("click", () => {
-          document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
-          document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-          btn.classList.add("active");
-          const tab = btn.dataset.tab;
-          const target = document.getElementById(tab);
-          if (target) target.classList.add("active");
+    function inicializarAplicacao() {
+      criarInterface();
+      montarSelectsEListeners();
+      inicializarCondicoes();
+      appInicializado = true;
+
+      if (window.matchMedia('(max-width: 900px)').matches) {
+        document.getElementById('sidebar').classList.add('minimized');
+        document.getElementById('sidebarRight').classList.add('minimized');
+      }
+      atualizarLayout();
+      carregarFichaDoSlotAtual();
+      iniciarEscutaRolagens();
+      renderizarUIEscudo();
+
+      const main = document.getElementById("main-content");
+      main.addEventListener("input", event => {
+        if (event.target.matches('#vidaQuick, #sanidadeQuick, #auraQuick, #inputFicha, #imgUpload, [id^="cfg"]')) return;
+        if (event.target.id === "nome") sincronizarNomeDoSlotAtual();
+        salvarFichaManual();
+      });
+
+      document.addEventListener("pointerdown", liberarAudio, { once: true, passive: true });
+      document.addEventListener("keydown", event => {
+        liberarAudio();
+        if (event.key === "Escape") {
+          fecharMenusMobile();
+          fecharModalConfig();
+          document.getElementById("modalNotas").style.display = "none";
+          fecharModalFichaEscudo();
+          fecharPopup();
+        }
+      }, { once: false });
+
+      document.querySelectorAll(".modal").forEach(modal => {
+        modal.addEventListener("click", event => {
+          if (event.target !== modal) return;
+          if (modal.id === "modalNotas") fecharModalNotas();
+          else if (modal.id === "modalFichaEscudo") fecharModalFichaEscudo();
+          else if (modal.id === "modalConfigHab") fecharModalConfig();
         });
       });
-    });
+
+      window.addEventListener("resize", atualizarLayout, { passive: true });
+      window.addEventListener("beforeunload", () => {
+        if (!aplicandoDados) salvarDadosLocalmente(getSlotAtual(), montarDadosFicha());
+      });
+
+      auth.getRedirectResult().catch(erro => console.error("Falha no retorno do login:", erro));
+      auth.onAuthStateChanged(aoAlterarAutenticacao);
+    }
+
+    document.addEventListener("DOMContentLoaded", inicializarAplicacao);
   </script>
 </body>
 </html>
