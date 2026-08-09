@@ -785,18 +785,9 @@
       *, *::before, *::after { animation-duration: .01ms; animation-iteration-count: 1; transition-duration: .01ms; }
     }
 
-    /* 21. EXTENSÕES COMPATÍVEIS: PA, EFEITOS, ORDENAÇÃO E FICHA DO MESTRE */
-    :root {
-      --pa: #7b68c7;
-      --pa-soft: rgba(123, 104, 199, .16);
-      --pa-temp: #c567b0;
-    }
-    .resource-card.pa { --resource: var(--pa); --resource-soft: var(--pa-soft); }
-    .temp-txt.pa { color: var(--pa-temp); }
-    .status-fill.temp-pa { background: var(--pa-temp); }
+    /* 21. EXTENSÕES COMPATÍVEIS: EFEITOS, ORDENAÇÃO E FICHA DO MESTRE */
     .resource-max-button { min-height: 28px; padding: 3px 7px; border: 1px solid var(--border); border-radius: 6px; color: var(--text-soft); background: var(--resource-soft); font-size: .62rem; font-weight: 700; }
     .resource-settings { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-    .resource-card.pa .bonus-maximum input { width: 54px; }
     .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
     .audio-status { display: flex; align-items: center; gap: 7px; min-height: 30px; color: var(--muted); font-size: .65rem; }
 
@@ -858,8 +849,6 @@
     .log-content { min-width: 0; }
     .log-item.evento { border-left-color: var(--success); }
 
-    .master-status-grid { grid-template-columns: repeat(4, 1fr); }
-    .combatant-stats { grid-template-columns: repeat(4, 1fr); }
     .master-member-portrait { display: flex; align-items: center; gap: 10px; min-width: 0; }
     .master-member-avatar { display: grid; place-items: center; width: 42px; height: 42px; flex: 0 0 42px; overflow: hidden; border: 1px solid var(--border-strong); border-radius: 10px; color: var(--accent-strong); background: var(--surface-3); font-weight: 800; }
     .master-member-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -872,7 +861,7 @@
     .remote-sheet-portrait img { width: 100%; height: 100%; object-fit: cover; }
     .remote-sheet-title h3 { margin: 0; color: var(--text); font-size: 1.35rem; }
     .remote-sheet-title p { margin: 3px 0 12px; color: var(--muted); }
-    .remote-resource-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 8px; }
+    .remote-resource-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
     .remote-resource { padding: 9px; border: 1px solid var(--border); border-radius: 8px; background: rgba(0,0,0,.22); }
     .remote-resource span { display: block; color: var(--muted); font-size: .59rem; text-transform: uppercase; }
     .remote-resource strong { display: block; margin-top: 2px; }
@@ -1126,11 +1115,6 @@
             <div class="resource-head"><span class="resource-name"><svg class="icon icon-sm"><use href="#i-spark"/></svg>Aura</span><span class="resource-values"><input id="aura" type="number" inputmode="numeric" aria-label="Aura atual"><small id="auraMaxTxt">Máx: 0</small></span></div>
             <div class="status-bar"><div id="aura-bar" class="status-fill"></div></div><span id="auraTempTxt" class="temp-txt aura" hidden></span>
             <div class="resource-tools"><span class="resource-settings"><label class="bonus-maximum">Bônus máx. <input id="bonusAuraMax" type="number" value="0" inputmode="numeric"></label><button class="resource-max-button" type="button" data-action="fill-resource" data-status="aura" aria-label="Encher Aura ao máximo">Máx.</button></span><span class="quick-adjust"><input id="auraQuick" type="number" placeholder="+/−" aria-label="Alterar aura"><button type="button" data-action="adjust-status" data-status="aura">Aplicar</button></span></div>
-          </article>
-          <article class="resource-card pa">
-            <div class="resource-head"><span class="resource-name"><svg class="icon icon-sm"><use href="#i-dice"/></svg>PA</span><span class="resource-values"><input id="pa" type="number" inputmode="numeric" aria-label="PA atual"><small id="paMaxTxt">Máx: 0</small></span></div>
-            <div class="status-bar"><div id="pa-bar" class="status-fill"></div></div><span id="paTempTxt" class="temp-txt pa" hidden></span>
-            <div class="resource-tools"><span class="resource-settings"><label class="bonus-maximum">Máx. base <input id="paBaseMax" type="number" value="0" min="0" inputmode="numeric"></label><label class="bonus-maximum">Bônus <input id="bonusPaMax" type="number" value="0" inputmode="numeric"></label><button class="resource-max-button" type="button" data-action="fill-resource" data-status="pa" aria-label="Encher PA ao máximo">Máx.</button></span><span class="quick-adjust"><input id="paQuick" type="number" placeholder="+/−" aria-label="Alterar PA"><button type="button" data-action="adjust-status" data-status="pa">Aplicar</button></span></div>
           </article>
         </div>
       </header>
@@ -1430,8 +1414,8 @@
     const pericias = [["FOR","Atletismo"],["FOR","Luta"],["CON","Fortitude"],["AGI","Reflexos"],["AGI","Furtividade"],["AGI","Acrobacia"],["AGI","Iniciativa"],["AGI","Pontaria"],["AGI","Pilotagem"],["INT","Ciências"],["INT","Tática"],["INT","Investigação"],["INT","Ofício"],["INT","Medicina"],["INT","Tecnologia"],["INT","Sobrevivência"],["INT","Ocultismo"],["INT","Enganação"],["INT","Diplomacia"],["POD","Intimidação"],["POD","Artes"],["POD","Intuição"],["POD","Percepção"],["POD","Adestramento"],["POD","Charme"],["POD","Vontade"],["POD","Energia"]];
 
     const CATEGORIAS_HABILIDADE = ["Ataque", "Defesa", "Suporte", "Cura", "Movimento", "Reação", "Passiva", "Especial", "Utilidade"];
-    const RECURSOS = ["vida", "sanidade", "aura", "pa"];
-    const ROTULOS_RECURSO = { vida: "Vida", sanidade: "Sanidade", aura: "Aura", pa: "PA" };
+    const RECURSOS = ["vida", "sanidade", "aura"];
+    const ROTULOS_RECURSO = { vida: "Vida", sanidade: "Sanidade", aura: "Aura" };
     const DURACOES_EFEITO = [
       ["ate_desativar", "Até desativar"], ["uma_rodada", "1 rodada"], ["rodadas", "X rodadas"],
       ["proximo_teste", "Até o próximo teste"], ["proximo_ataque", "Até o próximo ataque"],
@@ -1471,9 +1455,10 @@
 
     function normalizarGatilho(gatilho) {
       const base = gatilho && typeof gatilho === "object" ? gatilho : {};
+      const tipo = String(base.tipo || "sempre");
       return {
         ...base,
-        tipo: String(base.tipo || "sempre"),
+        tipo: tipo === "pa_abaixo" ? "aura_abaixo" : tipo,
         valor: numeroSeguro(base.valor, 50),
         condicao: String(base.condicao || "")
       };
@@ -1482,12 +1467,15 @@
     function normalizarEfeito(efeito = {}, indice = 0) {
       const alvo = String(efeito.alvo || "atributo");
       const propriedadePadrao = alvo === "pericia" ? "bonus" : alvo === "recurso" ? "max" : "valor";
+      const alvoIdPadrao = alvo === "atributo" ? "FOR" : alvo === "pericia" ? "per_0" : alvo === "recurso" ? "vida" : "deslocamento";
+      const alvoIdBruto = String(efeito.alvoId || alvoIdPadrao);
+      const alvoId = alvo === "recurso" && alvoIdBruto === "pa" ? "aura" : alvoIdBruto;
       const duracao = normalizarDuracao(efeito.duracao);
       return {
         ...efeito,
         id: String(efeito.id || gerarId(`efeito${indice}`)),
         alvo,
-        alvoId: String(efeito.alvoId || (alvo === "atributo" ? "FOR" : alvo === "pericia" ? "per_0" : alvo === "recurso" ? "vida" : "deslocamento")),
+        alvoId,
         propriedade: String(efeito.propriedade || propriedadePadrao),
         valor: numeroSeguro(efeito.valor, 0),
         dados: numeroSeguro(efeito.dados, 0),
@@ -1501,11 +1489,13 @@
     }
 
     function normalizarCusto(custo = {}) {
-      if (typeof custo === "number" || typeof custo === "string") return { id: gerarId("custo"), recurso: "pa", valor: Math.max(0, numeroSeguro(custo, 0)) };
+      if (typeof custo === "number" || typeof custo === "string") return { id: gerarId("custo"), recurso: "aura", valor: Math.max(0, numeroSeguro(custo, 0)) };
+      const recursoBruto = String(custo.recurso || "aura").toLowerCase();
+      const recurso = recursoBruto === "pa" ? "aura" : recursoBruto;
       return {
         ...custo,
         id: String(custo.id || gerarId("custo")),
-        recurso: RECURSOS.includes(String(custo.recurso || "pa").toLowerCase()) ? String(custo.recurso || "pa").toLowerCase() : "pa",
+        recurso: RECURSOS.includes(recurso) ? recurso : "aura",
         valor: Math.max(0, numeroSeguro(custo.valor, 0))
       };
     }
@@ -1601,6 +1591,9 @@
     function normalizarModificador(modificador = {}, indice = 0) {
       const duracao = normalizarDuracao(modificador.duracao);
       const restantePadrao = ["uma_rodada", "rodadas"].includes(duracao) ? Math.max(1, Math.floor(numeroSeguro(modificador.rodadas, 1))) : null;
+      const alvo = String(modificador.alvo || "atributo");
+      const alvoIdBruto = String(modificador.alvoId || "FOR");
+      const alvoId = alvo === "recurso" && alvoIdBruto === "pa" ? "aura" : alvoIdBruto;
       return {
         ...modificador,
         id: String(modificador.id || gerarId(`modificador${indice}`)),
@@ -1609,14 +1602,14 @@
         origemId: String(modificador.origemId || ""),
         efeitoId: String(modificador.efeitoId || ""),
         tipoOrigem: String(modificador.tipoOrigem || "manual"),
-        alvo: String(modificador.alvo || "atributo"),
-        alvoId: String(modificador.alvoId || "FOR"),
+        alvo,
+        alvoId,
         propriedade: String(modificador.propriedade || "valor"),
         valor: numeroSeguro(modificador.valor, 0),
         dados: numeroSeguro(modificador.dados, 0),
         duracao,
         restante: modificador.restante == null ? restantePadrao : Math.max(0, Math.floor(numeroSeguro(modificador.restante, 0))),
-        periciaConsumo: String(modificador.periciaConsumo || modificador.alvoId || ""),
+        periciaConsumo: String(modificador.periciaConsumo || alvoId || ""),
         empilhavel: modificador.empilhavel !== false,
         removivel: modificador.removivel !== false,
         ativo: modificador.ativo !== false,
@@ -1639,6 +1632,10 @@
 
     function normalizarFicha(ficha = {}) {
       const base = ficha && typeof ficha === "object" ? { ...ficha } : {};
+      if ((base.aura == null || base.aura === "") && base.pa != null) base.aura = base.pa;
+      delete base.pa;
+      delete base.paBaseMax;
+      delete base.bonusPaMax;
       return {
         ...base,
         schemaVersion: Math.max(7, numeroSeguro(base.schemaVersion, 0)),
@@ -1649,10 +1646,7 @@
         condicoesPersonalizadasAtivas: (Array.isArray(base.condicoesPersonalizadasAtivas) ? base.condicoesPersonalizadasAtivas : []).map(normalizarCondicaoAtiva),
         historicoAlteracoes: (Array.isArray(base.historicoAlteracoes) ? base.historicoAlteracoes : []).map(normalizarHistorico).slice(0, 15),
         somCritico: { modo: "padrao", nome: "", tipo: "", tamanho: 0, dados: "", ...(base.somCritico || {}) },
-        avatarMiniatura: String(base.avatarMiniatura || ""),
-        pa: numeroSeguro(base.pa, 0),
-        paBaseMax: Math.max(0, numeroSeguro(base.paBaseMax, 0)),
-        bonusPaMax: numeroSeguro(base.bonusPaMax, 0)
+        avatarMiniatura: String(base.avatarMiniatura || "")
       };
     }
 
@@ -1665,7 +1659,7 @@
       const gatilho = normalizarGatilho(modificador.gatilho);
       if (!modificador.ativo) return false;
       if (!gatilho.tipo || gatilho.tipo === "sempre") return true;
-      const mapaRecurso = { vida_abaixo: "vida", sanidade_abaixo: "sanidade", aura_abaixo: "aura", pa_abaixo: "pa" };
+      const mapaRecurso = { vida_abaixo: "vida", sanidade_abaixo: "sanidade", aura_abaixo: "aura" };
       if (mapaRecurso[gatilho.tipo]) {
         const id = mapaRecurso[gatilho.tipo];
         const atual = numeroSeguro(document.getElementById(id)?.value, 0);
@@ -1997,9 +1991,6 @@
         vida: document.getElementById("vida").value || 0,
         sanidade: document.getElementById("sanidade").value || 0,
         aura: document.getElementById("aura").value || 0,
-        pa: document.getElementById("pa")?.value || 0,
-        paBaseMax: document.getElementById("paBaseMax")?.value || 0,
-        bonusPaMax: document.getElementById("bonusPaMax")?.value || 0,
         habilidades: clonarDados(habilidades.map(normalizarHabilidade)),
         modificadoresAtivos: clonarDados(modificadoresAtivos.map(normalizarModificador)),
         condicoesPersonalizadas: clonarDados(condicoesPersonalizadas.map(normalizarCondicaoPersonalizada)),
@@ -2163,9 +2154,6 @@
       document.getElementById("vida").value = d.vida || 0;
       document.getElementById("sanidade").value = d.sanidade || 0;
       document.getElementById("aura").value = d.aura || 0;
-      document.getElementById("pa").value = d.pa ?? 0;
-      document.getElementById("paBaseMax").value = d.paBaseMax ?? 0;
-      document.getElementById("bonusPaMax").value = d.bonusPaMax ?? 0;
       tiposRD = Array.isArray(d.tiposRD) ? d.tiposRD.map((rd, indice) => ({ id: String(rd.id || `rd_${indice}_${Date.now()}`), nome: String(rd.nome || "RD sem nome"), valor: Number(rd.valor) || 0 })) : [];
       if (!tiposRD.length && (Number(d.rdFisica) || Number(d.rdMental))) {
         if (Number(d.rdFisica)) tiposRD.push({ id: "rd_fisica_legada", nome: "Física", valor: Number(d.rdFisica) || 0 });
@@ -2313,9 +2301,6 @@
       document.getElementById("bonusVidaMax").value = 0;
       document.getElementById("bonusSanidadeMax").value = 0;
       document.getElementById("bonusAuraMax").value = 0;
-      document.getElementById("pa").value = 0;
-      document.getElementById("paBaseMax").value = 0;
-      document.getElementById("bonusPaMax").value = 0;
       document.getElementById("bonusDeslocamento").value = 0;
       document.getElementById("categoriaNota").value = "geral";
       document.getElementById("tituloNota").value = "";
@@ -2824,15 +2809,12 @@
       const bonusVida = Number(document.getElementById("bonusVidaMax")?.value) || 0;
       const bonusSanidade = Number(document.getElementById("bonusSanidadeMax")?.value) || 0;
       const bonusAura = Number(document.getElementById("bonusAuraMax")?.value) || 0;
-      const paBaseMax = Math.max(0, Number(document.getElementById("paBaseMax")?.value) || 0);
-      const bonusPa = Number(document.getElementById("bonusPaMax")?.value) || 0;
 
       const vidaMax = Math.max(0, ((30 + con * 3) * nivel) + bonusVida + somarModificadores("recurso", "vida", "max"));
       const sanidadeMax = Math.max(0, ((20 + intt * 2) * nivel) + bonusSanidade + somarModificadores("recurso", "sanidade", "max"));
       const auraMax = Math.max(0, ((con + pod) * 3) + ((con + pod) * (nivel - 1)) + bonusAura + somarModificadores("recurso", "aura", "max"));
-      const paMax = Math.max(0, paBaseMax + bonusPa + somarModificadores("recurso", "pa", "max"));
 
-      [["vida", vidaMax], ["sanidade", sanidadeMax], ["aura", auraMax], ["pa", paMax]].forEach(([id, novoMax]) => {
+      [["vida", vidaMax], ["sanidade", sanidadeMax], ["aura", auraMax]].forEach(([id, novoMax]) => {
         const el = document.getElementById(id);
         if (!el) return;
         const maxAnterior = Number(el.max) || 0;
@@ -2844,7 +2826,6 @@
       document.getElementById("vidaMaxTxt").innerText = "Máx: " + vidaMax;
       document.getElementById("sanidadeMaxTxt").innerText = "Máx: " + sanidadeMax;
       document.getElementById("auraMaxTxt").innerText = "Máx: " + auraMax;
-      document.getElementById("paMaxTxt").innerText = "Máx: " + paMax;
 
       recalcularDeslocamento();
       RECURSOS.forEach(id => atualizarRecurso(id, false));
@@ -2882,7 +2863,6 @@
     function atualizarVida(salvar = true) { atualizarRecurso("vida", salvar); }
     function atualizarSanidade(salvar = true) { atualizarRecurso("sanidade", salvar); }
     function atualizarAura(salvar = true) { atualizarRecurso("aura", salvar); }
-    function atualizarPA(salvar = true) { atualizarRecurso("pa", salvar); }
 
     function aplicarValorRecurso(tipo, valor, salvar = true) {
       const campo = document.getElementById(tipo);
@@ -2931,7 +2911,7 @@
       RECURSOS.forEach(tipo => aplicarValorRecurso(tipo, numeroSeguro(document.getElementById(tipo)?.max, 0), false));
       registrarHistoricoAlteracao("Todos os recursos restaurados", antes, capturarEstadoCombate(), "recurso");
       salvarFichaManual();
-      mostrarAlerta("Vida, Sanidade, Aura e PA foram restaurados.");
+      mostrarAlerta("Vida, Sanidade e Aura foram restaurados.");
     }
 
     function recalcularTudoDerivado(salvar = false) {
@@ -3230,7 +3210,7 @@
           <label class="field"><span>Rodadas</span><input type="number" min="1" value="${efeito.rodadas}" data-effect-field="rodadas" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"></label>
           <label class="field"><span>Empilhamento</span><select data-effect-field="empilhavel" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"><option value="true" ${efeito.empilhavel ? "selected" : ""}>Empilhável</option><option value="false" ${!efeito.empilhavel ? "selected" : ""}>Não empilhável</option></select></label>
           <button class="btn btn-icon btn-danger" type="button" data-action="remove-effect" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}" aria-label="Remover efeito">${icone("trash")}</button>
-          <div class="effect-trigger"><label class="field"><span>Gatilho</span><select data-effect-field="trigger-type" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"><option value="sempre" ${efeito.gatilho.tipo === "sempre" ? "selected" : ""}>Sempre</option><option value="vida_abaixo" ${efeito.gatilho.tipo === "vida_abaixo" ? "selected" : ""}>Vida abaixo de %</option><option value="sanidade_abaixo" ${efeito.gatilho.tipo === "sanidade_abaixo" ? "selected" : ""}>Sanidade abaixo de %</option><option value="aura_abaixo" ${efeito.gatilho.tipo === "aura_abaixo" ? "selected" : ""}>Aura abaixo de %</option><option value="pa_abaixo" ${efeito.gatilho.tipo === "pa_abaixo" ? "selected" : ""}>PA abaixo de %</option><option value="possui_condicao" ${efeito.gatilho.tipo === "possui_condicao" ? "selected" : ""}>Possuir condição</option><option value="em_combate" ${efeito.gatilho.tipo === "em_combate" ? "selected" : ""}>Estar em combate</option></select></label><label class="field"><span>Percentual</span><input type="number" min="0" max="100" value="${efeito.gatilho.valor}" data-effect-field="trigger-value" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"></label><label class="field"><span>Condição exigida</span><input value="${escaparAtributo(efeito.gatilho.condicao)}" placeholder="Ex.: Sangrando" data-effect-field="trigger-condition" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"></label></div>
+          <div class="effect-trigger"><label class="field"><span>Gatilho</span><select data-effect-field="trigger-type" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"><option value="sempre" ${efeito.gatilho.tipo === "sempre" ? "selected" : ""}>Sempre</option><option value="vida_abaixo" ${efeito.gatilho.tipo === "vida_abaixo" ? "selected" : ""}>Vida abaixo de %</option><option value="sanidade_abaixo" ${efeito.gatilho.tipo === "sanidade_abaixo" ? "selected" : ""}>Sanidade abaixo de %</option><option value="aura_abaixo" ${efeito.gatilho.tipo === "aura_abaixo" ? "selected" : ""}>Aura abaixo de %</option><option value="possui_condicao" ${efeito.gatilho.tipo === "possui_condicao" ? "selected" : ""}>Possuir condição</option><option value="em_combate" ${efeito.gatilho.tipo === "em_combate" ? "selected" : ""}>Estar em combate</option></select></label><label class="field"><span>Percentual</span><input type="number" min="0" max="100" value="${efeito.gatilho.valor}" data-effect-field="trigger-value" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"></label><label class="field"><span>Condição exigida</span><input value="${escaparAtributo(efeito.gatilho.condicao)}" placeholder="Ex.: Sangrando" data-effect-field="trigger-condition" data-effect-owner="${tipoDono}" data-owner-id="${escaparAtributo(donoId)}" data-effect-id="${escaparAtributo(efeito.id)}"></label></div>
         </div>`;
       }).join("");
     }
@@ -3561,7 +3541,7 @@
     function adicionarCusto(habilidadeId) {
       const habilidade = encontrarHabilidade(habilidadeId);
       if (!habilidade) return;
-      habilidade.custos.push(normalizarCusto({ recurso: "pa", valor: 1 }));
+      habilidade.custos.push(normalizarCusto({ recurso: "aura", valor: 1 }));
       renderHabilidades();
       salvarFichaManual();
     }
@@ -4611,12 +4591,12 @@
           salvarFichaManual();
           return;
         }
-        if (alvo.id.startsWith("cfg") || ["vidaQuick", "sanidadeQuick", "auraQuick", "paQuick", "selectCondicao", "temaSelector", "danoRecebido", "defesaDano", "rdMentalDano", "codigoEntrarCampanha", "nomeNovaCampanha", "slotEntrarCampanha", "skillModifierSkill", "skillModifierDice", "skillModifierBonus", "skillModifierDuration", "skillModifierRounds", "skillModifierOrigin", "remoteConditionSelect", "remoteModifierTarget", "remoteModifierValue", "remoteModifierDuration", "remoteModifierRounds", "remoteModifierOrigin"].includes(alvo.id)) return;
+        if (alvo.id.startsWith("cfg") || ["vidaQuick", "sanidadeQuick", "auraQuick", "selectCondicao", "temaSelector", "danoRecebido", "defesaDano", "rdMentalDano", "codigoEntrarCampanha", "nomeNovaCampanha", "slotEntrarCampanha", "skillModifierSkill", "skillModifierDice", "skillModifierBonus", "skillModifierDuration", "skillModifierRounds", "skillModifierOrigin", "remoteConditionSelect", "remoteModifierTarget", "remoteModifierValue", "remoteModifierDuration", "remoteModifierRounds", "remoteModifierOrigin"].includes(alvo.id)) return;
         if (alvo.id === "tipoDanoRecebido") { atualizarCamposDanoRecebido(); return; }
         if (alvo.id === "rdAtiva") { rdAtivaId = alvo.value; atualizarBloqueio(); salvarFichaManual(); return; }
         if (/^per_\d+$/.test(alvo.id)) { atualizarDestaquePericia(alvo.id); salvarFichaManual(); return; }
         if (alvo.id.startsWith("atr_")) { recalcularVidaSanidade(); atualizarBloqueio(); atualizarDT(); atualizarCargaInventario(); recalcularDeslocamento(); atualizarDestaquesEfetivos(); return; }
-        if (["bonusVidaMax", "bonusSanidadeMax", "bonusAuraMax", "paBaseMax", "bonusPaMax", "nivel"].includes(alvo.id)) { recalcularVidaSanidade(); return; }
+        if (["bonusVidaMax", "bonusSanidadeMax", "bonusAuraMax", "nivel"].includes(alvo.id)) { recalcularVidaSanidade(); return; }
         if (alvo.id === "bonusDeslocamento") { recalcularDeslocamento(); salvarFichaManual(); return; }
         if (RECURSOS.includes(alvo.id)) {
           atualizarRecurso(alvo.id, false);
@@ -4638,7 +4618,7 @@
         if (RECURSOS.includes(event.target?.id)) estadoAntesEdicaoRecurso = capturarEstadoCombate();
       });
       document.addEventListener("keydown", event => {
-        if (event.key === "Enter" && ["vidaQuick", "sanidadeQuick", "auraQuick", "paQuick"].includes(event.target.id)) {
+        if (event.key === "Enter" && ["vidaQuick", "sanidadeQuick", "auraQuick"].includes(event.target.id)) {
           event.preventDefault();
           ajustarStatus(event.target.id.replace("Quick", ""));
         }
@@ -4653,7 +4633,7 @@
       if (modificador.ativo === false) return false;
       const gatilho = normalizarGatilho(modificador.gatilho);
       if (gatilho.tipo === "sempre") return true;
-      const mapa = { vida_abaixo: ["vida", "vidaMax"], sanidade_abaixo: ["sanidade", "sanidadeMax"], aura_abaixo: ["aura", "auraMax"], pa_abaixo: ["pa", "paMax"] };
+      const mapa = { vida_abaixo: ["vida", "vidaMax"], sanidade_abaixo: ["sanidade", "sanidadeMax"], aura_abaixo: ["aura", "auraMax"] };
       if (mapa[gatilho.tipo]) {
         const [atualKey, maxKey] = mapa[gatilho.tipo];
         const atual = numeroSeguro(ficha[atualKey], 0);
@@ -4681,7 +4661,6 @@
       const vidaMax = ((30 + con * 3) * nivel) + (Number(ficha.bonusVidaMax) || 0) + somarModificadoresFicha(ficha, "recurso", "vida", "max");
       const sanidadeMax = ((20 + intt * 2) * nivel) + (Number(ficha.bonusSanidadeMax) || 0) + somarModificadoresFicha(ficha, "recurso", "sanidade", "max");
       const auraMax = ((con + pod) * 3) + ((con + pod) * (nivel - 1)) + (Number(ficha.bonusAuraMax) || 0) + somarModificadoresFicha(ficha, "recurso", "aura", "max");
-      const paMax = Math.max(0, numeroSeguro(ficha.paBaseMax, 0) + numeroSeguro(ficha.bonusPaMax, 0) + somarModificadoresFicha(ficha, "recurso", "pa", "max"));
       return {
         nome: ficha.nome || "Sem nome",
         jogador: ficha.jogador || usuarioAtual?.displayName || "Jogador",
@@ -4693,8 +4672,6 @@
         sanidadeMax,
         aura: Number(ficha.aura) || 0,
         auraMax,
-        pa: Number(ficha.pa) || 0,
-        paMax,
         avatarMiniatura: ficha.avatarMiniatura || "",
         efeitosAtivos: (ficha.modificadoresAtivos || []).length,
         ultimaRolagem: ultimaRolagemLocal || null
@@ -4745,14 +4722,12 @@
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/sanidadeMax`] = resumo.sanidadeMax;
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/aura`] = resumo.aura;
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/auraMax`] = resumo.auraMax;
-          atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/pa`] = resumo.pa;
-          atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/paMax`] = resumo.paMax;
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/avatarMiniatura`] = resumo.avatarMiniatura || "";
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/efeitosAtivos`] = resumo.efeitosAtivos || 0;
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/atualizadoEm`] = firebase.database.ServerValue.TIMESTAMP;
         }
         if (campanha?.combate?.participantes?.[membroId]) {
-          ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","pa","paMax","avatarMiniatura","efeitosAtivos"].forEach(chave => {
+          ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","avatarMiniatura","efeitosAtivos"].forEach(chave => {
             atualizacoes[`campanhas_v2/${campanhaId}/combate/participantes/${membroId}/${chave}`] = resumo[chave];
           });
         }
@@ -4939,7 +4914,7 @@
         const proprio = participante.uid === usuarioAtual?.uid && String(participante.slot) === String(getSlotAtual());
         const mostrarStatus = ehMestre || inimigo || proprio;
         const avatar = urlImagemSegura(participante.avatarMiniatura || "");
-        return `<article class="combatant-card"><div class="combatant-head"><div class="master-member-portrait"><span class="master-member-avatar">${avatar ? `<img src="${escaparAtributo(avatar)}" alt="">` : escaparHTML((participante.nome || "?").charAt(0).toUpperCase())}</span><div><strong>${escaparHTML(participante.nome || "Combatente")}</strong><div class="muted">${inimigo ? "Personagem do mestre" : escaparHTML(participante.jogador || "Jogador")} · Slot ${escaparHTML(participante.slot || "?")}${participante.efeitosAtivos ? ` · ${participante.efeitosAtivos} efeito(s)` : ""}</div></div></div><span class="initiative-value">${participante.iniciativa == null ? "—" : escaparHTML(participante.iniciativa)}</span></div>${mostrarStatus ? `<div class="combatant-stats"><span>Vida ${Number(participante.vida) || 0}/${Number(participante.vidaMax) || 0}</span><span>San. ${Number(participante.sanidade) || 0}/${Number(participante.sanidadeMax) || 0}</span><span>Aura ${Number(participante.aura) || 0}/${Number(participante.auraMax) || 0}</span><span>PA ${Number(participante.pa) || 0}/${Number(participante.paMax) || 0}</span></div>` : ""}${ehMestre ? `<div class="button-row"><button class="btn btn-small" type="button" data-action="open-campaign-sheet" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Abrir ficha</button><button class="btn btn-small btn-danger" type="button" data-action="remove-combatant" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Retirar</button></div>` : ""}</article>`;
+        return `<article class="combatant-card"><div class="combatant-head"><div class="master-member-portrait"><span class="master-member-avatar">${avatar ? `<img src="${escaparAtributo(avatar)}" alt="">` : escaparHTML((participante.nome || "?").charAt(0).toUpperCase())}</span><div><strong>${escaparHTML(participante.nome || "Combatente")}</strong><div class="muted">${inimigo ? "Personagem do mestre" : escaparHTML(participante.jogador || "Jogador")} · Slot ${escaparHTML(participante.slot || "?")}${participante.efeitosAtivos ? ` · ${participante.efeitosAtivos} efeito(s)` : ""}</div></div></div><span class="initiative-value">${participante.iniciativa == null ? "—" : escaparHTML(participante.iniciativa)}</span></div>${mostrarStatus ? `<div class="combatant-stats"><span>Vida ${Number(participante.vida) || 0}/${Number(participante.vidaMax) || 0}</span><span>San. ${Number(participante.sanidade) || 0}/${Number(participante.sanidadeMax) || 0}</span><span>Aura ${Number(participante.aura) || 0}/${Number(participante.auraMax) || 0}</span></div>` : ""}${ehMestre ? `<div class="button-row"><button class="btn btn-small" type="button" data-action="open-campaign-sheet" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Abrir ficha</button><button class="btn btn-small btn-danger" type="button" data-action="remove-combatant" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Retirar</button></div>` : ""}</article>`;
       }).join("") || '<div class="empty-state">Nenhum participante no combate.</div>';
       const historico = Object.values(combate.historicoIniciativa || {}).sort((a,b) => (Number(b.timestamp) || 0) - (Number(a.timestamp) || 0)).slice(0, 20);
       const seletorSlots = [...Array(10)].map((_, indice) => {
@@ -4963,7 +4938,7 @@
       const membrosHTML = membros.map(([id, membro]) => {
         const proprio = membro.uid === usuarioAtual?.uid;
         const avatar = urlImagemSegura(membro.avatarMiniatura || "");
-        return `<article class="member-card"><div class="member-card-head"><div class="master-member-portrait"><span class="master-member-avatar">${avatar ? `<img src="${escaparAtributo(avatar)}" alt="">` : escaparHTML((membro.nome || "?").charAt(0).toUpperCase())}</span><div><strong>${escaparHTML(membro.nome || "Personagem")}</strong><div class="muted">${escaparHTML(membro.jogador || membro.email || "Jogador")} · Slot ${escaparHTML(membro.slot || "?")}${membro.efeitosAtivos ? ` · ${membro.efeitosAtivos} efeito(s)` : ""}</div></div></div><div class="button-row">${ehMestre ? `<button class="btn btn-small btn-primary" type="button" data-action="open-campaign-sheet" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Abrir ficha</button>` : ""}${ehMestre && !proprio ? `<button class="btn btn-small btn-danger" type="button" data-action="kick-member" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Expulsar</button>` : ""}${proprio ? `<button class="btn btn-small btn-danger" type="button" data-action="leave-campaign" data-campaign-id="${escaparAtributo(campanha.id)}" data-slot="${escaparAtributo(membro.slot)}">Sair</button>` : ""}</div></div>${ehMestre || proprio ? `<div class="master-status-grid"><span>Vida ${Number(membro.vida) || 0}/${Number(membro.vidaMax) || 0}</span><span>San. ${Number(membro.sanidade) || 0}/${Number(membro.sanidadeMax) || 0}</span><span>Aura ${Number(membro.aura) || 0}/${Number(membro.auraMax) || 0}</span><span>PA ${Number(membro.pa) || 0}/${Number(membro.paMax) || 0}</span></div>` : ""}</article>`;
+        return `<article class="member-card"><div class="member-card-head"><div class="master-member-portrait"><span class="master-member-avatar">${avatar ? `<img src="${escaparAtributo(avatar)}" alt="">` : escaparHTML((membro.nome || "?").charAt(0).toUpperCase())}</span><div><strong>${escaparHTML(membro.nome || "Personagem")}</strong><div class="muted">${escaparHTML(membro.jogador || membro.email || "Jogador")} · Slot ${escaparHTML(membro.slot || "?")}${membro.efeitosAtivos ? ` · ${membro.efeitosAtivos} efeito(s)` : ""}</div></div></div><div class="button-row">${ehMestre ? `<button class="btn btn-small btn-primary" type="button" data-action="open-campaign-sheet" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Abrir ficha</button>` : ""}${ehMestre && !proprio ? `<button class="btn btn-small btn-danger" type="button" data-action="kick-member" data-campaign-id="${escaparAtributo(campanha.id)}" data-member-id="${escaparAtributo(id)}">Expulsar</button>` : ""}${proprio ? `<button class="btn btn-small btn-danger" type="button" data-action="leave-campaign" data-campaign-id="${escaparAtributo(campanha.id)}" data-slot="${escaparAtributo(membro.slot)}">Sair</button>` : ""}</div></div>${ehMestre || proprio ? `<div class="master-status-grid"><span>Vida ${Number(membro.vida) || 0}/${Number(membro.vidaMax) || 0}</span><span>San. ${Number(membro.sanidade) || 0}/${Number(membro.sanidadeMax) || 0}</span><span>Aura ${Number(membro.aura) || 0}/${Number(membro.auraMax) || 0}</span></div>` : ""}</article>`;
       }).join("") || '<div class="empty-state">Ainda não há personagens vinculados.</div>';
       container.innerHTML = `<div id="campanhaBannerDetalhe" class="campaign-detail-banner"><h3>${escaparHTML(campanha.nome || "Campanha")}</h3><span>${ehMestre ? "Você é o mestre" : `Mestre: ${escaparHTML(campanha.mestreNome || campanha.mestreEmail || "—")}`}</span><button class="campaign-code" type="button" data-action="copy-campaign-code" data-code="${escaparAtributo(campanha.codigo || "")}">Código ${escaparHTML(campanha.codigo || "—")} · copiar</button></div><div class="member-card-head"><h3>Membros vinculados</h3>${ehMestre ? `<button class="btn btn-small btn-danger" type="button" data-action="delete-campaign" data-campaign-id="${escaparAtributo(campanha.id)}">Apagar campanha</button>` : ""}</div><div class="member-list">${membrosHTML}</div>${renderizarCombateCampanha(campanha, ehMestre)}`;
       aplicarBannerEmElemento(document.getElementById("campanhaBannerDetalhe"), campanha.banner, false);
@@ -5216,8 +5191,6 @@
             sanidadeMax: Number(resumo.sanidadeMax) || 0,
             aura: Number(resumo.aura) || 0,
             auraMax: Number(resumo.auraMax) || 0,
-            pa: Number(resumo.pa) || 0,
-            paMax: Number(resumo.paMax) || 0,
             avatarMiniatura: resumo.avatarMiniatura || "",
             efeitosAtivos: Number(resumo.efeitosAtivos) || 0,
             tipo: "jogador",
@@ -5252,8 +5225,8 @@
         const resumo = montarResumoFichaCampanha(ficha);
         atualizacoes[`campanhas_fichas_v2/${campanhaId}/${membroId}`] = { ...resumo, ficha, atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
         atualizacoes[`campanhas_edicoes_v2/${campanhaId}/${membroId}`] = { ficha, editadoPorUid: usuarioAtual.uid, editadoPorEmail: usuarioAtual.email || "", motivo, atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
-        if (campanha.membros?.[membroId]) ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","pa","paMax","avatarMiniatura","efeitosAtivos"].forEach(chave => atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/${chave}`] = resumo[chave] ?? 0);
-        if (campanha.combate?.participantes?.[membroId]) ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","pa","paMax","avatarMiniatura","efeitosAtivos"].forEach(chave => atualizacoes[`campanhas_v2/${campanhaId}/combate/participantes/${membroId}/${chave}`] = resumo[chave] ?? 0);
+        if (campanha.membros?.[membroId]) ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","avatarMiniatura","efeitosAtivos"].forEach(chave => atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/${chave}`] = resumo[chave] ?? 0);
+        if (campanha.combate?.participantes?.[membroId]) ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","avatarMiniatura","efeitosAtivos"].forEach(chave => atualizacoes[`campanhas_v2/${campanhaId}/combate/participantes/${membroId}/${chave}`] = resumo[chave] ?? 0);
         if (ficha.uid === usuarioAtual.uid && ficha.slot) fichasProprias.push(ficha);
       });
       if (Object.keys(atualizacoes).length) await database.ref().update(atualizacoes);
@@ -5419,9 +5392,9 @@
       const inventarioHTML = ficha.inventario.map((item, indice) => `<details class="remote-section"><summary>${escaparHTML(item.nome || `Item ${indice + 1}`)}${item.equipado ? " · EQUIPADO" : ""}</summary><div class="field-grid">${campoRemoto("Item", `inventario.${indice}.nome`, item.nome || "")}${campoRemoto("Quantidade", `inventario.${indice}.quantidade`, item.quantidade, "number")}${selectRemoto("Tipo", `inventario.${indice}.equipavel`, String(item.equipavel), [["false","Comum"],["true","Equipável"]], "boolean")}${selectRemoto("Estado", `inventario.${indice}.equipado`, String(item.equipado), [["false","Desequipado"],["true","Equipado"]], "boolean")}${campoRemoto("Descrição", `inventario.${indice}.desc`, item.desc || "", "textarea")}</div></details>`).join("") || '<div class="empty-state">Inventário vazio.</div>';
 
       document.getElementById("tituloFichaCampanha").textContent = `${ficha.nome || dados.nome || "Ficha"} — Slot ${ficha.slot || dados.slot || "?"}`;
-      document.getElementById("conteudoFichaCampanha").innerHTML = `<div class="remote-sheet-hero"><div class="remote-sheet-portrait">${avatar ? `<img src="${escaparAtributo(avatar)}" alt="Retrato de ${escaparAtributo(ficha.nome || "personagem")}">` : escaparHTML(iniciais)}</div><div class="remote-sheet-title"><h3>${escaparHTML(ficha.nome || "Personagem sem nome")}</h3><p>${escaparHTML(ficha.jogador || "Jogador não informado")} · Nível ${escaparHTML(ficha.nivel || 1)} · Slot ${escaparHTML(ficha.slot || dados.slot || "?")}</p><div class="remote-resource-grid">${barraRemota("Vida", resumo.vida, resumo.vidaMax, "vida")}${barraRemota("Sanidade", resumo.sanidade, resumo.sanidadeMax, "sanidade")}${barraRemota("Aura", resumo.aura, resumo.auraMax, "aura")}${barraRemota("PA", resumo.pa, resumo.paMax, "pa")}</div></div></div><div class="remote-sheet-layout"><nav class="remote-sheet-nav" aria-label="Seções da ficha remota"><a href="#remote-identificacao">Identificação</a><a href="#remote-recursos">Recursos</a><a href="#remote-atributos">Atributos</a><a href="#remote-pericias">Perícias</a><a href="#remote-efeitos">Condições</a><a href="#remote-habilidades">Habilidades</a><a href="#remote-inventario">Inventário</a><a href="#remote-narrativa">Narrativa</a></nav><div class="remote-editor">
+      document.getElementById("conteudoFichaCampanha").innerHTML = `<div class="remote-sheet-hero"><div class="remote-sheet-portrait">${avatar ? `<img src="${escaparAtributo(avatar)}" alt="Retrato de ${escaparAtributo(ficha.nome || "personagem")}">` : escaparHTML(iniciais)}</div><div class="remote-sheet-title"><h3>${escaparHTML(ficha.nome || "Personagem sem nome")}</h3><p>${escaparHTML(ficha.jogador || "Jogador não informado")} · Nível ${escaparHTML(ficha.nivel || 1)} · Slot ${escaparHTML(ficha.slot || dados.slot || "?")}</p><div class="remote-resource-grid">${barraRemota("Vida", resumo.vida, resumo.vidaMax, "vida")}${barraRemota("Sanidade", resumo.sanidade, resumo.sanidadeMax, "sanidade")}${barraRemota("Aura", resumo.aura, resumo.auraMax, "aura")}</div></div></div><div class="remote-sheet-layout"><nav class="remote-sheet-nav" aria-label="Seções da ficha remota"><a href="#remote-identificacao">Identificação</a><a href="#remote-recursos">Recursos</a><a href="#remote-atributos">Atributos</a><a href="#remote-pericias">Perícias</a><a href="#remote-efeitos">Condições</a><a href="#remote-habilidades">Habilidades</a><a href="#remote-inventario">Inventário</a><a href="#remote-narrativa">Narrativa</a></nav><div class="remote-editor">
         <details id="remote-identificacao" class="remote-section" open><summary>Identificação e retrato</summary><div class="field-grid">${campoRemoto("Personagem", "nome", ficha.nome || "")}${campoRemoto("Jogador", "jogador", ficha.jogador || "")}${campoRemoto("Idade", "idade", ficha.idade || "", "number")}${campoRemoto("Nível", "nivel", ficha.nivel || 1, "number")}${campoRemoto("Energia inata", "antecedencia", ficha.antecedencia || "", "textarea")}${campoRemoto("Imagem (URL ou base64)", "imagem", ficha.imagem || "", "textarea")}</div></details>
-        <details id="remote-recursos" class="remote-section" open><summary>Recursos e combate</summary><div class="field-grid">${campoRemoto("Vida atual", "vida", ficha.vida, "number")}${campoRemoto("Bônus de vida máxima", "bonusVidaMax", ficha.bonusVidaMax || 0, "number")}${campoRemoto("Sanidade atual", "sanidade", ficha.sanidade, "number")}${campoRemoto("Bônus de sanidade máxima", "bonusSanidadeMax", ficha.bonusSanidadeMax || 0, "number")}${campoRemoto("Aura atual", "aura", ficha.aura, "number")}${campoRemoto("Bônus de aura máxima", "bonusAuraMax", ficha.bonusAuraMax || 0, "number")}${campoRemoto("PA atual", "pa", ficha.pa, "number")}${campoRemoto("PA máximo base", "paBaseMax", ficha.paBaseMax, "number")}${campoRemoto("Bônus de PA máximo", "bonusPaMax", ficha.bonusPaMax, "number")}${campoRemoto("Bônus de deslocamento", "bonusDeslocamento", ficha.bonusDeslocamento || 0, "number")}${campoRemoto("Atributo base da DT", "dtAtributoBase", ficha.dtAtributoBase || "POD")}${campoRemoto("Bônus de DT", "dtBonus", ficha.dtBonus || 0, "number")}${campoRemoto("Última iniciativa", "ultimoTesteIniciativa", ficha.ultimoTesteIniciativa || 0, "number")}${campoRemoto("RD ativa (ID)", "rdAtivaId", ficha.rdAtivaId || "")}</div><h3>Reduções de dano</h3><div class="remote-array">${rdsHTML}</div></details>
+        <details id="remote-recursos" class="remote-section" open><summary>Recursos e combate</summary><div class="field-grid">${campoRemoto("Vida atual", "vida", ficha.vida, "number")}${campoRemoto("Bônus de vida máxima", "bonusVidaMax", ficha.bonusVidaMax || 0, "number")}${campoRemoto("Sanidade atual", "sanidade", ficha.sanidade, "number")}${campoRemoto("Bônus de sanidade máxima", "bonusSanidadeMax", ficha.bonusSanidadeMax || 0, "number")}${campoRemoto("Aura atual", "aura", ficha.aura, "number")}${campoRemoto("Bônus de aura máxima", "bonusAuraMax", ficha.bonusAuraMax || 0, "number")}${campoRemoto("Bônus de deslocamento", "bonusDeslocamento", ficha.bonusDeslocamento || 0, "number")}${campoRemoto("Atributo base da DT", "dtAtributoBase", ficha.dtAtributoBase || "POD")}${campoRemoto("Bônus de DT", "dtBonus", ficha.dtBonus || 0, "number")}${campoRemoto("Última iniciativa", "ultimoTesteIniciativa", ficha.ultimoTesteIniciativa || 0, "number")}${campoRemoto("RD ativa (ID)", "rdAtivaId", ficha.rdAtivaId || "")}</div><h3>Reduções de dano</h3><div class="remote-array">${rdsHTML}</div></details>
         <details id="remote-atributos" class="remote-section" open><summary>Atributos</summary><div class="remote-grid">${atributosHTML}</div></details>
         <details id="remote-pericias" class="remote-section"><summary>Perícias</summary><div class="remote-array">${periciasHTML}</div></details>
         <details id="remote-efeitos" class="remote-section" open><summary>Condições, efeitos e ações do mestre</summary><div class="condicao-container">${condicoesPadraoHTML}${condicoesCustomHTML || ""}</div><div class="remote-master-actions"><div class="remote-action-box"><h4>Aplicar condição</h4><select id="remoteConditionSelect">${opcoesCondicao}</select><button class="btn btn-small btn-primary full-width" type="button" data-action="remote-add-condition">Aplicar condição</button></div><div class="remote-action-box"><h4>Adicionar modificador</h4><select id="remoteModifierTarget">${opcoesAlvoEfeito()}</select><div class="field-grid"><label class="field"><span>Valor</span><input id="remoteModifierValue" type="number" value="1"></label><label class="field"><span>Duração</span><select id="remoteModifierDuration">${opcoesDuracao("ate_desativar")}</select></label><label class="field"><span>Rodadas</span><input id="remoteModifierRounds" type="number" min="1" value="1"></label><label class="field"><span>Origem</span><input id="remoteModifierOrigin" value="Efeito do mestre"></label></div><button class="btn btn-small btn-primary full-width" type="button" data-action="remote-add-modifier">Adicionar modificador</button></div></div><h3>Modificadores ativos</h3><div class="effect-list">${modificadoresHTML}</div></details>
@@ -5554,12 +5527,12 @@
       atualizacoes[`campanhas_fichas_v2/${campanhaId}/${membroId}`] = { ...resumo, ficha, atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
       atualizacoes[`campanhas_edicoes_v2/${campanhaId}/${membroId}`] = { ficha, editadoPorUid: usuarioAtual.uid, editadoPorEmail: usuarioAtual.email || "", atualizadoEm: firebase.database.ServerValue.TIMESTAMP };
       if (membroExiste) {
-        ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","pa","paMax","avatarMiniatura","efeitosAtivos"].forEach(chave => {
+        ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","avatarMiniatura","efeitosAtivos"].forEach(chave => {
           atualizacoes[`campanhas_v2/${campanhaId}/membros/${membroId}/${chave}`] = resumo[chave];
         });
       }
       if (participanteExiste) {
-        ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","pa","paMax","avatarMiniatura","efeitosAtivos"].forEach(chave => {
+        ["nome","jogador","vida","vidaMax","sanidade","sanidadeMax","aura","auraMax","avatarMiniatura","efeitosAtivos"].forEach(chave => {
           atualizacoes[`campanhas_v2/${campanhaId}/combate/participantes/${membroId}/${chave}`] = resumo[chave];
         });
       }
